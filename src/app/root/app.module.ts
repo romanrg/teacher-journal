@@ -9,6 +9,7 @@ import {SubjectsComponent} from "../components/subjects/subjects.component";
 import {StatisticsComponent} from "../components/statistics/statistics.component";
 import {ExportComponent} from "../components/export/export.component";
 import {PageNotFoundComponent} from "../components/page-not-found/page-not-found.component";
+import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {PageNotFoundComponent} from "../components/page-not-found/page-not-found
     SubjectsComponent,
     StatisticsComponent,
     ExportComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    StudentsTableComponent,
   ],
   imports: [
     BrowserModule,

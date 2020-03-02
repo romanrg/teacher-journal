@@ -5,7 +5,6 @@ import {SubjectsComponent} from "../components/subjects/subjects.component";
 import {StatisticsComponent} from "../components/statistics/statistics.component";
 import {ExportComponent} from "../components/export/export.component";
 import {PageNotFoundComponent} from "../components/page-not-found/page-not-found.component";
-import {AppComponent} from "./app.component";
 
 const routes: Routes = [
   {path: "", redirectTo: "students", pathMatch: "full"},

@@ -1,0 +1,24 @@
+<table class="students-table__table">
+  <caption class="student-table__caption">
+    Students
+  </caption>
+  <thead class="students-table__head">
+    <tr class="students-table__row">
+      <th class="students-table__header">id</th>
+      <th class="students-table__header">name</th>
+      <th class="students-table__header">surname</th>
+      <th class="students-table__header">address</th>
+      <th class="students-table__header">description</th>
+    </tr>
+  </thead>
+  <tbody class="students-table__body" *ngFor="let student of students; let i = index">
+    <tr class="students-table__row">
+      <td class="students-table__cell">{{i + 1}}</td>
+      <td class="students-table__cell">{{student.name | titlecase}}</td>
+      <td class="students-table__cell">{{student.surname | titlecase}}</td>
+      <td class="students-table__cell">{{student.adress}}</td>
+      <td class="students-table__cell">{{student.description}}</td>
+    </tr>
+  </tbody>
+
+</table>
