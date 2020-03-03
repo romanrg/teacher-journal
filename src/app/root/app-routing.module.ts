@@ -6,11 +6,13 @@ import {StatisticsComponent} from "../components/statistics/statistics.component
 import {ExportComponent} from "../components/export/export.component";
 import {PageNotFoundComponent} from "../components/page-not-found/page-not-found.component";
 import {StudentFormComponent} from "../components/students/student-form/student-form.component";
+import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
 
 const routes: Routes = [
   {path: "", redirectTo: "students", pathMatch: "full"},
   {path: "students", component: StudentsComponent},
   {path: "subjects", component: SubjectsComponent},
+  {path: "subjects/:id",  component: SubjectsTableComponent},
   {path: "statistics", component: StatisticsComponent},
   {path: "export", component: ExportComponent},
   {path: "new-student", component: StudentFormComponent},

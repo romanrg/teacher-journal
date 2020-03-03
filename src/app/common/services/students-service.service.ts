@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
-import { from } from "rxjs";
+import {from, Observable} from "rxjs";
+import {IStudent} from "../models/IStudent";
 
-const students: any = [
+const students: IStudent[] = [
   {
     _id: "5e5cbe27384ce7e093efc43e",
     id: 0,
     name: "Hopper",
     surname: "Rocha",
-    adress: "Estonia, Skyland, Fanchon Place 102",
+    address: "Estonia, Skyland, Fanchon Place 102",
     description: "Do elit pariatur dolor magna eiusmod adipisicing ex dolor aliquip."
   },
   {
@@ -15,7 +16,7 @@ const students: any = [
     id: 1,
     name: "Pauline",
     surname: "Allison",
-    adress: "French Guiana, Rutherford, Albee Square 165",
+    address: "French Guiana, Rutherford, Albee Square 165",
     description: "Aute aliquip mollit consequat et nulla ut laboris."
   },
   {
@@ -23,7 +24,7 @@ const students: any = [
     id: 2,
     name: "Hall",
     surname: "Anthony",
-    adress: "Suriname, Leeper, Hemlock Street 139",
+    address: "Suriname, Leeper, Hemlock Street 139",
     description: "Minim qui esse non qui anim ad qui ad Lorem pariatur culpa voluptate labore."
   },
   {
@@ -31,7 +32,7 @@ const students: any = [
     id: 3,
     name: "Leonor",
     surname: "Hendricks",
-    adress: "Uganda, Heil, Chapel Street 126",
+    address: "Uganda, Heil, Chapel Street 126",
     description: "Proident minim consequat ea sit quis mollit ex adipisicing ex veniam."
   },
   {
@@ -39,7 +40,7 @@ const students: any = [
     id: 4,
     name: "Kidd",
     surname: "Roy",
-    adress: "Denmark, Eastvale, Fulton Street 9",
+    address: "Denmark, Eastvale, Fulton Street 9",
     description: "Irure id eiusmod cupidatat consectetur veniam."
   },
   {
@@ -47,7 +48,7 @@ const students: any = [
     id: 5,
     name: "Ester",
     surname: "Mays",
-    adress: "Senegal, Shindler, Beekman Place 82",
+    address: "Senegal, Shindler, Beekman Place 82",
     description: "Esse qui excepteur officia eu et ad eu labore ea enim proident."
   },
   {
@@ -55,7 +56,7 @@ const students: any = [
     id: 6,
     name: "Cooke",
     surname: "Marks",
-    adress: "El Salvador, Rosine, Himrod Street 121",
+    address: "El Salvador, Rosine, Himrod Street 121",
     description: "Aliqua aute dolore culpa proident proident proident irure dolor nulla eiusmod quis."
   },
   {
@@ -63,7 +64,7 @@ const students: any = [
     id: 7,
     name: "Dejesus",
     surname: "Sheppard",
-    adress: "Monaco, Mansfield, Jardine Place 138",
+    address: "Monaco, Mansfield, Jardine Place 138",
     description: "Magna dolore exercitation magna duis adipisicing et cupidatat do aliquip irure id irure elit."
   },
   {
@@ -71,7 +72,7 @@ const students: any = [
     id: 8,
     name: "Sandoval",
     surname: "Oconnor",
-    adress: "Kenya, Marienthal, Scholes Street 63",
+    address: "Kenya, Marienthal, Scholes Street 63",
     description: "Officia eiusmod sint quis quis."
   },
   {
@@ -79,7 +80,7 @@ const students: any = [
     id: 9,
     name: "Lopez",
     surname: "Christensen",
-    adress: "Luxembourg, Condon, Dunham Place 60",
+    address: "Luxembourg, Condon, Dunham Place 60",
     description: "Laboris deserunt voluptate qui reprehenderit eiusmod officia eu quis laborum magna."
   },
   {
@@ -87,7 +88,7 @@ const students: any = [
     id: 10,
     name: "Shanna",
     surname: "Byrd",
-    adress: "Netherlands Antilles, Bedias, Brightwater Avenue 109",
+    address: "Netherlands Antilles, Bedias, Brightwater Avenue 109",
     description: "Aute incididunt sit labore reprehenderit proident in aliqua id ad laboris sit laborum."
   },
   {
@@ -95,7 +96,7 @@ const students: any = [
     id: 11,
     name: "Norris",
     surname: "Stevenson",
-    adress: "Czech Republic, Winchester, Dunne Court 161",
+    address: "Czech Republic, Winchester, Dunne Court 161",
     description: "Incididunt voluptate nostrud reprehenderit est voluptate velit aliquip laboris adipisicing eu eiusmod."
   },
   {
@@ -103,7 +104,7 @@ const students: any = [
     id: 12,
     name: "Woodard",
     surname: "Trevino",
-    adress: "Cook Islands, Farmington, Ford Street 27",
+    address: "Cook Islands, Farmington, Ford Street 27",
     description: "Esse consectetur excepteur nisi irure tempor cupidatat eu laborum adipisicing velit."
   },
   {
@@ -111,7 +112,7 @@ const students: any = [
     id: 13,
     name: "Fox",
     surname: "Sears",
-    adress: "Montserrat, Rivers, Clifton Place 23",
+    address: "Montserrat, Rivers, Clifton Place 23",
     description: "Sint pariatur quis id id irure irure eu ex tempor."
   },
   {
@@ -119,7 +120,7 @@ const students: any = [
     id: 14,
     name: "Wilson",
     surname: "Dickson",
-    adress: "Viet Nam, Keyport, Harrison Place 82",
+    address: "Viet Nam, Keyport, Harrison Place 82",
     description: "Voluptate cillum consequat consequat duis sunt tempor sunt fugiat est sunt nostrud fugiat culpa."
   },
   {
@@ -127,7 +128,7 @@ const students: any = [
     id: 15,
     name: "Harris",
     surname: "Glenn",
-    adress: "Algeria, Gambrills, Waldorf Court 173",
+    address: "Algeria, Gambrills, Waldorf Court 173",
     description: "Commodo dolor sunt aliquip culpa id esse consequat eu ipsum irure laborum eu."
   },
   {
@@ -135,7 +136,7 @@ const students: any = [
     id: 16,
     name: "Jerry",
     surname: "Sharp",
-    adress: "Slovak Republic, Topaz, Frost Street 29",
+    address: "Slovak Republic, Topaz, Frost Street 29",
     description: "Officia non id voluptate quis dolore id aute officia nostrud voluptate."
   },
   {
@@ -143,7 +144,7 @@ const students: any = [
     id: 17,
     name: "Edith",
     surname: "Blackwell",
-    adress: "Falkland Islands (Malvinas), Katonah, Newport Street 46",
+    address: "Falkland Islands (Malvinas), Katonah, Newport Street 46",
     description: "Amet tempor sunt officia ipsum labore mollit consectetur laboris nostrud pariatur nisi."
   },
   {
@@ -151,7 +152,7 @@ const students: any = [
     id: 18,
     name: "Josephine",
     surname: "Moss",
-    adress: "Rwanda, Echo, Willoughby Street 135",
+    address: "Rwanda, Echo, Willoughby Street 135",
     description: "Anim non nulla dolore irure est anim et voluptate anim velit minim officia consectetur enim."
   },
   {
@@ -159,7 +160,7 @@ const students: any = [
     id: 19,
     name: "Jordan",
     surname: "Walker",
-    adress: "Fiji, Eagleville, Hazel Court 69",
+    address: "Fiji, Eagleville, Hazel Court 69",
     description: "Elit reprehenderit sunt ex non ad consectetur officia elit ea."
   },
   {
@@ -167,7 +168,7 @@ const students: any = [
     id: 20,
     name: "Bobbie",
     surname: "Baird",
-    adress: "US Minor Outlying Islands, Nicholson, Furman Street 186",
+    address: "US Minor Outlying Islands, Nicholson, Furman Street 186",
     description: "Ad quis fugiat laborum excepteur elit voluptate sint."
   },
   {
@@ -175,7 +176,7 @@ const students: any = [
     id: 21,
     name: "Fry",
     surname: "Wade",
-    adress: "Chad, Waterford, Tompkins Place 16",
+    address: "Chad, Waterford, Tompkins Place 16",
     description: "Elit laborum minim tempor exercitation sit deserunt elit."
   },
   {
@@ -183,7 +184,7 @@ const students: any = [
     id: 22,
     name: "Wiley",
     surname: "Thornton",
-    adress: "Namibia, Riceville, Kenmore Court 48",
+    address: "Namibia, Riceville, Kenmore Court 48",
     description: "Do consectetur reprehenderit do ut qui est eu."
   }
 ];
@@ -193,15 +194,15 @@ const students: any = [
 })
 export class StudentsServiceService {
 
-  private students: [];
+  private students: IStudent[];
   constructor() {
     this.students = students;
   }
 
-  public getStudents() {
+  public getStudents(): Observable<IStudent> {
     return from([this.students]);
   }
-  public addStudent(student: Object): void {
+  public addStudent(student: IStudent): void {
     this.students.push(student);
   }
 }
