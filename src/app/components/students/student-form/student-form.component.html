@@ -7,7 +7,7 @@
     Add new Student
   </legend>
   <label class="form__label">
-    Name:
+    <span class="form__name">Name:</span>
     <input type="text" class="form__input" formControlName="name">
 
   </label>
@@ -18,7 +18,7 @@
   </span>
 
   <label class="form__label">
-    Surname:
+    <span class="form__name">Surname:</span>
     <input type="text" class="form__input" formControlName="surname">
   </label>
   <span *ngIf="surname.invalid && surname.touched && surname.errors.required"
@@ -28,11 +28,11 @@
   </span>
 
   <label class="form__label">
-    Address:
+    <span class="form__name">Address:</span>
     <input type="text" class="form__input" formControlName="adress">
   </label>
   <label class="form__label">
-    Description:
+    <span class="form__name">Description:</span>
     <textarea
       formControlName="description"
       class="form__input"

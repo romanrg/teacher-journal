@@ -10,9 +10,9 @@ $error: red
   border-radius: 30px
   background: transparent
   box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
-  margin: 5rem
   padding: 2rem
   box-sizing: border-box
+  margin: 3rem auto
 
 .form__legend
   text-transform: uppercase
@@ -21,6 +21,7 @@ $error: red
   box-sizing: border-box
   display: flex
   align-self: center
+  user-select: none
 .form__label
   color: $color
   display: flex
@@ -29,7 +30,11 @@ $error: red
   flex-grow: 1
   width: 90%
   padding: 1rem
-
+.form__name
+  width: 15%
+  display: flex
+  align-self: flex-end
+  justify-content: flex-end
 
 .form__input
   margin-left: 1rem
@@ -48,15 +53,21 @@ $error: red
   padding: 1rem
   display: flex
   tab-index: 1
-  color: $color
+  color: $active-color
   align-self: center
   text-transform: uppercase
   font: inherit
   align-items: center
   justify-content: center
   cursor: pointer
+  border-radius: 10px
+  box-shadow: 9px 9px 18px #272727, -9px -9px 18px #353535
+  &[disabled]
+    filter: grayscale(100%)
 
 .form__span--error
   color: $error
   font-size: 0.8rem
   padding-left: 1rem
+  display: flex
+  align-self: center

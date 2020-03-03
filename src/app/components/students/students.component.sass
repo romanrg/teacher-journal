@@ -1,11 +1,15 @@
 $color: #FFFFFF
+.container
+  display: flex
+  flex-direction: column
 .students__button
-  margin: 2rem auto
+  box-sizing: border-box
   background: transparent
   display: flex
   font-size: 2rem
-  width: 4rem
   min-height: 4rem
+  width: 4rem
+  cursor: pointer
   color: $color
   border-radius: 10px
   box-shadow:  15px 15px 29px #272727, -15px -15px 29px #353535
@@ -15,3 +19,7 @@ $color: #FFFFFF
 
 .table__link
   text-decoration: none
+  display: flex
+  align-self: center
+  margin-top: 2rem
+  cursor: pointer
