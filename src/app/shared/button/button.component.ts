@@ -7,6 +7,7 @@ import {Component, Input, OnInit} from "@angular/core";
 })
 export class ButtonComponent implements OnInit {
   @Input("screenReader") public screenReaderMessage: string;
+  @Input("textContent") public textContent: string;
   constructor() { }
 
   public ngOnInit(): void {

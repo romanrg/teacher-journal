@@ -10,18 +10,27 @@ $active-color: #ffa500
   justify-content: space-between
   align-items: center
   font-size: 1rem
-  flex-grow: 1
+  flex-grow: 2
   padding: 0
   margin: 0
-.pagination__left
-  text-align: right
+
+.pagination__item
+  flex-grow: 1
+  padding-bottom: 1rem
 .pagination__button
   flex-grow: 1
   background: transparent
   border: none
   color: $color
   font-size: 1.5rem
+  display: flex
+  tab-index: 1
   &:hover
+    color: $active-color
+  &:focus
     color: $active-color
 .active
   border-bottom: 0.05rem solid $active-color
+
+.pagination__number
+  font-size: 1rem

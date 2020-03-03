@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 export class StudentsTableComponent implements OnInit {
   public currentPaginationNumber: number = 1;
   public students: Observable<[]>;
-  public paginationConstant: number = 5;
+  public paginationConstant: number = 4;
   constructor(
     private studentsService: StudentsServiceService
   ) { }
