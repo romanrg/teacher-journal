@@ -13,7 +13,7 @@ export class StudentFormComponent implements OnInit {
   public form: FormGroup = new FormGroup({
     name: new FormControl("", [Validators.required]),
     surname: new FormControl("", [Validators.required]),
-    adress: new FormControl(""),
+    address: new FormControl(""),
     description: new FormControl("")
   });
   constructor(

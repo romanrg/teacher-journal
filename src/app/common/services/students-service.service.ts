@@ -199,7 +199,7 @@ export class StudentsServiceService {
     this.students = students;
   }
 
-  public getStudents(): Observable<IStudent> {
+  public getStudents(): Observable<IStudent[]> {
     return from([this.students]);
   }
   public addStudent(student: IStudent): void {

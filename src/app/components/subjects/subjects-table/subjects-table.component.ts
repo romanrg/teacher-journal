@@ -3,7 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {Observable} from "rxjs";
 import {ISubject} from "../../../common/models/ISubject";
-import {withLatestFrom, map} from "rxjs/internal/operators";
+import {withLatestFrom, map, filter, find, tap} from "rxjs/internal/operators";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
@@ -12,7 +12,6 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-  public subject$: Observable<ISubject>;
   public subject: ISubject;
   public form: FormGroup = new FormGroup({
     teacher: new FormControl("")
@@ -23,12 +22,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this.subject$ = this.subjectsService.subjects.pipe(
-      withLatestFrom(this.route.params),
-      map(data => data[0].filter(subj => subj._id === +data[1].id))
-    );
 
-    this.subject$.subscribe(data => this.subject = data);
   }
   public ngOnDestroy(): void {
   }

@@ -52,12 +52,12 @@ const subjects: ISubject[] = [
 })
 export class SubjectsService {
 
-  private _subjects$: Observable<ISubject>;
+  private _subjects$: Observable<ISubject[]>;
   constructor() {
     this._subjects$ = from([subjects]);
   }
 
-  get subjects(): Observable<ISubject> {
+  get subjects(): Observable<ISubject[]> {
     return this._subjects$;
   }
 }

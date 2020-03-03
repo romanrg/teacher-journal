@@ -9,7 +9,7 @@ import {SubjectsService} from "../../common/services/subjects.service";
 export class SubjectsComponent implements OnInit {
 
   constructor(
-    private subjectService: SubjectsService
+    public subjectService: SubjectsService
   ) { }
 
   public ngOnInit(): void {

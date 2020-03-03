@@ -5,5 +5,6 @@ export interface ISubject {
   teacher: ITeacher | string;
   cabinet?: number;
   description?: string;
+  address?: string;
   _id: string | number;
 }
