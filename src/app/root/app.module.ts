@@ -12,6 +12,8 @@ import {PageNotFoundComponent} from "../components/page-not-found/page-not-found
 import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
 import {ButtonComponent} from "../shared/button/button.component";
 import {PaginationComponent} from "../shared/pagination/pagination.component";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {StudentFormComponent} from "../components/students/student-form/student-form.component";
 
 @NgModule({
   declarations: [
@@ -24,11 +26,14 @@ import {PaginationComponent} from "../shared/pagination/pagination.component";
     PageNotFoundComponent,
     StudentsTableComponent,
     ButtonComponent,
-    PaginationComponent
+    PaginationComponent,
+    StudentFormComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

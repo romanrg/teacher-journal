@@ -1,0 +1,62 @@
+$color: #FFFFFF
+$active-color: #ffa500
+$error: red
+.form
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: space-between
+  max-width: 40rem
+  border-radius: 30px
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  margin: 5rem
+  padding: 2rem
+  box-sizing: border-box
+
+.form__legend
+  text-transform: uppercase
+  color: $active-color
+  padding: 1rem
+  box-sizing: border-box
+  display: flex
+  align-self: center
+.form__label
+  color: $color
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-grow: 1
+  width: 90%
+  padding: 1rem
+
+
+.form__input
+  margin-left: 1rem
+  padding: 0.5rem
+  font: inherit
+  flex-grow: 1
+  border: none
+  background: transparent
+  border-bottom: 0.05rem solid $active-color
+  color: $color
+
+.form__submit
+  flex-grow: 1
+  background: transparent
+  border: none
+  padding: 1rem
+  display: flex
+  tab-index: 1
+  color: $color
+  align-self: center
+  text-transform: uppercase
+  font: inherit
+  align-items: center
+  justify-content: center
+  cursor: pointer
+
+.form__span--error
+  color: $error
+  font-size: 0.8rem
+  padding-left: 1rem

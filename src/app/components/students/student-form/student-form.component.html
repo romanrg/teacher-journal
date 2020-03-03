@@ -1,0 +1,50 @@
+<form
+  class="form"
+  (ngSubmit)="onSubmit()"
+  [formGroup]="form"
+>
+  <legend class="form__legend">
+    Add new Student
+  </legend>
+  <label class="form__label">
+    Name:
+    <input type="text" class="form__input" formControlName="name">
+
+  </label>
+  <span *ngIf="name.invalid && name.touched && name.errors.required"
+        class="form__span--error"
+  >
+      This field is required
+  </span>
+
+  <label class="form__label">
+    Surname:
+    <input type="text" class="form__input" formControlName="surname">
+  </label>
+  <span *ngIf="surname.invalid && surname.touched && surname.errors.required"
+        class="form__span--error"
+  >
+      This field is required
+  </span>
+
+  <label class="form__label">
+    Address:
+    <input type="text" class="form__input" formControlName="adress">
+  </label>
+  <label class="form__label">
+    Description:
+    <textarea
+      formControlName="description"
+      class="form__input"
+    ></textarea>
+  </label>
+
+  <button
+    class="form__submit"
+    type="submit"
+    [disabled]="!form.valid"
+  >
+    Submit
+  </button>
+</form>
+

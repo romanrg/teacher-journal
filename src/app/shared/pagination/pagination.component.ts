@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, EventEmitter, Output} from "@angular/core";
-import {Observable} from "rxjs";
+import {Observable, Observer} from "rxjs";
 
 @Component({
   selector: "app-pagination",
@@ -9,18 +9,17 @@ import {Observable} from "rxjs";
 export class PaginationComponent implements OnInit {
   @Input() public paginationConstant: number;
   @Input("students") public data: Observable<[]>;
-  @Output() public changePagination: EventEmitter = new EventEmitter();
+  @Output() public changePagination: EventEmitter<any> = new EventEmitter();
   public currentPaginationNumber: number = 1;
+  public pagination: [];
   constructor() { }
 
   public ngOnInit(): void {
-    console.log(this.paginationConstant);
-    console.log(this.data);
   }
 
-  public countPagination(students: Object): void {
+  public countPagination(students: Observable<any>): void {
     let aux: number = 0;
-    const sub: Subscription = students.subscribe(
+    const sub = students.subscribe(
       data => aux = data.length / this.paginationConstant
     );
     sub.unsubscribe();

@@ -1,10 +1,11 @@
 <div class="container">
   <app-students-table></app-students-table>
-  <app-button
-    class="students__button"
-    screenReader="Add new student"
-    textContent="+"
-    style="display: none"
-  ></app-button>
+  <a routerLink="/new-student" class="table__link">
+    <app-button
+      class="students__button"
+      screenReader="Add new student"
+      textContent="+"
+    ></app-button>
+  </a>
 </div>
 
