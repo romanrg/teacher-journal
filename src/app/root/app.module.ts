@@ -10,6 +10,8 @@ import {StatisticsComponent} from "../components/statistics/statistics.component
 import {ExportComponent} from "../components/export/export.component";
 import {PageNotFoundComponent} from "../components/page-not-found/page-not-found.component";
 import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
+import {ButtonComponent} from "../shared/button/button.component";
+import {PaginationComponent} from "../shared/pagination/pagination.component";
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import {StudentsTableComponent} from "../components/students/students-table/stud
     ExportComponent,
     PageNotFoundComponent,
     StudentsTableComponent,
+    ButtonComponent,
+    PaginationComponent
   ],
   imports: [
     BrowserModule,

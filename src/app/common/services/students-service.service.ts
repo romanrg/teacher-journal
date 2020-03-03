@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import Students from "../constants/students-mock.json";
+import { from } from "rxjs";
 
 @Injectable({
   providedIn: "root"
@@ -8,10 +9,10 @@ export class StudentsServiceService {
 
   private students: [];
   constructor() {
-    this.students = Students;
+    this.students = Array.from(Students);
   }
 
   public getStudents() {
-    return this.students;
+    return from([this.students]);
   }
 }

@@ -12,9 +12,6 @@ export class PageNotFoundComponent implements OnInit {
   constructor(private  router: Router) { }
 
   public ngOnInit(): void {
-    console.log(this.router.events.pipe(
-      filter(e => console.log(e))
-    ));
   }
 
 }

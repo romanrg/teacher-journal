@@ -1,0 +1,20 @@
+<tr class="pagination__row">
+  <td class="pagination__cell" colspan="5">
+    <div class="container">
+      {{countPagination(data)}}
+      <button class="pagination__button" (click)="decreasePagination()"><</button>
+      <ul class="pagination__list">
+        <li class="pagination__item" *ngFor="let page of pagination">
+          <button
+            (click)="setPaginationConstant(page)"
+            class="pagination__button"
+            [class.active]="page === currentPaginationNumber">
+            {{page}}
+          </button>
+        </li>
+      </ul>
+      <button class="pagination__button"
+              (click)="increasePagination()">></button>
+    </div>
+  </td>
+</tr>
