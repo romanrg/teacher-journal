@@ -15,3 +15,17 @@
     </li>
   </ul>
 </nav>
+<a  class="subjects__link subjects__link--form"
+  routerLink="/new-subject"
+>
+  <app-button
+    class="subjects__btn"
+    screenReader="Create new subject"
+    textContent="+"
+    [action]="addNewSubject"
+    (emitter)="addNewSubject()"
+  >
+
+  </app-button>
+
+</a>

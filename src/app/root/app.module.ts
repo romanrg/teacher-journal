@@ -17,6 +17,7 @@ import {StudentFormComponent} from "../components/students/student-form/student-
 import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
 import {TableComponent} from "../shared/table/table.component";
 import {FormComponent} from "../shared/form/form.component";
+import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {FormComponent} from "../shared/form/form.component";
     StudentFormComponent,
     SubjectsTableComponent,
     TableComponent,
-    FormComponent
+    FormComponent,
+    SubjectFormComponent
   ],
   imports: [
     BrowserModule,

@@ -4,16 +4,18 @@ import {StudentsServiceService} from "../../../common/services/students-service.
 import {Router} from "@angular/router";
 import {IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
+import {SubjectsService} from "../../../common/services/subjects.service";
+import {ISubject} from "../../../common/models/ISubject";
 
 @Component({
-  selector: "app-student-form",
-  templateUrl: "./student-form.component.html",
-  styleUrls: ["./student-form.component.sass"]
+  selector: "app-subject-form",
+  templateUrl: "./subject-form.component.html",
+  styleUrls: ["./subject-form.component.sass"]
 })
-export class StudentFormComponent implements OnInit {
+export class SubjectFormComponent implements OnInit {
   public formConfig: IFormConfig;
   constructor(
-    private studentsService: StudentsServiceService,
+    private subjectsService: SubjectsService,
     private router: Router
   ) { }
 
@@ -21,7 +23,7 @@ export class StudentFormComponent implements OnInit {
     const type: "text" | "textarea" = "text";
     const errorMessages: string[] = ["This field is required"];
     this.formConfig = {
-      legend: "Add New Student",
+      legend: "Add New Subject",
       formGroupName: {
         name: "form",
         formControls: [
@@ -33,14 +35,14 @@ export class StudentFormComponent implements OnInit {
             errorMessages,
           },
           {
-            name: "surname",
+            name: "teacher",
             initialValue: "",
             type,
             validators: [Validators.required],
             errorMessages,
           },
           {
-            name: "address",
+            name: "cabinet",
             initialValue: "",
             type,
             validators: [],
@@ -59,8 +61,8 @@ export class StudentFormComponent implements OnInit {
     };
   }
 
-  public submit($event: IStudent): void {
-    this.studentsService.addStudent($event);
-    this.router.navigate(["/students"]);
+  public submit($event: ISubject): void {
+    this.subjectsService.addSubject($event);
+    this.router.navigate(["/subjects"]);
   }
 }

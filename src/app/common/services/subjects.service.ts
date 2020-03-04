@@ -60,4 +60,8 @@ export class SubjectsService {
   get subjects(): Observable<ISubject[]> {
     return this._subjects$;
   }
+  public addSubject(subject: ISubject): void {
+    subject._id = subjects.length;
+    subjects.push(subject);
+  }
 }
