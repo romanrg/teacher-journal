@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {ITableConfig} from "../../common/models/ITableConfig";
-import {config, Observable, Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 
 
 @Component({
@@ -28,12 +28,13 @@ export class TableComponent implements OnInit, OnDestroy {
     this.data$ = this.config.tableBody[0];
     const dataSub: Subscription = this.data$.subscribe(data => this.data = data);
     this.subscriptions.push(dataSub);
-
-    console.log(this.config.tableHeaderCell);
   }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  public checkDate(header: String): boolean {
+    return header instanceof Date;
+  }
 }

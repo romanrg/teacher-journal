@@ -7,7 +7,14 @@
   <ng-container *ngIf="config.tableHeader">
     <thead class="table__head">
       <tr class="table__head-row">
-        <th class="table__head-cell" *ngFor="let header of config.tableHeader">{{header}}</th>
+        <th class="table__head-cell" *ngFor="let header of config.tableHeader">
+          <ng-container *ngIf="checkDate(header)">
+            {{header | date:"dd/MM"}}
+          </ng-container>
+          <ng-container *ngIf="!checkDate(header)">
+            {{header}}
+          </ng-container>
+        </th>
         <ng-container *ngIf="config.tableHeaderCell">
           <th class="table__head-cell">
             <app-button

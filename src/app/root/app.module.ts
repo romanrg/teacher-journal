@@ -16,6 +16,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {StudentFormComponent} from "../components/students/student-form/student-form.component";
 import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
 import {TableComponent} from "../shared/table/table.component";
+import {FormComponent} from "../shared/form/form.component";
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {TableComponent} from "../shared/table/table.component";
     PaginationComponent,
     StudentFormComponent,
     SubjectsTableComponent,
-    TableComponent
+    TableComponent,
+    FormComponent
   ],
   imports: [
     BrowserModule,

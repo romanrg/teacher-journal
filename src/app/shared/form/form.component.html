@@ -1,0 +1,40 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="form"
+>
+  <legend *ngIf="config.legend" class="form__legend">{{config.legend}}</legend>
+  <ng-container *ngFor="let input of config.formGroupName.formControls">
+    <ng-container *ngIf="input.type !== 'textarea'">
+      <label class="form__label">
+        <span class="form__label-name">{{input.name | titlecase}}</span>
+          <input
+                    type="{{input.type}}"
+                    formControlName="{{input.name}}"
+                    class="form__input"
+                  >
+      </label>
+      <span
+        class="form__span--error"
+        *ngIf="!getControlName(input.name).valid &&
+            getControlName(input.name).touched && getControlName(input.name).errors.required"
+      >
+        {{input.errorMessages[0]}}
+      </span>
+    </ng-container>
+    <ng-container *ngIf="input.type === 'textarea'">
+      <label class="form__label">
+        <span class="form__label-name">{{input.name}}</span>
+        <textarea
+          formControlName="description"
+          class="form__input"
+        ></textarea>
+      </label>
+    </ng-container>
+  </ng-container>
+  <button
+    type="submit"
+    [disabled]="!form.valid"
+    class="form__submit"
+  >Submit</button>
+</form>

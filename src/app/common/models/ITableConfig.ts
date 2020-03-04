@@ -9,10 +9,10 @@ export interface ITableConfig {
     textContent: string;
     screenReader: string;
   };
-  tableBody?: [Observable<T>, string[]];
+  tableBody?: [Observable<any>, string[]];
   tableFooter?: [];
   pagination?: {
     paginationConstant: number;
-    data: Observable<T>;
+    data: Observable<any>;
   };
 }

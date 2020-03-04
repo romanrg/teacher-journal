@@ -39,7 +39,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
 
   public addNewDate(): void {
-    this.tableConfig.tableHeader.push("new Date added");
+    this.tableConfig.tableHeader.push(new Date());
   }
 
   public ngOnInit(): void {
@@ -74,10 +74,5 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-  }
-
-  public doSmt($event: Event): void {
-    console.log("inside subject");
-    console.log(this.tableConfig)
   }
 }

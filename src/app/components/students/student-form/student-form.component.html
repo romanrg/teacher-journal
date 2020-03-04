@@ -1,4 +1,4 @@
-<form
+<!--<form
   class="form"
   (ngSubmit)="onSubmit()"
   [formGroup]="form"
@@ -47,4 +47,6 @@
     Submit
   </button>
 </form>
+-->
 
+<app-form [config]="formConfig" (onSubmit)="submit($event)"></app-form>
