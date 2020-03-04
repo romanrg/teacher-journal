@@ -1,9 +1,9 @@
-<ng-container *ngFor="let subject of subject$ | async">
+<!--<ng-container *ngFor="let subject of subject$ | async">
   <div class="container">
     <h2 class="subject-table__title">{{subject.name}}</h2>
 
     <table class="subject-table__table">
-      <caption class="subject-table__caption">{{subject.name}} students:</caption>
+      <caption class="subject-table__caption">{{subject.name}} students: {{(students$ | async).length}}</caption>
       <thead class="subject-table__head">
       <tr class="subject-table__row">
         <th class="subject-table__header">Name</th>
@@ -47,24 +47,30 @@
       ></app-pagination>
     </table>
 
-    <form
-      (ngSubmit)="changeTeacher()"
-      [formGroup]="form"
-      class="subject-table__form"
-    >
-      <label class="subject-table__label">
-        <span class="subject-table__wrapper">Teacher:</span>
-        <input
-          type="text"
-          placeholder="{{subject.teacher}}"
-          formControlName="teacher"
-          class="subject-table__teacher-input"
-        >
-      </label>
-      <button
-        type="submit"
-        class="subject-table__submit"
-      >Submit</button>
-    </form>
+
   </div>
-</ng-container>
+</ng-container>-->
+
+
+<div class="container" >
+  <app-table [config]="tableConfig" (onTrigger)="addNewDate()"></app-table>
+  <form
+    (ngSubmit)="changeTeacher()"
+    [formGroup]="form"
+    class="subject-table__form"
+  >
+    <label class="subject-table__label">
+      <span class="subject-table__wrapper">Teacher:</span>
+      <input
+        type="text"
+        placeholder="{{subject.teacher}}"
+        formControlName="teacher"
+        class="subject-table__teacher-input"
+      >
+    </label>
+    <button
+      type="submit"
+      class="subject-table__submit"
+    >Submit</button>
+  </form>
+</div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {Observable} from "rxjs";
 import {IStudent} from "../../../common/models/IStudent";
+import {ITableConfig} from "../../../common/models/ITableConfig";
 
 @Component({
   selector: "app-students-table",
@@ -9,17 +10,22 @@ import {IStudent} from "../../../common/models/IStudent";
   styleUrls: ["./students-table.component.sass"]
 })
 export class StudentsTableComponent implements OnInit {
-  public currentPaginationNumber: number = 1;
-  public students: Observable<IStudent[]>;
-  public paginationConstant: number = 4;
+  public tableConfig: ITableConfig;
   constructor(
     private studentsService: StudentsServiceService
   ) { }
 
   public ngOnInit(): void {
-    this.students = this.studentsService.getStudents();
-  }
-  public setPaginationConstant(page: number): void {
-    this.currentPaginationNumber = page;
+    const students: Observable<IStudent[]> = this.studentsService.getStudents();
+    const headers: string[] = ["name", "surname", "address", "description"]
+    this.tableConfig = {
+      caption: ["Students"],
+      tableBody: [students, headers],
+      pagination: {
+        paginationConstant: 5,
+        data: students
+      },
+      tableHeader: headers
+    };
   }
 }

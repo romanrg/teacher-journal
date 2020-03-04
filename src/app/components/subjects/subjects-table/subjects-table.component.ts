@@ -7,6 +7,7 @@ import {map, withLatestFrom} from "rxjs/internal/operators";
 import {Observable, Subscription} from "rxjs";
 import {IStudent} from "../../../common/models/IStudent";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
+import {ITableConfig} from "../../../common/models/ITableConfig";
 
 @Component({
   selector: "app-subjects-table",
@@ -14,10 +15,11 @@ import {StudentsServiceService} from "../../../common/services/students-service.
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-  public currentPaginationNumber: number = 1;
-  public paginationConstant: number = 5;
+  public subscriptions: Subscription[] = [];
+  public tableConfig: ITableConfig = {};
   public subject$: Observable<ISubject[]>;
   public students$: Observable<IStudent[]>;
+  public subject: ISubject;
   public form: FormGroup = new FormGroup({
     teacher: new FormControl("", [Validators.required, Validators.min(3)])
   });
@@ -36,22 +38,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     auxSubscribe.unsubscribe();
   }
 
-  public setPaginationConstant(page: number): void {
-    this.currentPaginationNumber = page;
-  }
-
   public addNewDate(): void {
-    console.log("new date Added");
-    const auxSubscription: Subscription = this.subject$.subscribe(
-      subject => {
-        if (!subject[0].marks) {
-          subject[0].marks = [];
-        }
-        subject[0].marks.push(new Date());
-        console.log(subject[0]);
-      }
-    );
-    auxSubscription.unsubscribe();
+    this.tableConfig.tableHeader.push("new Date added");
   }
 
   public ngOnInit(): void {
@@ -61,8 +49,35 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         map(data => data[0].filter(sub => sub._id === +data[1].id))
       );
     this.students$ = this.studentsService.getStudents();
-  }
-  public ngOnDestroy(): void {
+
+    this.subscriptions.push(
+      this.subject$.subscribe(data => this.subject = data[0])
+    );
+
+    this.tableConfig = {
+      tableHeader: ["name", "surname", "average mark"],
+      caption: [`${this.subject.name} class students:`],
+      tableBody: [this.students$, ["name", "surname"]],
+      pagination: {
+        paginationConstant: 5,
+        data: this.students$
+      },
+      tableHeaderCell: {
+        position: "last",
+        action: this.addNewDate,
+        screenReader: "Add new date",
+        textContent: "+"
+      }
+    };
+
   }
 
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  public doSmt($event: Event): void {
+    console.log("inside subject");
+    console.log(this.tableConfig)
+  }
 }

@@ -1,4 +1,8 @@
 import { Component, OnInit } from "@angular/core";
+import {ITableConfig} from "../../common/models/ITableConfig";
+import {StudentsServiceService} from "../../common/services/students-service.service";
+import {IStudent} from "../../common/models/IStudent";
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -8,9 +12,12 @@ import { Component, OnInit } from "@angular/core";
 })
 export class StatisticsComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+
+  ) { }
 
   public ngOnInit(): void {
+
   }
 
 }

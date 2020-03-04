@@ -15,6 +15,7 @@ import {PaginationComponent} from "../shared/pagination/pagination.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {StudentFormComponent} from "../components/students/student-form/student-form.component";
 import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
+import {TableComponent} from "../shared/table/table.component";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {SubjectsTableComponent} from "../components/subjects/subjects-table/subj
     ButtonComponent,
     PaginationComponent,
     StudentFormComponent,
-    SubjectsTableComponent
+    SubjectsTableComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
