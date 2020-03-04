@@ -1,10 +1,12 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
-import {Observable} from "rxjs";
 import {ISubject} from "../../../common/models/ISubject";
-import {withLatestFrom, map, filter, find, tap} from "rxjs/internal/operators";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {map, withLatestFrom} from "rxjs/internal/operators";
+import {Observable, Subscription} from "rxjs";
+import {IStudent} from "../../../common/models/IStudent";
+import {StudentsServiceService} from "../../../common/services/students-service.service";
 
 @Component({
   selector: "app-subjects-table",
@@ -12,23 +14,45 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-  public subject: ISubject;
+  public currentPaginationNumber: number = 1;
+  public paginationConstant: number = 5;
+  public subject$: Observable<ISubject[]>;
+  public students$: Observable<IStudent[]>;
   public form: FormGroup = new FormGroup({
-    teacher: new FormControl("")
+    teacher: new FormControl("", [Validators.required, Validators.min(3)])
   });
   constructor(
     private subjectsService: SubjectsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private studentsService: StudentsServiceService
   ) { }
 
-  public ngOnInit(): void {
+  public changeTeacher(): void {
+    const newTeacher: string = this.form.get("teacher").value;
+    const auxSubscribe: Subscription = this.subject$.subscribe(
+      subject => subject[0].teacher = newTeacher
+    );
+    this.form.reset();
+    auxSubscribe.unsubscribe();
+  }
 
+  public setPaginationConstant(page: number): void {
+    this.currentPaginationNumber = page;
+  }
+
+  public addNewDate(): void {
+    console.log("new date Added");
+  }
+
+  public ngOnInit(): void {
+    this.subject$ = this.subjectsService.subjects
+      .pipe(
+        withLatestFrom(this.route.params),
+        map(data => data[0].filter(sub => sub._id === +data[1].id))
+      );
+    this.students$ = this.studentsService.getStudents();
   }
   public ngOnDestroy(): void {
   }
 
-  public submitTeacher(): void {
-    this.subject[0].teacher = this.form.get("teacher").value;
-    this.form.reset();
-  }
 }

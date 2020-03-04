@@ -1,21 +1,60 @@
-<!--
-<div class="container" *ngFor="let sub of subject$ | async">
-  <h2 class="subject-table__header">
-    {{sub.name}}
-  </h2>
+<ng-container *ngFor="let subject of subject$ | async">
+  <div class="container">
+    <h2 class="subject-table__title">{{subject.name}}</h2>
 
+    <table class="subject-table__table">
+      <caption class="subject-table__caption">{{subject.name}} students:</caption>
+      <thead class="subject-table__head">
+      <tr class="subject-table__row">
+        <th class="subject-table__header">Name</th>
+        <th class="subject-table__header">Surname</th>
+        <th class="subject-table__header">Average Mark</th>
+        <th class="students-table__header">
+          <app-button
+            class="students-table__new-date"
+            screenReader="Add new date"
+            textContent="+"
+            (click)="addNewDate()"
+          ></app-button>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let student of students$| async; let i = index">
+        <tr *ngIf="i >= ((currentPaginationNumber - 1) * paginationConstant) &&
+           i < (paginationConstant * currentPaginationNumber)">
+          <td class="subject-table__cell">{{student.name}}</td>
+          <td class="subject-table__cell">{{student.surname}}</td>
+          <td><!--{{marks | average}}--></td>
+        </tr>
+      </ng-container>
+      </tbody>
+      <app-pagination
+        class="pagination"
+        [paginationConstant]="paginationConstant"
+        [students]="students$"
+        (changePagination)="setPaginationConstant($event)"
+      ></app-pagination>
+    </table>
 
-  <form [formGroup]="form" (ngSubmit)="submitTeacher()">
-    <label>
-      <span>Teacher: </span>
-      <input
-        formControlName="teacher"
-        type="text"
-        placeholder="{{sub.teacher}}"
-      >
-    </label>
-    <button
-      type="submit"
-    >Edit teacher</button>
-  </form>
-</div>-->
+    <form
+      (ngSubmit)="changeTeacher()"
+      [formGroup]="form"
+      class="subject-table__form"
+    >
+      <label class="subject-table__label">
+        <span class="subject-table__wrapper">Teacher:</span>
+        <input
+          type="text"
+          placeholder="{{subject.teacher}}"
+          formControlName="teacher"
+          class="subject-table__teacher-input"
+        >
+      </label>
+      <button
+        type="submit"
+        class="subject-table__submit"
+      >Submit</button>
+    </form>
+  </div>
+</ng-container>

@@ -1,0 +1,106 @@
+$color: #FFFFFF
+$active-color: #ffa500
+.container
+  display: flex
+  flex-direction: column
+  margin: 0 auto
+  max-width: 60rem
+.subject-table__title
+  color: $color
+  text-transform: uppercase
+  display: flex
+  align-self: center
+.subject-table__table
+  flex-grow: 1
+  color: $color
+  border-spacing: 2rem
+  max-width: 60rem
+  margin: 0 auto
+  border-radius: 30px
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.subject-table__caption
+  margin: 1rem
+  text-transform: uppercase
+  user-select: none
+  font-weight: 900
+  color: $active-color
+.subject-table__header
+  text-transform: uppercase
+  border-bottom: 0.05rem solid transparent
+  user-select: none
+  &:hover
+    border-bottom: 0.05rem solid $active-color
+    cursor: pointer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.subject-table__form
+  margin-top: 3rem
+  display: flex
+  flex-direction: column
+  max-width: 20rem
+  padding: 2rem
+  align-self: center
+  border-radius: 30px
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+
+.subject-table__label
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-bottom: 1rem
+  color: $color
+.subject-table__wrapper
+  display: flex
+  align-self: flex-end
+.subject-table__teacher-input
+  flex-grow: 1
+  padding: 0.5rem
+  background: transparent
+  border: 0
+  color: $color
+  border-bottom: 0.05rem solid $active-color
+  margin-left: 1rem
+  font-family: inherit
+.subject-table__cell
+  text-align: center
+  vertical-align: center
+.subject-table__submit
+  border: 0
+  background: transparent
+  font-family: inherit
+  display: flex
+  align-self: center
+  text-transform: uppercase
+  color: $active-color
+  padding: 1rem
+  border-radius: 20px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.students-table__new-date
+  border-radius: 10px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  color: $active-color
+  font-size: 2rem
+  cursor: pointer
+  &:hover
+    box-shadow: inset 20px 20px 60px #272727, inset -20px -20px 60px #353535
+.pagination
+  display: table-footer-group
