@@ -53,7 +53,10 @@
 
 
 <div class="container" >
-  <app-table [config]="tableConfig" (onTrigger)="addNewDate()"></app-table>
+  <app-table [config]="tableConfig"
+             (onTrigger)="addNewDate()"
+             (changeDate)="updateDay($event)"
+  ></app-table>
   <form
     (ngSubmit)="changeTeacher()"
     [formGroup]="form"

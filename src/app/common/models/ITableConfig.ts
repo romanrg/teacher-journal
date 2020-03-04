@@ -2,7 +2,7 @@ import {Observable} from "rxjs";
 
 export interface ITableConfig {
   caption?: string[] | string;
-  tableHeader?: string[];
+  tableHeader?: any;
   tableHeaderCell?: {
     position: number | "last";
     action: Function;

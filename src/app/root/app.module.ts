@@ -18,6 +18,7 @@ import {SubjectsTableComponent} from "../components/subjects/subjects-table/subj
 import {TableComponent} from "../shared/table/table.component";
 import {FormComponent} from "../shared/form/form.component";
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
+import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {SubjectFormComponent} from "../components/subjects/subject-form/subject-
     SubjectsTableComponent,
     TableComponent,
     FormComponent,
-    SubjectFormComponent
+    SubjectFormComponent,
+    DateEditorComponent
   ],
   imports: [
     BrowserModule,

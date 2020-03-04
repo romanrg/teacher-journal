@@ -15,6 +15,7 @@ export class TableComponent implements OnInit, OnDestroy {
   public currentPaginationNumber: number = 1;
   @Input("config") public config: ITableConfig;
   @Output() public onTrigger: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public changeDate: EventEmitter<any> = new EventEmitter<any>();
   constructor() {}
 
   public setPaginationConstant(page: number): void {
@@ -36,5 +37,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   public checkDate(header: String): boolean {
     return header instanceof Date;
+  }
+
+  public changeDay($event: any): void {
+    this.changeDate.emit($event);
   }
 }

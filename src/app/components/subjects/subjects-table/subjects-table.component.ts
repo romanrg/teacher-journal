@@ -75,4 +75,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
+
+  public updateDay($event: any): void {
+    this.tableConfig.tableHeader.pop();
+    this.tableConfig.tableHeader.push($event.date);
+
+    console.log(this.tableConfig);
+  }
 }
