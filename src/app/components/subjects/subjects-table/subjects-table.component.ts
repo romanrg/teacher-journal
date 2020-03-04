@@ -42,6 +42,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   public addNewDate(): void {
     console.log("new date Added");
+    const auxSubscription: Subscription = this.subject$.subscribe(
+      subject => {
+        if (!subject[0].marks) {
+          subject[0].marks = [];
+        }
+        subject[0].marks.push(new Date());
+        console.log(subject[0]);
+      }
+    );
+    auxSubscription.unsubscribe();
   }
 
   public ngOnInit(): void {

@@ -8,7 +8,12 @@
       <tr class="subject-table__row">
         <th class="subject-table__header">Name</th>
         <th class="subject-table__header">Surname</th>
-        <th class="subject-table__header">Average Mark</th>
+        <ng-container *ngIf="subject.marks">
+          <th class="subject-table__header">Average Mark</th>
+          <ng-container *ngFor="let date of subject.marks">
+            <th class="subject-table__header">{{date | date:"dd/MM"}}</th>
+          </ng-container>
+        </ng-container>
         <th class="students-table__header">
           <app-button
             class="students-table__new-date"
@@ -25,7 +30,12 @@
            i < (paginationConstant * currentPaginationNumber)">
           <td class="subject-table__cell">{{student.name}}</td>
           <td class="subject-table__cell">{{student.surname}}</td>
-          <td><!--{{marks | average}}--></td>
+          <ng-container *ngIf="subject.marks">
+            <td class="subject-table__cell">Average placeholder</td>
+            <ng-container *ngFor="let date of subject.marks">
+              <td class="subject-table__cell subject-table__cell--mark">mark...</td>
+            </ng-container>
+          </ng-container>
         </tr>
       </ng-container>
       </tbody>
