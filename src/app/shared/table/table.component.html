@@ -34,7 +34,13 @@
     <ng-container *ngFor="let object of data; let i = index">
       <tr *ngIf="i >= ((currentPaginationNumber - 1) * config.pagination.paginationConstant) &&
            i < (config.pagination.paginationConstant * currentPaginationNumber)">
-        <ng-container *ngFor="let prop of config.tableBody[1]">
+
+        <ng-container *ngIf="config.tableBody[1][0] === 'all'; else notAll">
+          <ng-container *ngFor="let cell of object">
+            <td class="table__cell">{{cell}}</td>
+          </ng-container>
+        </ng-container>
+        <ng-container #notAll *ngFor="let prop of config.tableBody[1]">
           <td class="table__cell">{{object[prop]}}</td>
         </ng-container>
       </tr>

@@ -16,3 +16,5 @@ export interface ITableConfig {
     data: Observable<any>;
   };
 }
+
+type tableRow = string[];

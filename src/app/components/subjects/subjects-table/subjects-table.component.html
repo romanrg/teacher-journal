@@ -56,6 +56,8 @@
   <app-table [config]="tableConfig"
              (onTrigger)="addNewDate()"
              (changeDate)="updateDay($event)"
+             (click)="handleClick($event)"
+             (keydown.enter)="addMarkToStudent($event)"
   ></app-table>
   <form
     (ngSubmit)="changeTeacher()"

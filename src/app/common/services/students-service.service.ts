@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {from, Observable} from "rxjs";
+import {from, Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
 
 const students: IStudent[] = [
@@ -204,5 +204,8 @@ export class StudentsServiceService {
   }
   public addStudent(student: IStudent): void {
     this.students.push(student);
+  }
+  public getOfStudents(): any {
+    return of(...this.students);
   }
 }
