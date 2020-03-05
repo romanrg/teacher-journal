@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import {ISubject} from "../models/ISubject";
 import {from, Observable} from "rxjs";
+import {map, withLatestFrom} from "rxjs/internal/operators";
+import {Params} from "@angular/router";
 
 const subjects: ISubject[] = [
   {
@@ -63,5 +65,13 @@ export class SubjectsService {
   public addSubject(subject: ISubject): void {
     subject._id = subjects.length;
     subjects.push(subject);
+  }
+
+  public getSubjectByIdFromRoute(routerParams: Observable<Params>): Observable<ISubject[]> {
+    return this._subjects$
+      .pipe(
+        withLatestFrom(routerParams),
+        map(data => data[0].filter(sub => sub._id === +data[1].id))
+      );
   }
 }

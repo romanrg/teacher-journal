@@ -37,7 +37,10 @@
 
         <ng-container *ngIf="config.tableBody[1][0] === 'all'; else notAll">
           <ng-container *ngFor="let cell of object">
-            <td class="table__cell">{{cell}}</td>
+            <ng-container *ngIf="!functionCheck(cell)">
+              <td   class="table__cell">{{cell}}</td>
+            </ng-container>
+
           </ng-container>
         </ng-container>
         <ng-container #notAll *ngFor="let prop of config.tableBody[1]">

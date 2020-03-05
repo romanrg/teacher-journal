@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angula
 import {ITableConfig} from "../../common/models/ITableConfig";
 import {Observable, Subscription} from "rxjs";
 
-
 @Component({
   selector: "app-table",
   templateUrl: "./table.component.html",
@@ -41,5 +40,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   public changeDay($event: any): void {
     this.changeDate.emit($event);
+  }
+
+  public functionCheck(cell: any): boolean {
+    return typeof cell === "function";
   }
 }
