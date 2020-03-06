@@ -51,26 +51,16 @@ const mergeSubjectAndStudents: Function = (
 const getMetaDataOfClick: Function = (
   $event: Event
 ): IMetaOfNewMarkInput => {
-  let clickCloumn: number = 0;
-  let person: {name: string; surname: string} = {name: "", surname: ""};
-  let colLength: number = 0;
-  Array.from($event.target.parentNode.childNodes)
-    .filter(node => node.classList)
-    .map(data => {
-      colLength = colLength + 1;
-      return data;
-    })
-    .map((node, i) => {
-      node === $event.target ? clickCloumn = i : "";
-      return node;
-    })
-    .map((data, i) => {
-      if (i === 0) {
-        person.name = data.innerText;
-      } else if (i === 1) {
-        person.surname = data.innerText;
-      }
-    });
+
+  const filteredData: [] = Array.from($event.target.parentNode.childNodes)
+    .filter(node => node.classList);
+  const colLength: number = filteredData.length;
+  const clickCloumn: number = filteredData
+    .findIndex(node => node === $event.target);
+  const person: {name: string; surname: string} = {
+    name: filteredData[0].innerText,
+    surname: filteredData[1].innerText,
+  };
   return {clickCloumn, colLength, person};
 };
 
