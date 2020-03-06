@@ -8,7 +8,7 @@ export interface IFormConfig {
 
 export interface IFormControlConfig {
   name: string;
-  initialValue: "" | string;
+  initialValue: string;
   type: FormControlType;
   validators: any;
   errorMessages: string[];
