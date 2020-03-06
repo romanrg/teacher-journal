@@ -59,23 +59,5 @@
              (click)="handleClick($event)"
              (keydown.enter)="addMarkToStudent($event)"
   ></app-table>
-  <form
-    (ngSubmit)="changeTeacher()"
-    [formGroup]="form"
-    class="subject-table__form"
-  >
-    <label class="subject-table__label">
-      <span class="subject-table__wrapper">Teacher:</span>
-      <input
-        type="text"
-        placeholder="{{subject.teacher}}"
-        formControlName="teacher"
-        class="subject-table__teacher-input"
-      >
-    </label>
-    <button
-      type="submit"
-      class="subject-table__submit"
-    >Submit</button>
-  </form>
+  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
 </div>

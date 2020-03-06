@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
 import {IFormConfig, IFormControlConfig} from "../../common/models/IFormConfig";
 import {AbstractControl, FormControl, FormGroup} from "@angular/forms";
 
@@ -11,6 +11,7 @@ export class FormComponent implements OnInit {
 
   @Input("config") public config: IFormConfig;
   @Output() public onSubmit: EventEmitter<any> = new EventEmitter<any>();
+  public initialConfig: IFormConfig;
   public form: FormGroup;
   constructor() {
   }

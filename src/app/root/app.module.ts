@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { NgModule } from "@angular/core";
+import {NgModule, Renderer2} from "@angular/core";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -19,6 +19,7 @@ import {TableComponent} from "../shared/table/table.component";
 import {FormComponent} from "../shared/form/form.component";
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
 import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
+
 
 @NgModule({
   declarations: [
@@ -43,9 +44,9 @@ import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [],
+  providers: [Renderer2],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

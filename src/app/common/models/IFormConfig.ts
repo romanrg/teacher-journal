@@ -13,4 +13,5 @@ export interface IFormControlConfig {
   type: "text" | "textarea" | "date";
   validators: any;
   errorMessages: string[];
+  placeholder?: string;
 }
