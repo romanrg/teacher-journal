@@ -1,1 +1,15 @@
-<p>export works!</p>
+<div class="container">
+  <h2 class="export__header">Export As: </h2>
+  <div class="container">
+    <app-button
+      [screenReader]="'Export as PDF-file'"
+      [textContent]=""
+      class="export__btn export__btn--pdf"
+    ></app-button>
+    <app-button
+      [screenReader]="'Export for MS Excel'"
+      [textContent]=""
+      class="export__btn export__btn--excel"
+    ></app-button>
+  </div>
+</div>

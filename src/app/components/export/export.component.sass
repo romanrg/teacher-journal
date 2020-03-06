@@ -1,0 +1,42 @@
+$color: #FFFFFF
+$active-color: #ffa500
+.container
+  display: flex
+  flex-wrap: wrap
+  margin: 3rem auto
+  width: 25rem
+  align-items: center
+  justify-content: center
+.export__header
+  text-transform: uppercase
+  color: $active-color
+  display: flex
+.export__btn
+  height: 10rem
+  width: 10rem
+  display: flex
+  border-radius: 50px
+  background: #2e2e2e
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  color: $color
+  margin-right: 1rem
+  &:hover
+    color: $active-color
+    cursor: pointer
+.export__btn--pdf
+  -webkit-mask-image: url("src/assets/icon-pdf.svg")
+  mask-image: url("src/assets/icon-pdf.svg")
+.export__btn--excel
+  -webkit-mask-image: url("src/assets/icon-excel.svg")
+  mask-image: url("src/assets/icon-excel.svg")
+.export__btn--pdf,
+.export__btn--excel
+  background-color: $color
+  mask-size: 50%
+  mask-repeat: no-repeat
+  mask-position: center
+  transition: all  0.3s
+  &:hover
+    mask-size: 70%
+    background-color: $active-color
+
