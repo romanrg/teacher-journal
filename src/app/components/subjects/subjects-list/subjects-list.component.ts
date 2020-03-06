@@ -1,12 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import {SubjectsService} from "../../common/services/subjects.service";
+import {SubjectsService} from "../../../common/services/subjects.service";
 
 @Component({
-  selector: "app-subjects",
-  templateUrl: "./subjects.component.html",
-  styleUrls: ["./subjects.component.sass"]
+  selector: "app-subjects-list",
+  templateUrl: "./subjects-list.component.html",
+  styleUrls: ["./subjects-list.component.sass"]
 })
-export class SubjectsComponent implements OnInit {
+export class SubjectsListComponent implements OnInit {
 
   constructor(
     public subjectService: SubjectsService,

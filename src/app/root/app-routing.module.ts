@@ -9,6 +9,7 @@ import {StudentFormComponent} from "../components/students/student-form/student-
 import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
 import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
+import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
 
 const studentsRoutes: Routes = [
   {path: "new-student", component: StudentFormComponent},
@@ -17,13 +18,19 @@ const studentsRoutes: Routes = [
 
 const subjectsRoutes: Routes = [
   {
-    path: ":id",
-    component: SubjectsTableComponent
-  },
-  {
     path: "new-subject",
     component: SubjectFormComponent
   },
+  {
+    path: "",
+    component: SubjectsListComponent,
+    pathMatch: "full"
+  },
+  {
+    path: ":id",
+    component: SubjectsTableComponent
+  },
+
 ];
 
 const routes: Routes = [

@@ -1,11 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import {Validators} from "@angular/forms";
-import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {Router} from "@angular/router";
 import {IFormConfig} from "../../../common/models/IFormConfig";
-import {IStudent} from "../../../common/models/IStudent";
-import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
+import {SubjectsService} from "../../../common/services/subjects.service";
 
 @Component({
   selector: "app-subject-form",
