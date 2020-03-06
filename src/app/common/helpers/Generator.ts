@@ -10,19 +10,15 @@ export class Generator {
   }
 
   public generateAttributes(element: any, attributes): void {
-    for (let attr in attributes) {
-      if (attributes.hasOwnProperty(attr)) {
-        this.render.setAttribute(element, attr, attributes[attr]);
-      }
-    }
+    Object.keys(attributes).forEach(attr => {
+      this.render.setAttribute(element, attr, attributes[attr]);
+    });
   }
 
   public generateProperties(element: any, properties): void {
-    for (let prop in properties) {
-      if (properties.hasOwnProperty(prop)) {
-        this.render.setProperty(element, prop, properties[prop]);
-      }
-    }
+    Object.keys(properties).forEach(prop => {
+      this.render.setProperty(element, prop, properties[prop]);
+    });
   }
 
   public appendChild(parent: any, child: any): void {
