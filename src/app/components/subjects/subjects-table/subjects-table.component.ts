@@ -40,7 +40,7 @@ const mergeSubjectAndStudents: Function = (
         }
 
       }
-      data.students.push([...pushable]);
+      data.students.push(pushable);
     }).unsubscribe();
     result = of(data.students);
   }).unsubscribe();
