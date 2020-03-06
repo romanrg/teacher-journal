@@ -1,15 +1,17 @@
 <div class="container">
   <h2 class="export__header">Export As: </h2>
-  <div class="container">
+  <div class="container container--btn">
     <app-button
       [screenReader]="'Export as PDF-file'"
       [textContent]=""
       class="export__btn export__btn--pdf"
+      (click)="exportAsPDF()"
     ></app-button>
     <app-button
       [screenReader]="'Export for MS Excel'"
       [textContent]=""
       class="export__btn export__btn--excel"
+      (click)="exportAsExcel()"
     ></app-button>
   </div>
 </div>

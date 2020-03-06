@@ -4,24 +4,26 @@ $active-color: #ffa500
   display: flex
   flex-wrap: wrap
   margin: 3rem auto
-  width: 25rem
+  max-width: 60rem
   align-items: center
   justify-content: center
+  flex-direction: column
+.container--btn
+  max-width: 30rem
+  flex-grow: 1
+  justify-content: space-between
+  flex-direction: row
 .export__header
   text-transform: uppercase
   color: $active-color
   display: flex
+  user-select: none
 .export__btn
   height: 10rem
   width: 10rem
   display: flex
-  border-radius: 50px
-  background: #2e2e2e
-  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
-  color: $color
   margin-right: 1rem
   &:hover
-    color: $active-color
     cursor: pointer
 .export__btn--pdf
   -webkit-mask-image: url("src/assets/icon-pdf.svg")

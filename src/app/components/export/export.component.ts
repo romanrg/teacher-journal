@@ -12,4 +12,11 @@ export class ExportComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public exportAsExcel(): void {
+    console.log("WOW EXPORTED AS EXCEL");
+  }
+
+  public exportAsPDF(): void {
+    console.log("WOW EXPORTED AS PDF");
+  }
 }
