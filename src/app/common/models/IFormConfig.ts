@@ -12,8 +12,12 @@ export interface IFormConfig {
 export interface IFormControlConfig {
   name: string;
   initialValue: "" | string;
-  type: "text" | "textarea" | "date";
+  type: FormControlType;
   validators: any;
   errorMessages: string[];
   placeholder?: string | ITeacher;
+}
+
+enum FormControlType {
+  type = "text", "textarea", "date"
 }
