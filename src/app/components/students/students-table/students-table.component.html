@@ -1,3 +1,14 @@
+
+<div class="container">
 <app-table
   [config]="tableConfig"
 ></app-table>
+
+<a routerLink="/students/new-student" class="table__link">
+  <app-button
+    class="students__button"
+    screenReader="Add new student"
+    textContent="+"
+  ></app-button>
+</a>
+</div>

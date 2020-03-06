@@ -1,3 +1,5 @@
+import {ITeacher} from "./ITeacher";
+
 export interface IFormConfig {
   legend: string;
   formGroupName: {
@@ -13,5 +15,5 @@ export interface IFormControlConfig {
   type: "text" | "textarea" | "date";
   validators: any;
   errorMessages: string[];
-  placeholder?: string;
+  placeholder?: string | ITeacher;
 }

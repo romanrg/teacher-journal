@@ -46,7 +46,7 @@ import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [Renderer2],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -31,7 +31,7 @@ const mergeSubjectAndStudents: Function = (
   const aux1: Subscription = subject.subscribe(data => {
     data.students = [];
     const aux2: Subscription = persons.subscribe(person =>  {
-      const pushable: [] = [];
+      const pushable: any = [];
       for (let prop of config) {
         if (typeof prop === "function") {
           pushable.push(prop);
@@ -88,6 +88,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public students$: Observable<IStudent[]>;
   public tableData$: Observable<any>;
   public subject: ISubject;
+
+  public generator: Generator;
+  public manager: SubscriptionManager;
 
   constructor(
     private subjectsService: SubjectsService,
