@@ -1,0 +1,29 @@
+@import "src/styles/variables.sass"
+.breadcrumbs__list
+  display: flex
+  padding: 0
+  list-style: none
+  text-transform: uppercase
+  color: $color
+  align-self: center
+
+.breadcrumbs__item
+  display: flex
+  align-items: baseline
+  align-self: baseline
+  &:last-child
+    color: $active-color
+.breadcrumbs__item
+  &:not(:last-child)
+    &::after
+      content: ">"
+      text-transform: uppercase
+      margin: 0 1rem
+      color: $active-color
+      display: flex
+
+.breadcrumbs__link
+  text-decoration: none
+  color: inherit
+.breadcrumbs__link:hover
+  color: $active-color

@@ -20,6 +20,7 @@ import {FormComponent} from "../shared/form/form.component";
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
 import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
 import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
+import {BreadcrumbsComponent} from "../shared/breadcrumbs/breadcrumbs.component";
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import {SubjectsListComponent} from "../components/subjects/subjects-list/subjec
     FormComponent,
     SubjectFormComponent,
     DateEditorComponent,
-    SubjectsListComponent
+    SubjectsListComponent,
+    BreadcrumbsComponent
   ],
   imports: [
     BrowserModule,

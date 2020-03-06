@@ -12,25 +12,45 @@ import {StudentsTableComponent} from "../components/students/students-table/stud
 import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
 
 const studentsRoutes: Routes = [
-  {path: "new-student", component: StudentFormComponent},
-  {path: "", component: StudentsTableComponent},
+  {
+    path: "new-student",
+    component: StudentFormComponent,
+    data : {
+      breadcrumb: "add new student"
+    }
+  },
+  {
+    path: "",
+    component: StudentsTableComponent,
+    data : {
+      breadcrumb: ""
+    }
+  },
 ];
 
 const subjectsRoutes: Routes = [
   {
     path: "new-subject",
-    component: SubjectFormComponent
+    component: SubjectFormComponent,
+    data : {
+      breadcrumb: "new subject"
+    }
   },
   {
     path: "",
     component: SubjectsListComponent,
-    pathMatch: "full"
+    pathMatch: "full",
+    data : {
+      breadcrumb: ""
+    }
   },
   {
     path: ":id",
-    component: SubjectsTableComponent
+    component: SubjectsTableComponent,
+    data : {
+      breadcrumb: "subject table"
+    }
   },
-
 ];
 
 const routes: Routes = [
@@ -38,22 +58,49 @@ const routes: Routes = [
     path: "",
     redirectTo: "students",
     pathMatch: "full",
+    data : {
+      breadcrumb: "home"
+    }
   },
   {
     path: "students",
     component: StudentsComponent,
-    children: studentsRoutes
+    children: studentsRoutes,
+    data : {
+      breadcrumb: ""
+    }
   },
   {
     path: "subjects",
     component: SubjectsComponent,
-    children: subjectsRoutes
+    children: subjectsRoutes,
+    data : {
+      breadcrumb: "subjects"
+    }
   },
 
-  {path: "statistics", component: StatisticsComponent},
-  {path: "export", component: ExportComponent},
+  {
+    path: "statistics",
+    component: StatisticsComponent,
+    data : {
+      breadcrumb: "statistics"
+    }
+  },
+  {
+    path: "export",
+    component: ExportComponent,
+    data : {
+      breadcrumb: "export"
+    }
+  },
 
-  {path: "**", component: PageNotFoundComponent},
+  {
+    path: "**",
+    component: PageNotFoundComponent,
+    data : {
+      breadcrumb: "404"
+    }
+  },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

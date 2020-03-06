@@ -1,0 +1,22 @@
+<ol class="breadcrumbs__list">
+  <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async">
+    <li class="breadcrumbs__item" *ngIf="breadcrumb.label">
+      <ng-container *ngIf="!breadcrumb.params">
+        <ng-container >
+          <a [routerLink]="breadcrumb.url" class="breadcrumbs__link">
+            {{breadcrumb.label}}
+          </a>
+        </ng-container>
+
+      </ng-container>
+      <ng-container *ngIf="breadcrumb.params">
+        <a [routerLink]="[breadcrumb.url, breadcrumb.params]">
+          <ng-container *ngIf="breadcrumb.label">
+            {{breadcrumb.label}}
+          </ng-container>
+        </a>
+      </ng-container>
+    </li>
+  </ng-container>
+
+</ol>
