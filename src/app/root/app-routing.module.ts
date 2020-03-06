@@ -45,10 +45,10 @@ const subjectsRoutes: Routes = [
     }
   },
   {
-    path: ":id",
+    path: ":name",
     component: SubjectsTableComponent,
     data : {
-      breadcrumb: "subject table"
+      breadcrumb: `subject journal`
     }
   },
 ];

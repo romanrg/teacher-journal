@@ -71,7 +71,7 @@ export class SubjectsService {
     return this._subjects$
       .pipe(
         withLatestFrom(routerParams),
-        map(data => data[0].filter(sub => sub._id === +data[1].id))
+        map(data => data[0].filter(sub => sub.name === data[1].name))
       );
   }
 }

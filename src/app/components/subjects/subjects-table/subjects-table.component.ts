@@ -28,9 +28,9 @@ const mergeSubjectAndStudents: Function = (
   config: string[]
 ): Observable<any> => {
   let result: Observable<any> = undefined;
-  const aux1: Subscription = subject.subscribe(data => {
+  subject.subscribe(data => {
     data.students  = [];
-    const aux2: Subscription = persons.subscribe(person =>  {
+    persons.subscribe(person =>  {
       const pushable: any = [];
       for (let prop of config) {
         if (typeof prop === "function") {
@@ -41,11 +41,10 @@ const mergeSubjectAndStudents: Function = (
 
       }
       data.students.push([...pushable]);
-    });
-    aux2.unsubscribe();
+    }).unsubscribe();
     result = of(data.students);
-  });
-  aux1.unsubscribe();
+  }).unsubscribe();
+
   return result;
 };
 

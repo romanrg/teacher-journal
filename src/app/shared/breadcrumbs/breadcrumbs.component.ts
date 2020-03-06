@@ -10,7 +10,7 @@ import {Subject} from "rxjs";
   styleUrls: ["./breadcrumbs.component.sass"]
 })
 export class BreadcrumbsComponent implements OnInit {
-  public breadcrumbs$: Subject;
+  public breadcrumbs$: Subject<IBreadCrumb[]>;
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute

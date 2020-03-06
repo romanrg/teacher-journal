@@ -13,6 +13,7 @@
   align-self: baseline
   &:last-child
     color: $active-color
+
 .breadcrumbs__item
   &:not(:last-child)
     &::after
@@ -22,8 +23,11 @@
       color: $active-color
       display: flex
 
+
 .breadcrumbs__link
   text-decoration: none
   color: inherit
-.breadcrumbs__link:hover
-  color: $active-color
+  transition: all 0.3s
+  &:hover
+    color: $active-color
+
