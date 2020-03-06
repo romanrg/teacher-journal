@@ -1,0 +1,14 @@
+<ng-container *ngIf="action">
+  <button class="btn" (click)="onActionTriggered()">
+    <span class="visually-hidden">{{screenReaderMessage}}</span>
+    {{textContent}}
+  </button>
+</ng-container>
+
+
+<ng-container *ngIf="!action">
+<button class="btn">
+  <span class="visually-hidden">{{screenReaderMessage}}</span>
+  {{textContent}}
+</button>
+</ng-container>

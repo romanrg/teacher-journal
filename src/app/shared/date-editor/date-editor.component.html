@@ -1,0 +1,10 @@
+<!--
+<label class="date-editor__label">
+  Class date:
+  <input type="date" class="input__date">
+</label>
+-->
+<ng-container *ngIf="submited">
+  <app-form [config]="config" (onSubmit)="editDate($event)"></app-form>
+</ng-container>
+

@@ -1,0 +1,60 @@
+<table class="table" >
+  <ng-container *ngIf="config.caption">
+    <caption class="table__caption">
+      {{config.caption}}
+    </caption>
+  </ng-container>
+  <ng-container *ngIf="config.tableHeader">
+    <thead class="table__head">
+      <tr class="table__head-row">
+        <th class="table__head-cell" *ngFor="let header of config.tableHeader">
+          <ng-container *ngIf="checkDate(header)">
+            <div class="wrapper">
+              <app-date-editor (onSubmit)="changeDay($event)"></app-date-editor>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!checkDate(header)">
+            {{header}}
+          </ng-container>
+        </th>
+        <ng-container *ngIf="config.tableHeaderCell">
+          <th class="table__head-cell">
+            <app-button
+              (emitter)="triggerPulled()"
+              [screenReader]="config.tableHeaderCell.screenReader"
+              [textContent]="config.tableHeaderCell.textContent"
+              [action]="config.tableHeaderCell.action"
+            ></app-button>
+          </th>
+        </ng-container>
+      </tr>
+    </thead>
+  </ng-container>
+    <tbody>
+    <ng-container *ngFor="let object of data; let i = index">
+      <tr *ngIf="i >= ((currentPaginationNumber - 1) * config.pagination.paginationConstant) &&
+           i < (config.pagination.paginationConstant * currentPaginationNumber)">
+
+        <ng-container *ngIf="config.tableBody[1][0] === 'all'; else notAll">
+          <ng-container *ngFor="let cell of object">
+            <ng-container *ngIf="!functionCheck(cell)">
+              <td   class="table__cell">{{cell}}</td>
+            </ng-container>
+
+          </ng-container>
+        </ng-container>
+        <ng-container #notAll *ngFor="let prop of config.tableBody[1]">
+          <td class="table__cell">{{object[prop]}}</td>
+        </ng-container>
+      </tr>
+    </ng-container>
+    </tbody>
+  <ng-container *ngIf="config.pagination">
+    <app-pagination
+      class="table__pagination"
+      [paginationConstant]="config.pagination.paginationConstant"
+      [students]="config.pagination.data"
+      (changePagination)="setPaginationConstant($event)"
+    ></app-pagination>
+  </ng-container>
+</table>
