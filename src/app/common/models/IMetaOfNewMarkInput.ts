@@ -1,3 +1,5 @@
+import {IPerson} from "./IPerson";
+
 export interface IMetaOfNewMarkInput {
-  clickCloumn: number; colLength: number; person: {name: string; surname: string};
+  clickCloumn: number; colLength: number; person: IPerson;
 }
