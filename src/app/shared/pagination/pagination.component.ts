@@ -19,10 +19,9 @@ export class PaginationComponent implements OnInit {
 
   public countPagination(students: Observable<any>): void {
     let aux: number = 0;
-    const sub = students.subscribe(
+    students.subscribe(
       data => aux = data.length / this.paginationConstant
-    );
-    sub.unsubscribe();
+    ).unsubscribe();
     this.pagination = makePaginationArray(Math.ceil(aux));
   }
   public increasePagination(): void {
