@@ -1,5 +1,9 @@
 import {Component, Input, OnInit, EventEmitter, Output} from "@angular/core";
-import {Observable, Observer} from "rxjs";
+import {Observable} from "rxjs";
+
+const makePaginationArray: Function = (n: number): number[] => {
+  return [...Array(n).keys()].map(i => i + 1);
+};
 
 @Component({
   selector: "app-pagination",
@@ -45,10 +49,4 @@ export class PaginationComponent implements OnInit {
 
 }
 
-const makePaginationArray: Function = (n: number): number[] => {
-  let result: number[] = [];
-  for (let i: number = 1; i < n + 1; i++) {
-    result.push(i);
-  }
-  return result;
-};
+
