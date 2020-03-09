@@ -21,6 +21,7 @@ import {SubjectFormComponent} from "../components/subjects/subject-form/subject-
 import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
 import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
 import {BreadcrumbsComponent} from "../shared/breadcrumbs/breadcrumbs.component";
+import {ExitFormGuard} from "../common/guards/exit-form.guard";
 
 
 @NgModule({
@@ -50,7 +51,7 @@ import {BreadcrumbsComponent} from "../shared/breadcrumbs/breadcrumbs.component"
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [ExitFormGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

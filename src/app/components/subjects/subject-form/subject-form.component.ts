@@ -4,14 +4,16 @@ import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {ISubject} from "../../../common/models/ISubject";
 import {SubjectsService} from "../../../common/services/subjects.service";
+import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 
 @Component({
   selector: "app-subject-form",
   templateUrl: "./subject-form.component.html",
   styleUrls: ["./subject-form.component.sass"]
 })
-export class SubjectFormComponent implements OnInit {
+export class SubjectFormComponent implements OnInit, ComponentCanDeactivate {
   public formConfig: IFormConfig;
+  public isSaved: boolean = false;
   constructor(
     private subjectsService: SubjectsService,
     private router: Router
@@ -59,7 +61,15 @@ export class SubjectFormComponent implements OnInit {
   }
 
   public submit($event: ISubject): void {
+    this.isSaved = true;
     this.subjectsService.addSubject($event);
     this.router.navigate(["/subjects"]);
+  }
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.isSaved === false) {
+      return confirm("Do you want to leave the page?");
+    } else {
+      return true;
+    }
   }
 }

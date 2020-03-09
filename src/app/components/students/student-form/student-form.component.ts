@@ -4,14 +4,16 @@ import {StudentsServiceService} from "../../../common/services/students-service.
 import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
+import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 
 @Component({
   selector: "app-student-form",
   templateUrl: "./student-form.component.html",
   styleUrls: ["./student-form.component.sass"]
 })
-export class StudentFormComponent implements OnInit {
+export class StudentFormComponent implements OnInit, ComponentCanDeactivate {
   public formConfig: IFormConfig;
+  public isSaved: boolean = false;
   constructor(
     private studentsService: StudentsServiceService,
     private router: Router
@@ -58,7 +60,16 @@ export class StudentFormComponent implements OnInit {
     };
   }
 
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.isSaved === false) {
+      return confirm("Do you want to leave the page?");
+    } else {
+      return true;
+    }
+  };
+
   public submit($event: IStudent): void {
+    this.isSaved = true;
     this.studentsService.addStudent($event);
     this.router.navigate(["/students"]);
   }

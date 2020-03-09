@@ -10,11 +10,13 @@ import {SubjectsTableComponent} from "../components/subjects/subjects-table/subj
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
 import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
 import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
+import {ExitFormGuard} from "../common/guards/exit-form.guard";
 
 const studentsRoutes: Routes = [
   {
     path: "new-student",
     component: StudentFormComponent,
+    canDeactivate: [ExitFormGuard],
     data : {
       breadcrumb: "add new student"
     }
@@ -32,6 +34,7 @@ const subjectsRoutes: Routes = [
   {
     path: "new-subject",
     component: SubjectFormComponent,
+    canDeactivate: [ExitFormGuard],
     data : {
       breadcrumb: "new subject"
     }
