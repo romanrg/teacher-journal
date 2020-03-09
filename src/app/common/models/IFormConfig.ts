@@ -21,5 +21,7 @@ export interface IFormGroupName {
 }
 
 export enum FormControlType {
-  text = "text",  text = "textarea", date = "date"
+  text = "text",
+  textarea = "textarea",
+  date = "date"
 }

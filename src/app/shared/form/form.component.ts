@@ -11,7 +11,6 @@ export class FormComponent implements OnInit {
 
   @Input("config") public config: IFormConfig;
   @Output() public onSubmit: EventEmitter<any> = new EventEmitter<any>();
-  public initialConfig: IFormConfig;
   public form: FormGroup;
   constructor() {
   }
@@ -44,4 +43,9 @@ export class FormComponent implements OnInit {
     this.form = this.createFormFromConfig(this.config);
   }
 
+  public isShowErrorMessage(control: AbstractControl): boolean {
+    console.log(control);
+    console.log(!control.valid && control.touched && control.errors.required);
+    return (!control.valid && control.touched && control.errors.required);
+  }
 }

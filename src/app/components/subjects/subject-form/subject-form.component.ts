@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import {Validators} from "@angular/forms";
 import {Router} from "@angular/router";
-import {IFormConfig} from "../../../common/models/IFormConfig";
+import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {ISubject} from "../../../common/models/ISubject";
 import {SubjectsService} from "../../../common/services/subjects.service";
 
@@ -18,7 +18,6 @@ export class SubjectFormComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    const type: "text" | "textarea" = "text";
     const errorMessages: string[] = ["This field is required"];
     this.formConfig = {
       legend: "Add New Subject",
@@ -28,28 +27,28 @@ export class SubjectFormComponent implements OnInit {
           {
             name: "name",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages,
           },
           {
             name: "teacher",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages,
           },
           {
             name: "cabinet",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [],
             errorMessages,
           },
           {
             name: "description",
             initialValue: "",
-            type: "textarea",
+            type: FormControlType.textarea,
             validators: [],
             errorMessages: errorMessages
           }
