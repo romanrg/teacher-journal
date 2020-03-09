@@ -1,0 +1,53 @@
+@import "src/styles/variables.sass"
+.table-foot
+  display: flex
+  flex-direction: row
+  font-family: inherit
+.table-foot__row
+  display: flex
+  flex-grow: 1
+.table-foot__cell
+  display: flex
+  &--controller
+    flex-grow: 0.8
+    align-items: center
+    justify-content: center
+  &--selector
+    flex-grow: 0.2
+    display: flex
+.table-foot__list
+  display: flex
+  list-style: none
+  padding: 0
+  margin: 0
+.table-foot__item
+  border-bottom: 0.05rem solid transparent
+  transition: all 0.3s
+  &:hover
+    border-bottom: 0.05rem solid $color
+    cursor: pointer
+.table-foot__descriptor
+  display: flex
+  align-self: center
+  margin-right: 0.3rem
+  &:hover
+    cursor: pointer
+.table-foot__select
+  border: none
+  background: transparent
+  padding: 0.3rem
+  font-family: inherit
+  color: $color
+  background: $bg-color
+  &:hover
+    cursor: pointer
+.active
+  color: $active-color
+.table-foot__btn
+  font-family: inherit
+  font-size: 1.2rem
+.table-foot__btn--controller
+  transition: all 0.3s
+  &:hover
+    color: $active-color
+    cursor: pointer

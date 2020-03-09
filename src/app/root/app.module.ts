@@ -22,6 +22,13 @@ import {DateEditorComponent} from "../shared/date-editor/date-editor.component";
 import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
 import {BreadcrumbsComponent} from "../shared/breadcrumbs/breadcrumbs.component";
 import {ExitFormGuard} from "../common/guards/exit-form.guard";
+import {OneHeaderTableComponent} from "../shared/one-header-table/one-header-table.component";
+import {TableCaptionComponent} from "../shared/one-header-table/table-caption/table-caption.component";
+import {TableHeadComponent} from "../shared/one-header-table/table-head/table-head.component";
+import {TableBodyComponent} from "../shared/one-header-table/table-body/table-body.component";
+import {TableFootComponent} from "../shared/one-header-table/table-foot/table-foot.component";
+import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.component";
+import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
 
 
 @NgModule({
@@ -43,7 +50,14 @@ import {ExitFormGuard} from "../common/guards/exit-form.guard";
     SubjectFormComponent,
     DateEditorComponent,
     SubjectsListComponent,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    OneHeaderTableComponent,
+    TableCaptionComponent,
+    TableHeadComponent,
+    TableBodyComponent,
+    TableFootComponent,
+    TableRowComponent,
+    TableCellComponent,
   ],
   imports: [
     BrowserModule,

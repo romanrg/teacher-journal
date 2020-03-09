@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import {from, Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
+import {patchTsGetExpandoInitializer} from "@angular/compiler-cli/ngcc/src/packages/patch_ts_expando_initializer";
 
 const students: IStudent[] = [
   {
@@ -203,9 +204,10 @@ export class StudentsServiceService {
     return from([this.students]);
   }
   public addStudent(student: IStudent): void {
+    student.id = students.length;
     this.students.push(student);
   }
-  public getOfStudents(): any {
+  public getOfStudents(): Observable<IStudent> {
     return of(...this.students);
   }
 }

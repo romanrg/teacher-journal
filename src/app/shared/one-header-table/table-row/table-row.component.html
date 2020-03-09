@@ -1,0 +1,9 @@
+<tr class="table-row">
+    <ng-container *ngFor="let cell of row">
+      <app-table-cell
+        [ngStyle]="{'width': getCellWidth()}"
+        [cell]="cell"
+        [cellType]="cellType"
+        class="table-row__cell"></app-table-cell>
+    </ng-container>
+</tr>

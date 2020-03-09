@@ -1,0 +1,4 @@
+<ng-container [ngSwitch]="cellType">
+  <td *ngSwitchCase="'td'" class="table-cell table-cell__td">{{cell}}</td>
+  <th *ngSwitchCase="'th'" class="table-cell table-cell__th">{{cell}}</th>
+</ng-container>

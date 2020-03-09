@@ -5,6 +5,8 @@ import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
+import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-student-form",
@@ -62,7 +64,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate {
 
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
-      return confirm("Do you want to leave the page?");
+      return confirm(CONFIRMATION_MESSAGE);
     } else {
       return true;
     }

@@ -5,6 +5,7 @@ import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {ISubject} from "../../../common/models/ISubject";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
+import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 
 @Component({
   selector: "app-subject-form",
@@ -67,7 +68,7 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate {
   }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
-      return confirm("Do you want to leave the page?");
+      return confirm(CONFIRMATION_MESSAGE);
     } else {
       return true;
     }
