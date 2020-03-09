@@ -48,7 +48,6 @@ export class FormComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log(this.isSaved);
     this.form = this.createFormFromConfig(this.config);
   }
 

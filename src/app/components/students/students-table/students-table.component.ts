@@ -13,7 +13,6 @@ import {RowCreator} from "../../../common/helpers/RowCreator";
 })
 export class StudentsTableComponent implements OnInit {
   public tableConfig: ITableConfig;
-  public tableConfig1: any;
   constructor(
     private studentsService: StudentsServiceService
   ) {

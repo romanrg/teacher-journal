@@ -9,4 +9,5 @@ export interface ISubject {
   _id: string | number;
   marks?: [];
   students?: [];
+  uniqueDates: [];
 }

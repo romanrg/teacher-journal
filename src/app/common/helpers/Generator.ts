@@ -13,6 +13,7 @@ export class Generator {
     Object.keys(attributes).forEach(attr => {
       this.render.setAttribute(element, attr, attributes[attr]);
     });
+
   }
 
   public generateProperties(element: any, properties): void {
