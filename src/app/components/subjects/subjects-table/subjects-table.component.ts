@@ -152,13 +152,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.students$ = this.studentsService.getStudents();
     this.manager.addSubscription(this.subject$.subscribe(data => this.subject = data[0]));
 
-    let aux$: Observable<IStudent> = this.studentsService.getOfStudents()
+    const aux$: Observable<IStudent> = this.studentsService.getOfStudents()
       .pipe(
         map(data => ({
           id: data._id, name: data.name, surname: data.surname
         }))
     );
-    let auxSubject$: Observable<ISubject> = this.subject$.pipe(
+    const auxSubject$: Observable<ISubject> = this.subject$.pipe(
       map(data => data[0])
     );
     this.tableData$ = mergeSubjectAndStudents(auxSubject$, aux$, ["name", "surname", "average"]);

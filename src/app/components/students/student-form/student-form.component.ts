@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import {Validators} from "@angular/forms";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {Router} from "@angular/router";
-import {IFormConfig} from "../../../common/models/IFormConfig";
+import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
 
 @Component({
@@ -18,7 +18,6 @@ export class StudentFormComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    const type: "text" | "textarea" = "text";
     const errorMessages: string[] = ["This field is required"];
     this.formConfig = {
       legend: "Add New Student",
@@ -28,28 +27,28 @@ export class StudentFormComponent implements OnInit {
           {
             name: "name",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages,
           },
           {
             name: "surname",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages,
           },
           {
             name: "address",
             initialValue: "",
-            type,
+            type: FormControlType.text,
             validators: [],
             errorMessages,
           },
           {
             name: "description",
             initialValue: "",
-            type: "textarea",
+            type: FormControlType.textarea,
             validators: [],
             errorMessages: errorMessages
           }

@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {IBreadCrumb} from "../../common/models/IBreadCrumb";
 import {distinctUntilChanged, filter, map, tap} from "rxjs/internal/operators";
-import {Subject} from "rxjs";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-breadcrumbs",
@@ -10,7 +10,7 @@ import {Subject} from "rxjs";
   styleUrls: ["./breadcrumbs.component.sass"]
 })
 export class BreadcrumbsComponent implements OnInit {
-  public breadcrumbs$: Subject<IBreadCrumb[]>;
+  public breadcrumbs$: Observable<IBreadCrumb[]>;
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute

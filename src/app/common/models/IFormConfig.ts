@@ -20,6 +20,6 @@ export interface IFormGroupName {
   formControls?: IFormControlConfig[];
 }
 
-enum FormControlType {
-  type = "text", "textarea", "date"
+export enum FormControlType {
+  text = "text",  text = "textarea", date = "date"
 }
