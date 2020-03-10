@@ -29,6 +29,8 @@ import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.
 import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
 import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
+import {HighlightDirective} from "../common/directives/highlight.directive";
+import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 
 
 @NgModule({
@@ -56,6 +58,8 @@ import {SortByPipe} from "../common/pipes/sort-by.pipe";
     TableFootComponent,
     TableRowComponent,
     TableCellComponent,
+    HighlightDirective,
+    MarksHighlightDirective,
   ],
   imports: [
     BrowserModule,

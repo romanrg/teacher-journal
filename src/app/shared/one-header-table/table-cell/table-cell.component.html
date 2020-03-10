@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="cellType">
-  <td *ngSwitchCase="tdType" class="table-cell table-cell__td">{{cellCut(cell)}}</td>
+  <td *ngSwitchCase="tdType" class="table-cell table-cell__td"><ng-container appMarksHighlight>{{cellCut(cell)}}</ng-container></td>
   <th *ngSwitchCase="thType" class="table-cell table-cell__th">{{dateTransformer(cell)}}
     <app-button
       class="table-cell__btn"
