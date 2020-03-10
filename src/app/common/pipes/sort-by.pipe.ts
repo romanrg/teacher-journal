@@ -23,14 +23,12 @@ export class SortByPipe implements PipeTransform {
   public transform(value: (string|number)[][], index: number): string[][] {
     let shouldSortNumbers: boolean = false;
     value.forEach(row => {
-      row.forEach(cell => {
-        if (typeof cell === 'number') {
-          shouldSortNumbers = true;
+        if (typeof row[0] === "number") {
           return;
+        } else if (index > 1) {
+          shouldSortNumbers = true;
         }
-      });
     });
-
     const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbers(index) : sortingFunctionForStrings(index);
     return value.sort(compareFn);
   }

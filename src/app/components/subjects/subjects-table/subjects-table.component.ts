@@ -54,7 +54,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return +target.parentNode.parentNode.parentNode.getAttribute("rowindex");
   }
   public addNewColumn(): void {
-    this.subjectTableConfig.headers.push("select date");
+    const timestamp: number  = (new Date()).getTime();
+    this.subjectTableConfig.headers.push(timestamp);
+    this.subject.uniqueDates.push(timestamp);
     this.subjectTableConfig.body.forEach(row => row.push(""));
   }
 
@@ -63,6 +65,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.generator.generateAttributes(target, {contenteditable: true});
     }
   }
+
+
+  public addDatePicker(target: EventTarget): void {
+    console.log("Here should appear date-picker");
+  };
+
+
   public handleThEvents(target: EventTarget, shiftLeftConstant: number, headersConstantNames: string[]): string[] {
     const datesForRow: string[] = this.subjectsService.handleUniqueDates(
       this.subject._id, this.getCellIndex(target) - shiftLeftConstant, target.textContent
@@ -92,7 +101,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.getCellIndex(target) - this.subjectHeadersConstantNames.length,
       +target.textContent,
     );
-    console.log(subject.students);
     return this.mergeStudentsAndMarksForView(
       body, subject.students, subject
     );
@@ -105,6 +113,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           target, this.headersRightShift, this.subjectHeadersConstantNames
         );
         break;
+
       default:
         target.blur();
         this.subjectTableConfig.body = this.handleTdEvents(target, this.subject, this.subjectTableConfig.body);
@@ -158,4 +167,5 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
+
 }

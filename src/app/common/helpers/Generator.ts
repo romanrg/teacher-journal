@@ -6,7 +6,7 @@ export class Generator {
   }
 
   public generateElement(tagName: string): any {
-    return this.render.createElement("input");
+    return this.render.createElement(tagName);
   }
 
   public generateAttributes(element: EventTarget, attributes): void {

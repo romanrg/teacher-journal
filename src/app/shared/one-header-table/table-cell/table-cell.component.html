@@ -1,11 +1,11 @@
 <ng-container [ngSwitch]="cellType">
   <td *ngSwitchCase="tdType" class="table-cell table-cell__td">{{cellCut(cell)}}</td>
-  <th *ngSwitchCase="thType" class="table-cell table-cell__th">{{cell}}
+  <th *ngSwitchCase="thType" class="table-cell table-cell__th">{{dateTransformer(cell)}}
     <app-button
       class="table-cell__btn"
       [textContent]="'V'"
-      screenReader="sort by {{cell}}"
       (click)="sortColumn()"
+      contenteditable="false"
     ></app-button>
   </th>
 </ng-container>

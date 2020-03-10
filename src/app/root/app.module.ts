@@ -27,7 +27,7 @@ import {TableBodyComponent} from "../shared/one-header-table/table-body/table-bo
 import {TableFootComponent} from "../shared/one-header-table/table-foot/table-foot.component";
 import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.component";
 import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
-import {DecimalPipe} from "@angular/common";
+import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 
 
@@ -63,7 +63,7 @@ import {SortByPipe} from "../common/pipes/sort-by.pipe";
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [ExitFormGuard, DecimalPipe, SortByPipe],
+  providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
