@@ -3,6 +3,8 @@ import {StudentsServiceService} from "../../../common/services/students-service.
 import {Observable} from "rxjs";
 import {IStudent} from "../../../common/models/IStudent";
 import {ITableConfig} from "../../../common/models/ITableConfig";
+import {map, tap} from "rxjs/internal/operators";
+import {RowCreator} from "../../../common/helpers/RowCreator";
 
 @Component({
   selector: "app-students-table",
@@ -13,19 +15,31 @@ export class StudentsTableComponent implements OnInit {
   public tableConfig: ITableConfig;
   constructor(
     private studentsService: StudentsServiceService
-  ) { }
+  ) {
+
+  }
 
   public ngOnInit(): void {
     const students: Observable<IStudent[]> = this.studentsService.getStudents();
-    const headers: string[] = ["name", "surname", "address", "description"]
     this.tableConfig = {
-      caption: ["Students"],
-      tableBody: [students, headers],
-      pagination: {
-        paginationConstant: 5,
-        data: students
-      },
-      tableHeader: headers
+      body: [],
+      headers: ["id", "name", "surname", "address", "description"],
+      caption: "Students list:"
     };
+    students.pipe(
+      map(data => {
+        data.forEach(student => {
+          const creator: RowCreator = new RowCreator();
+          const row: string[] = creator.generateRowFromObject(
+            student,
+            this.tableConfig.headers
+          );
+          row[0] = row[0] + 1;
+          this.tableConfig.body.push(row);
+        });
+        return data;
+        }
+      )
+    ).subscribe().unsubscribe();
   }
 }

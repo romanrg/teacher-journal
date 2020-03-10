@@ -4,76 +4,17 @@ import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs/internal/operators";
-import {Observable, of, Subscription} from "rxjs";
-import {IStudent} from "../../../common/models/IStudent";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
-import {ITableConfig} from "../../../common/models/ITableConfig";
-import {IPerson} from "../../../common/models/IPerson";
-import {MarkMaximumValue, MarkMinimumValue} from "../../../common/constants/MarkMinMax";
-import {IMetaOfNewMarkInput} from "../../../common/models/IMetaOfNewMarkInput";
-import {IInputNumberConfig} from "../../../common/models/IInputNumberConfig";
-import {Generator} from "../../../common/helpers/Generator";
-import {checkNumberRange} from "../../../common/helpers/checkNumberRange";
-import {IFormConfig} from "../../../common/models/IFormConfig";
+import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
-
-const addMarkToTheView: Function = (mark, element, generator): void => {
-  generator.createText(element.parentNode, `${mark}`);
-  generator.removeChild(element.parentNode, element);
-};
-
-const mergeSubjectAndStudents: Function = (
-  subject: Observable<ISubject>,
-  persons: Observable<IPerson>,
-  config: string[]
-): Observable<any> => {
-  let result: Observable<any> = undefined;
-  const aux1: Subscription = subject.subscribe(data => {
-    data.students = [];
-    const aux2: Subscription = persons.subscribe(person =>  {
-      const pushable: [] = [];
-      for (let prop of config) {
-        if (typeof prop === "function") {
-          pushable.push(prop);
-        } else {
-          pushable.push(person[prop]);
-        }
-
-      }
-      data.students.push([...pushable]);
-    });
-    aux2.unsubscribe();
-    result = of(data.students);
-  });
-  aux1.unsubscribe();
-  return result;
-};
-
-const getMetaDataOfClick: Function = (
-  $event: Event
-): IMetaOfNewMarkInput => {
-  let clickCloumn: number = 0;
-  let person: {name: string; surname: string} = {name: "", surname: ""};
-  let colLength: number = 0;
-  Array.from($event.target.parentNode.childNodes)
-    .filter(node => node.classList)
-    .map(data => {
-      colLength = colLength + 1;
-      return data;
-    })
-    .map((node, i) => {
-      node === $event.target ? clickCloumn = i : "";
-      return node;
-    })
-    .map((data, i) => {
-      if (i === 0) {
-        person.name = data.innerText;
-      } else if (i === 1) {
-        person.surname = data.innerText;
-      }
-    });
-  return {clickCloumn, colLength, person};
-};
+import {RowCreator} from "../../../common/helpers/RowCreator";
+import {ITableConfig} from "../../../common/models/ITableConfig";
+import {Generator} from "../../../common/helpers/Generator";
+import {IStudent} from "../../../common/models/IStudent";
+import {TableCell} from "../../../common/models/TableCellEnum";
+import {getAverageMark} from "../../../common/helpers/getAverageMark";
+import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
+import {mapKeyGenerator} from "../../../common/helpers/mapKeyGenerator";
 
 @Component({
   selector: "app-subjects-table",
@@ -81,22 +22,21 @@ const getMetaDataOfClick: Function = (
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-  public tableConfig: ITableConfig = {};
   public newTeacherConfig: IFormConfig;
-
-  public subject$: Observable<ISubject[]>;
-  public students$: Observable<IStudent[]>;
-  public tableData$: Observable<any>;
   public subject: ISubject;
-
+  public subjectTableConfig: ITableConfig;
+  public manager: SubscriptionManager;
+  public generator: Generator;
+  public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
+  public headersRightShift: number = SUBJECT_HEADERS_LENGTH;
   constructor(
     private subjectsService: SubjectsService,
     private route: ActivatedRoute,
     private studentsService: StudentsServiceService,
-    private render: Renderer2
+    private renderer: Renderer2
   ) {
-    this.generator = new Generator(this.render);
     this.manager = new SubscriptionManager();
+    this.generator = new Generator(this.renderer);
   }
 
   public changeTeacher($event: Event): void {
@@ -106,86 +46,116 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.subject.teacher = newTeacher;
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
-  public addNewDate(): void {
-    this.tableConfig.tableHeader.push(new Date());
+  public addNewColumn(): void {
+    this.subjectTableConfig.headers.push("select date");
+    this.subjectTableConfig.body.forEach(row => row.push(""));
   }
-  public updateDay($event: {date: string}): void {
-    this.tableConfig.tableHeader.pop();
-    this.tableConfig.tableHeader.push($event.date);
-    const aux$: Observable<any[]> = this.tableData$.pipe(
-      map(data => data.forEach(row => {
-        row.push("");
-      }))
+  public getRowChildsArrayOnCellClick(target: EventTarget): Element[] {
+    return [...target.parentNode.parentNode.childNodes];
+  }
+  public getRidOfAngularCommentElements(nodesArray: Element[]): Element[] {
+    return nodesArray.filter(node => node.classList);
+  }
+  public getRowIndex(row: Element[], target: EventTarget): number {
+    return row.findIndex(cell => cell === target.parentNode);
+  }
+  public checkForEditableCell(row: Element[], editablePositionConstant: number, target: EventTarget): boolean {
+    return this.getRowIndex(row, target) >= editablePositionConstant;
+  }
+  public addContentEditableAttribute(target: EventTarget): void {
+    const nodesArray: Element[] = this.getRowChildsArrayOnCellClick(target);
+    const clickRow: Element[] = this.getRidOfAngularCommentElements(nodesArray);
+    if (this.checkForEditableCell(clickRow, 3, target)) {
+      this.generator.generateAttributes(target, {contenteditable: true});
+    }
+  }
+  public getColNumberOfUniqueDatesAsIndex(target: EventTarget, shiftLeftConstant: number): number {
+    return this.getRidOfAngularCommentElements(
+      this.getRowChildsArrayOnCellClick(target)
+    ).findIndex(node  => node === target.parentNode) - shiftLeftConstant;
+  }
+  public findStudent(row: Element[]): IStudent {
+    return ({
+      name: row[0].textContent,
+      surname: row[1].textContent
+    });
+  }
+  public getPathToTheTheadElement(target: EventTarget): Element[] {
+    return Array.from([
+      ...target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
+    ][1].childNodes[0].childNodes[0].childNodes[0].childNodes);
+  }
+  public findDate(target: EventTarget): string {
+    const thead:  Element[] = this.getPathToTheTheadElement(target);
+    const row: Element[] = this.getRidOfAngularCommentElements(
+      this.getRowChildsArrayOnCellClick(target)
     );
-    const auxSub: Subscription = aux$.subscribe();
-    this.manager.addSubscription(auxSub);
+    const markIndex: number = this.getRowIndex(row, target);
+    const date: string = this.getRidOfAngularCommentElements(thead)[markIndex].textContent;
+    return date;
   }
-  public addMarkToStudent($event: Event): void {
-    const newMark: number = $event.target.value;
-    if (checkNumberRange(newMark, [MarkMinimumValue, MarkMaximumValue])) {
-      addMarkToTheView(newMark, $event.target, this.generator);
-    }
+  public handleThEvents(target: EventTarget, shiftLeftConstant: number, headersConstantNames: string[]): string[] {
+    const datesForRow: string[] = this.subjectsService.handleUniqueDates(
+      this.subject._id, this.getColNumberOfUniqueDatesAsIndex(target, shiftLeftConstant), target
+    );
+    return [...headersConstantNames, ...datesForRow];
+
   }
-  public handleClick($event: Event): void {
-    if ($event.target.classList[0] === "table__cell" && $event.target.innerText === "") {
-      const meta: IMetaOfNewMarkInput = getMetaDataOfClick($event);
-      if (checkNumberRange(meta.clickCloumn, [2, meta.colLength - 1], false)) {
-        const inputConfig: IInputNumberConfig = {
-          attributes: {
-            name: meta.person.name,
-            col: meta.clickCloumn,
-            surname: meta.person.surname,
-          },
-          properties: {
-            min: MarkMinimumValue,
-            max: MarkMaximumValue,
-            step: 1,
-            placeholder: $event.target.innerText,
-            type: "number",
-          }
-        };
-        this.generator.appendChild($event.target, this.generateNumberInput(inputConfig));
+  public addMarksForEachStudent(bodyData: ITableConfig["body"], students: ISubject["students"], subject: ISubject): string[][] {
+    const mapKey: Function = mapKeyGenerator;
+    return bodyData.map(row => {
+      const constantPartOfRow: string[] = row.slice(0, 2);
+      if (students.has(mapKey(row))) {
+        const marks: string[] = students.get(mapKey(row));
+        return [...constantPartOfRow, getAverageMark(marks), ...marks];
+      } else {
+        const emptyCellsJustForView: string[] = Array(subject.uniqueDates.length).fill("");
+        return [...constantPartOfRow, "", ...emptyCellsJustForView];
       }
+    });
+  }
+  public handleTdEvents(target: EventTarget, subject: ISubject, body: ITableConfig["body"]): string[][] {
+    const tdCellArray: Element[] = this.getRowChildsArrayOnCellClick(target);
+    this.subjectsService.addStudentsWithMarkToTheSubject(
+      subject._id,
+      this.findStudent(this.getRidOfAngularCommentElements(tdCellArray)),
+      subject.uniqueDates.findIndex(data => data === this.findDate(target)),
+      +target.textContent,
+    );
+    return this.addMarksForEachStudent(
+      body, subject.students, subject
+    );
+  }
+  public applyNewValue(target: EventTarget): void {
+    switch (target.tagName.toLowerCase()) {
+      case TableCell.th:
+        target.blur();
+        this.subjectTableConfig.headers = this.handleThEvents(
+          target, this.headersRightShift, this.subjectHeadersConstantNames
+        );
+        break;
+      default:
+        target.blur();
+        this.subjectTableConfig.body = this.handleTdEvents(target, this.subject, this.subjectTableConfig.body);
+        break;
     }
   }
-  public generateNumberInput(config: IInputNumberConfig): any {
-    const input: any = this.generator.generateElement("input");
-    this.generator.generateProperties(input, config.properties);
-    this.generator.generateAttributes(input, config.attributes);
-    return input;
+  public generateBodyDataFromStudents(bodyData: ITableConfig["body"]): void {
+    this.studentsService.getOfStudents().pipe(
+      map(data => {
+        const creator: RowCreator = new RowCreator();
+        const row: string[] = creator.generateRowFromObject(
+          data, ["name", "surname", "average mark"]
+        );
+        bodyData.push(row);
+      })
+    ).subscribe().unsubscribe();
   }
 
   public ngOnInit(): void {
-    this.subject$ = this.subjectsService.getSubjectByIdFromRoute(this.route.params);
-    this.students$ = this.studentsService.getStudents();
-    this.manager.addSubscription(this.subject$.subscribe(data => this.subject = data[0]));
-
-    let aux$: Observable<IStudent> = this.studentsService.getOfStudents()
-      .pipe(
-        map(data => ({
-          id: data._id, name: data.name, surname: data.surname
-        }))
+    this.manager.addSubscription(
+      this.subjectsService.getSubjectByIdFromRoute(this.route.params).subscribe(data => this.subject = data[0])
     );
-    let auxSubject$: Observable<ISubject> = this.subject$.pipe(
-      map(data => data[0])
-    );
-    this.tableData$ = mergeSubjectAndStudents(auxSubject$, aux$, ["name", "surname", "average"]);
-
-    this.tableConfig = {
-      tableHeader: ["name", "surname", "average mark"],
-      caption: [`${this.subject.name} class students:`],
-      tableBody: [this.tableData$, ["all"]],
-      pagination: {
-        paginationConstant: 10,
-        data: this.tableData$
-      },
-      tableHeaderCell: {
-        position: "last",
-        action: this.addNewDate,
-        screenReader: "Add new date",
-        textContent: "+"
-      }
-    };
     this.newTeacherConfig = {
       legend: "Change Subject Teacher",
       formGroupName: {
@@ -194,7 +164,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           {
             name: "teacher: ",
             initialValue: "",
-            type: "text",
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages: ["This field is required"],
             placeholder: this.subject.teacher,
@@ -203,10 +173,18 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
       },
     };
+    this.subjectTableConfig = {
+      headers: [...this.subjectHeadersConstantNames, ...this.subject.uniqueDates],
+      caption: `${this.subject.name} class students:`,
+      body: [],
+    };
 
+    this.generateBodyDataFromStudents(this.subjectTableConfig.body);
+    this.subjectTableConfig.body = this.addMarksForEachStudent(
+      this.subjectTableConfig.body, this.subject.students, this.subject
+    );
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
-
 }

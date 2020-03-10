@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import {IFormConfig} from "../../common/models/IFormConfig";
-import {Validators} from "@angular/forms";
+import {SubjectsService} from "../../common/services/subjects.service";
+import {StudentsServiceService} from "../../common/services/students-service.service";
+
 
 @Component({
   selector: "app-statistics",
@@ -9,16 +10,11 @@ import {Validators} from "@angular/forms";
 })
 export class StatisticsComponent implements OnInit {
 
-
   constructor(
-
+    private studentsService: StudentsServiceService,
+    public subjectService: SubjectsService,
   ) { }
 
-  public ngOnInit(): void {
+  public ngOnInit(): void {}
 
-  }
-
-  DoSmt($event) {
-    console.log($event);
-  }
 }

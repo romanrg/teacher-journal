@@ -1,4 +1,4 @@
-$color: #FFFFFF
+@import "src/styles/variables.sass"
 .container
   display: flex
   flex-direction: column
@@ -21,8 +21,12 @@ $color: #FFFFFF
 
 .not-found__item
   margin: 1rem
+  transition: all 0.3s
+  &:hover
+    color: $active-color
 
 .not-found__link
   color: inherit
   cursor: pointer
   text-decoration: none
+  text-transform: uppercase

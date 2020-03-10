@@ -21,7 +21,7 @@ export class DateEditorComponent implements OnInit {
         formControls: [{
           name: "date",
           initialValue: "",
-          type: "date",
+          type: FormControlType.date,
           validators: [Validators.required],
           errorMessages: ["This field is required"],
         }],
