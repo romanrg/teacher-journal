@@ -1,6 +1,8 @@
 <tr class="table-row">
-    <ng-container *ngFor="let cell of row">
+    <ng-container *ngFor="let cell of row; let i = index">
       <app-table-cell
+        (sortEmitter)="emitTopLevel(i)"
+        [attr.index]="i"
         [ngStyle]="{'width': getCellWidth()}"
         [cell]="cell"
         [cellType]="cellType"

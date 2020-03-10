@@ -6,6 +6,9 @@
   align-items: center
   justify-content: center
 .table-cell__th
+  display: flex
+  justify-content: space-between
+  align-items: center
   text-transform: uppercase
   border-bottom: 0.01rem solid transparent
   transition: all 0.3s
@@ -13,3 +16,6 @@
     border-bottom: 0.01rem solid $color
     cursor: pointer
     color: $active-color
+.table-cell__btn
+  color: $active-color
+  font: inherit

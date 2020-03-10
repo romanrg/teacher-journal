@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 
 @Component({
   selector: 'app-table-row',
@@ -9,7 +9,7 @@ export class TableRowComponent implements OnInit {
 
   @Input() public cellType: string;
   @Input() public row: string[];
-
+  @Output() public emitSorting: EventEmitter = new EventEmitter();
   constructor() { }
 
   ngOnInit(): void {
@@ -17,5 +17,9 @@ export class TableRowComponent implements OnInit {
 
   public getCellWidth(): string {
     return `${100 / this.row.length}%`;
+  }
+
+  public emitTopLevel(index: number): void {
+    this.emitSorting.emit(index);
   }
 }

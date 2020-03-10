@@ -15,6 +15,7 @@ import {TableCell} from "../../../common/models/TableCellEnum";
 import {getAverageMark} from "../../../common/helpers/getAverageMark";
 import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
 import {mapKeyGenerator} from "../../../common/helpers/mapKeyGenerator";
+import {IPerson} from "../../../common/models/IPerson";
 
 @Component({
   selector: "app-subjects-table",
@@ -46,62 +47,30 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.subject.teacher = newTeacher;
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
+  public getCellIndex(target: EventTarget): number {
+    return +target.parentNode.getAttribute("index");
+  }
+  public getRowIndex(target: EventTarget): number {
+    return +target.parentNode.parentNode.parentNode.getAttribute("rowindex");
+  }
   public addNewColumn(): void {
     this.subjectTableConfig.headers.push("select date");
     this.subjectTableConfig.body.forEach(row => row.push(""));
   }
-  public getRowChildsArrayOnCellClick(target: EventTarget): Element[] {
-    return [...target.parentNode.parentNode.childNodes];
-  }
-  public getRidOfAngularCommentElements(nodesArray: Element[]): Element[] {
-    return nodesArray.filter(node => node.classList);
-  }
-  public getRowIndex(row: Element[], target: EventTarget): number {
-    return row.findIndex(cell => cell === target.parentNode);
-  }
-  public checkForEditableCell(row: Element[], editablePositionConstant: number, target: EventTarget): boolean {
-    return this.getRowIndex(row, target) >= editablePositionConstant;
-  }
+
   public addContentEditableAttribute(target: EventTarget): void {
-    const nodesArray: Element[] = this.getRowChildsArrayOnCellClick(target);
-    const clickRow: Element[] = this.getRidOfAngularCommentElements(nodesArray);
-    if (this.checkForEditableCell(clickRow, 3, target)) {
+    if (this.getCellIndex(target) >= this.headersRightShift) {
       this.generator.generateAttributes(target, {contenteditable: true});
     }
   }
-  public getColNumberOfUniqueDatesAsIndex(target: EventTarget, shiftLeftConstant: number): number {
-    return this.getRidOfAngularCommentElements(
-      this.getRowChildsArrayOnCellClick(target)
-    ).findIndex(node  => node === target.parentNode) - shiftLeftConstant;
-  }
-  public findStudent(row: Element[]): IStudent {
-    return ({
-      name: row[0].textContent,
-      surname: row[1].textContent
-    });
-  }
-  public getPathToTheTheadElement(target: EventTarget): Element[] {
-    return Array.from([
-      ...target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
-    ][1].childNodes[0].childNodes[0].childNodes[0].childNodes);
-  }
-  public findDate(target: EventTarget): string {
-    const thead:  Element[] = this.getPathToTheTheadElement(target);
-    const row: Element[] = this.getRidOfAngularCommentElements(
-      this.getRowChildsArrayOnCellClick(target)
-    );
-    const markIndex: number = this.getRowIndex(row, target);
-    const date: string = this.getRidOfAngularCommentElements(thead)[markIndex].textContent;
-    return date;
-  }
   public handleThEvents(target: EventTarget, shiftLeftConstant: number, headersConstantNames: string[]): string[] {
     const datesForRow: string[] = this.subjectsService.handleUniqueDates(
-      this.subject._id, this.getColNumberOfUniqueDatesAsIndex(target, shiftLeftConstant), target
+      this.subject._id, this.getCellIndex(target) - shiftLeftConstant, target.textContent
     );
     return [...headersConstantNames, ...datesForRow];
 
   }
-  public addMarksForEachStudent(bodyData: ITableConfig["body"], students: ISubject["students"], subject: ISubject): string[][] {
+  public mergeStudentsAndMarksForView(bodyData: ITableConfig["body"], students: ISubject["students"], subject: ISubject): string[][] {
     const mapKey: Function = mapKeyGenerator;
     return bodyData.map(row => {
       const constantPartOfRow: string[] = row.slice(0, 2);
@@ -115,14 +84,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     });
   }
   public handleTdEvents(target: EventTarget, subject: ISubject, body: ITableConfig["body"]): string[][] {
-    const tdCellArray: Element[] = this.getRowChildsArrayOnCellClick(target);
+    const studentsRow: string[][] = body[this.getRowIndex(target)];
+    const student: IPerson = {name: studentsRow[0], surname: studentsRow[1]};
     this.subjectsService.addStudentsWithMarkToTheSubject(
       subject._id,
-      this.findStudent(this.getRidOfAngularCommentElements(tdCellArray)),
-      subject.uniqueDates.findIndex(data => data === this.findDate(target)),
+      student,
+      this.getCellIndex(target) - this.subjectHeadersConstantNames.length,
       +target.textContent,
     );
-    return this.addMarksForEachStudent(
+    console.log(subject.students);
+    return this.mergeStudentsAndMarksForView(
       body, subject.students, subject
     );
   }
@@ -180,7 +151,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     };
 
     this.generateBodyDataFromStudents(this.subjectTableConfig.body);
-    this.subjectTableConfig.body = this.addMarksForEachStudent(
+    this.subjectTableConfig.body = this.mergeStudentsAndMarksForView(
       this.subjectTableConfig.body, this.subject.students, this.subject
     );
   }

@@ -101,13 +101,13 @@ export class SubjectsService {
   public handleUniqueDates(
     _id: ISubject["_id"],
     uniqueDateIndex: number,
-    target: EventTarget
+    textContent: string
   ): ISubject["uniqueDates"] {
     const subj: ISubject = subjects.find(s => s._id === _id);
     if (typeof subj.uniqueDates[uniqueDateIndex] !== "string") {
-      subj.uniqueDates.push(target.textContent);
+      subj.uniqueDates.push(textContent);
     } else {
-      subj.uniqueDates[uniqueDateIndex] = target.textContent;
+      subj.uniqueDates[uniqueDateIndex] = textContent;
     }
     return subj.uniqueDates;
   }

@@ -1,6 +1,9 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {TableCell} from "../../../common/models/TableCellEnum";
 import { DecimalPipe } from "@angular/common";
+import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
+import {SUBJECT_HEADERS} from "../../../common/constants/SUBJECT_HEADERS";
+
 
 @Component({
   selector: "app-table-cell",
@@ -11,11 +14,13 @@ export class TableCellComponent implements OnInit {
 
   @Input() public cell: string;
   @Input() public cellType: string;
+  @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
 
   constructor(
-    private numberPipe: DecimalPipe
+    private numberPipe: DecimalPipe,
+    private sortPipe: SortByPipe
   ) { }
 
   public ngOnInit(): void {
@@ -33,4 +38,7 @@ export class TableCellComponent implements OnInit {
     }
   }
 
+  public sortColumn(): void {
+    this.sortEmitter.emit();
+  }
 }

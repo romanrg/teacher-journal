@@ -1,5 +1,8 @@
 <tbody>
-  <app-table-row *ngFor="let row of bodyData" class="table-body"
+  <app-table-row
+    *ngFor="let row of bodyData; let i = index" class="table-body"
+
+    [attr.rowIndex]="generateRowIndex(i)"
     [cellType]="'td'"
     [row]="row"
     class="table-body__row"
