@@ -83,7 +83,7 @@ export class SubjectsService {
   }
 
   public addStudentsWithMarkToTheSubject(
-    _id: ISubject._id, student: IStudent, dateIndex: string, mark: number
+    _id: ISubject["_id"], student: IStudent, dateIndex: string, mark: number
   ): void {
     const subj: ISubject = subjects.find(s => s._id === _id);
     const mapKey: string = JSON.stringify(student);
@@ -99,15 +99,15 @@ export class SubjectsService {
   }
 
   public handleUniqueDates(
-    _id: ISubject._id,
+    _id: ISubject["_id"],
     uniqueDateIndex: number,
-    $event: Event
-  ): ISubject.uniqueDates {
+    target: EventTarget
+  ): ISubject["uniqueDates"] {
     const subj: ISubject = subjects.find(s => s._id === _id);
     if (typeof subj.uniqueDates[uniqueDateIndex] !== "string") {
-      subj.uniqueDates.push($event.target.textContent);
+      subj.uniqueDates.push(target.textContent);
     } else {
-      subj.uniqueDates[uniqueDateIndex] = $event.target.textContent;
+      subj.uniqueDates[uniqueDateIndex] = target.textContent;
     }
     return subj.uniqueDates;
   }

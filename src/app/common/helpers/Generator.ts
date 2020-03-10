@@ -9,14 +9,14 @@ export class Generator {
     return this.render.createElement("input");
   }
 
-  public generateAttributes(element: any, attributes): void {
+  public generateAttributes(element: EventTarget, attributes): void {
     Object.keys(attributes).forEach(attr => {
       this.render.setAttribute(element, attr, attributes[attr]);
     });
 
   }
 
-  public generateProperties(element: any, properties): void {
+  public generateProperties(element: EventTarget, properties): void {
     Object.keys(properties).forEach(prop => {
       this.render.setProperty(element, prop, properties[prop]);
     });
@@ -26,7 +26,7 @@ export class Generator {
     this.render.appendChild(parent, child);
   }
 
-  public createText(element: any, text: string): void {
+  public createText(element: EventTarget, text: string): void {
     this.render.appendChild(element, this.render.createText(text));
   }
 

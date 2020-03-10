@@ -1,8 +1,9 @@
 <div class="container">
   <app-one-header-table
     [config]="subjectTableConfig"
-    (mouseover)="handleClick($event)"
-    (keydown.enter)="applyNewValue($event)"
+    (mouseover)="addContentEditableAttribute($event.target)"
+    (keydown.enter)="applyNewValue($event.target)"
+    (focusout)="applyNewValue($event.target)"
   ></app-one-header-table>
   <app-button
     class="subject-table__btn"

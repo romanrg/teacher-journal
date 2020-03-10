@@ -11,7 +11,8 @@ export class TableCellComponent implements OnInit {
 
   @Input() public cell: string;
   @Input() public cellType: string;
-  public TableCell: TableCell = TableCell;
+  public thType: "th" = TableCell.th;
+  public tdType: "td" = TableCell.td;
 
   constructor(
     private numberPipe: DecimalPipe

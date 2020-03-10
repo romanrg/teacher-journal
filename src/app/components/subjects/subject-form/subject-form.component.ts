@@ -6,6 +6,7 @@ import {ISubject} from "../../../common/models/ISubject";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-subject-form",

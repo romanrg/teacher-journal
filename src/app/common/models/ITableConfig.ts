@@ -4,4 +4,4 @@ export interface ITableConfig {
   body: tableRow[];
 }
 
-type tableRow = string[];
+export type tableRow = string[];
