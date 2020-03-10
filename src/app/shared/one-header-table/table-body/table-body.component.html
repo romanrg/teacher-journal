@@ -1,5 +1,5 @@
-<tbody *ngFor="let row of bodyData" class="table-body">
-  <app-table-row
+<tbody>
+  <app-table-row *ngFor="let row of bodyData" class="table-body"
     [cellType]="'td'"
     [row]="row"
     class="table-body__row"
