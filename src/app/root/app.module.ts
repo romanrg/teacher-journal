@@ -27,6 +27,7 @@ import {TableBodyComponent} from "../shared/one-header-table/table-body/table-bo
 import {TableFootComponent} from "../shared/one-header-table/table-foot/table-foot.component";
 import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.component";
 import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
+import {DecimalPipe} from "@angular/common";
 
 
 @NgModule({
@@ -61,7 +62,7 @@ import {TableCellComponent} from "../shared/one-header-table/table-cell/table-ce
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [ExitFormGuard],
+  providers: [ExitFormGuard, DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,19 +1,24 @@
 import {Component, DoCheck, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {ITableConfig} from "../../common/models/ITableConfig";
 
 @Component({
   selector: "app-one-header-table",
   templateUrl: "./one-header-table.component.html",
   styleUrls: ["./one-header-table.component.sass"],
 })
-export class OneHeaderTableComponent implements OnInit {
+export class OneHeaderTableComponent implements OnInit, DoCheck {
 
-  @Input() public config: any;
+  @Input() public config: ITableConfig;
   public dataForBody: Array<string[]>;
   public paginationConstant: number = 5;
   public currentPagination: number = 1;
   constructor() { }
 
   public ngOnInit(): void {
+    this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+  }
+
+  public ngDoCheck(): void {
     this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
   }
 

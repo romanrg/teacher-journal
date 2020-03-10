@@ -97,4 +97,18 @@ export class SubjectsService {
       subj.students.set(mapKey, prevMarks);
     }
   }
+
+  public handleUniqueDates(
+    _id: ISubject._id,
+    uniqueDateIndex: number,
+    $event: Event
+  ): ISubject.uniqueDates {
+    const subj: ISubject = subjects.find(s => s._id === _id);
+    if (typeof subj.uniqueDates[uniqueDateIndex] !== "string") {
+      subj.uniqueDates.push($event.target.textContent);
+    } else {
+      subj.uniqueDates[uniqueDateIndex] = $event.target.textContent;
+    }
+    return subj.uniqueDates;
+  }
 }

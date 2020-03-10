@@ -1,7 +1,7 @@
 <div class="container">
   <app-one-header-table
     [config]="subjectTableConfig"
-    (click)="handleClick($event)"
+    (mouseover)="handleClick($event)"
     (keydown.enter)="applyNewValue($event)"
   ></app-one-header-table>
   <app-button

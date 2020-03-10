@@ -8,6 +8,6 @@ export interface ISubject {
   address?: string;
   _id: string | number;
   marks?: [];
-  students?: [];
-  uniqueDates: [];
+  students?: Map<string, number[]>;
+  uniqueDates?: [];
 }
