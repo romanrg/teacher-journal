@@ -91,9 +91,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     );
 
     const submitMark: Function = wrapper(this.marksService.addMarks());
-    const cb = wrapper1(submitMark, this.addMarksToTheView());
+    const cb = wrapper1(submitMark, this.addMarksToTheView);
     return function (value: number): void {
-      submitMark(wrapped(value));
+      submitMark(value);
     };
   }
   public submitDate(): void {
