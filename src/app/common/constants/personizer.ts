@@ -1,3 +1,3 @@
-export const personizer: Function = ( row: string[]): string => {
-  return JSON.stringify({name: row[0], surname: row[1]})
+export const personizer: Function = ( name: string, surname: string): string => {
+  return {name, surname};
 };

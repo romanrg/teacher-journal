@@ -1,7 +1,6 @@
 <div class="container">
   <app-one-header-table
     [config]="subjectTableConfig"
-    (mouseover)="addContentEditableAttribute($event.target)"
     (click)="addDatePicker($event.target)"
     (keydown.enter)="applyNewValue($event.target)"
   ></app-one-header-table>

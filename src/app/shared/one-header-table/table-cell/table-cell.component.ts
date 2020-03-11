@@ -44,7 +44,7 @@ export class TableCellComponent implements OnInit {
 
   public dateTransformer(cell: String): number {
     if (typeof cell === 'number') {
-      return this.datePipe.transform(cell, 'LL / dd');
+      return this.datePipe.transform(cell, 'yyyy-MM-dd');
     } else {
       return cell;
     }

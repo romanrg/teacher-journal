@@ -10,7 +10,12 @@ export class HighlightDirective {
 
   private highlight(color: string): void {
     this.el.nativeElement.style.cursor = "pointer";
-    this.el.nativeElement.style.backgroundColor = color;
+    if (color) {
+      this.el.nativeElement.style.borderBottom = `solid 0.05rem ${color}`;
+    } else {
+      this.el.nativeElement.style.borderBottom = color;
+    }
+
   }
 
   @HostListener("mouseenter") public onMouseEnter(): void {

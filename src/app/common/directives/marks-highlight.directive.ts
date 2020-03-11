@@ -12,11 +12,12 @@ export class MarksHighlightDirective implements OnInit, AfterContentInit {
   public ngAfterContentInit(): void {
     const cellIndex: number = +this.el.nativeElement.parentNode.parentNode.getAttribute("index");
     const mark: string =  this.el.nativeElement.parentNode.textContent;
+
     if (cellIndex > 2 && mark !== "") {
       if (+mark >= 5) {
-        this.el.nativeElement.parentNode.style.borderBottom = "0.05rem solid green";
+        this.el.nativeElement.parentNode.style.color = "green";
       } else if (+mark < 5) {
-        this.el.nativeElement.parentNode.style.borderBottom = "0.05rem solid blue";
+        this.el.nativeElement.parentNode.style.color = "blue";
       }
     }
 

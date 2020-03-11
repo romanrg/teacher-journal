@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Renderer2} from "@angular/core";
+import {Component, EventEmitter, OnDestroy, OnInit, Renderer2} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
@@ -9,13 +9,13 @@ import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {ITableConfig} from "../../../common/models/ITableConfig";
-import {Generator} from "../../../common/helpers/Generator";
-import {IStudent} from "../../../common/models/IStudent";
-import {TableCell} from "../../../common/models/TableCellEnum";
+import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
 import {getAverageMark} from "../../../common/helpers/getAverageMark";
 import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
 import {mapKeyGenerator} from "../../../common/helpers/mapKeyGenerator";
 import {IPerson} from "../../../common/models/IPerson";
+import {DatePipe} from "@angular/common";
+import {personizer} from "../../../common/constants/personizer";
 
 @Component({
   selector: "app-subjects-table",
@@ -30,14 +30,19 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public generator: Generator;
   public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
   public headersRightShift: number = SUBJECT_HEADERS_LENGTH;
+  public dateGenerator: DatePicker;
+  public numberGenerator: NumberPicker;
   constructor(
     private subjectsService: SubjectsService,
     private route: ActivatedRoute,
     private studentsService: StudentsServiceService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private datePipe: DatePipe
   ) {
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer);
+    this.dateGenerator = new DatePicker(this.renderer);
+    this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
   }
 
   public changeTeacher($event: Event): void {
@@ -54,34 +59,66 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return +target.parentNode.parentNode.parentNode.getAttribute("rowindex");
   }
   public addNewColumn(): void {
-    const timestamp: number  = (new Date()).getTime();
-    this.subjectTableConfig.headers.push(timestamp);
-    this.subject.uniqueDates.push(timestamp);
+    this.subjectTableConfig.headers.push("Select date");
     this.subjectTableConfig.body.forEach(row => row.push(""));
   }
 
-  public addContentEditableAttribute(target: EventTarget): void {
-    if (this.getCellIndex(target) >= this.headersRightShift) {
-      this.generator.generateAttributes(target, {contenteditable: true});
-    }
+  public shouldAddNumberInput(target: EventTarget): boolean {
+    return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
   }
-
+  public shouldAddDateInput(target: EventTarget): boolean {
+    return (
+      target.tagName.toLowerCase() === "th" &&
+      !this.subjectHeadersConstantNames.includes(target.textContent) &&
+      target.textContent === "Select date"
+    );
+  }
 
   public addDatePicker(target: EventTarget): void {
-    console.log("Here should appear date-picker");
-  };
-
-
-  public handleThEvents(target: EventTarget, shiftLeftConstant: number, headersConstantNames: string[]): string[] {
-    const datesForRow: string[] = this.subjectsService.handleUniqueDates(
-      this.subject._id, this.getCellIndex(target) - shiftLeftConstant, target.textContent
-    );
-    return [...headersConstantNames, ...datesForRow];
-
+      if (this.shouldAddDateInput(target)) {
+        this.dateGenerator.generateDatePicker(
+          target,
+          this.subject.uniqueDates,
+          this.datePipe,
+          this.subjectTableConfig.headers,
+          this.subjectHeadersConstantNames,
+        );
+      } else if (this.shouldAddNumberInput(target)) {
+        this.numberGenerator.generateNumberPicker(
+          target
+        );
+      }
   }
+
+  public addNewDateHeaders(target: EventTarget): void {
+    const dateFromInput: string = target.value;
+    const newDate: string = dateFromInput.split("-").join("/");
+    const timeStamp: number = (new Date(newDate)).getTime();
+    this.subject.uniqueDates.push(timeStamp);
+    this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...this.subject.uniqueDates];
+  }
+
+  public addNewMarkToTheStudent(
+    target: EventTarget,
+    subject: ISubject,
+    shiftConstant: number,
+    body: string[][]
+  ): void {
+    const newMark: number = +target.value;
+    const uniqueDateIndex: number = +(this.getCellIndex(target) - shiftConstant);
+    const studentRow: string[] = body[this.getRowIndex(target)];
+    const student: string = personizer(studentRow[0], studentRow[1]);
+    this.subjectsService.addStudentsWithMarkToTheSubject(
+      subject._id, student, uniqueDateIndex, newMark
+    );
+    return this.mergeStudentsAndMarksForView(
+      body, subject.students, subject
+    );
+  }
+
   public mergeStudentsAndMarksForView(bodyData: ITableConfig["body"], students: ISubject["students"], subject: ISubject): string[][] {
     const mapKey: Function = mapKeyGenerator;
-    return bodyData.map(row => {
+    const data = bodyData.map(row => {
       const constantPartOfRow: string[] = row.slice(0, 2);
       if (students.has(mapKey(row))) {
         const marks: string[] = students.get(mapKey(row));
@@ -91,32 +128,19 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         return [...constantPartOfRow, "", ...emptyCellsJustForView];
       }
     });
-  }
-  public handleTdEvents(target: EventTarget, subject: ISubject, body: ITableConfig["body"]): string[][] {
-    const studentsRow: string[][] = body[this.getRowIndex(target)];
-    const student: IPerson = {name: studentsRow[0], surname: studentsRow[1]};
-    this.subjectsService.addStudentsWithMarkToTheSubject(
-      subject._id,
-      student,
-      this.getCellIndex(target) - this.subjectHeadersConstantNames.length,
-      +target.textContent,
-    );
-    return this.mergeStudentsAndMarksForView(
-      body, subject.students, subject
-    );
+    return data;
   }
   public applyNewValue(target: EventTarget): void {
-    switch (target.tagName.toLowerCase()) {
-      case TableCell.th:
+    switch (target.getAttribute("type")) {
+      case "date":
         target.blur();
-        this.subjectTableConfig.headers = this.handleThEvents(
-          target, this.headersRightShift, this.subjectHeadersConstantNames
-        );
+        this.addNewDateHeaders(target);
         break;
-
       default:
+        this.subjectTableConfig.body = this.addNewMarkToTheStudent(
+          target, this.subject, this.headersRightShift, this.subjectTableConfig.body
+        );
         target.blur();
-        this.subjectTableConfig.body = this.handleTdEvents(target, this.subject, this.subjectTableConfig.body);
         break;
     }
   }
