@@ -1,8 +1,9 @@
-<div class="container">
+
+<!--(keydown.enter)="applyNewValue($event.target)"-->
+<div class="container" >
   <app-one-header-table
     [config]="subjectTableConfig"
-    (click)="addDatePicker($event.target)"
-    (keydown.enter)="applyNewValue($event.target)"
+    (click)="generateInput($event.target)"
   ></app-one-header-table>
   <app-button
     class="subject-table__btn"

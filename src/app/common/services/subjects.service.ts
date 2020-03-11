@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import {ISubject} from "../models/ISubject";
-import {from, Observable} from "rxjs";
+import {from, Observable, of} from "rxjs";
 import {map, withLatestFrom} from "rxjs/internal/operators";
 import {Params} from "@angular/router";
 import {IStudent} from "../models/IStudent";
@@ -20,7 +20,7 @@ const subjects: ISubject[] = [
     "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
     "anim id est laborum.",
     students: new Map(),
-    uniqueDates: [],
+    uniqueDates: [1583193600000],
   },
   {
     _id: 1,
@@ -98,17 +98,13 @@ export class SubjectsService {
     }
   }
 
-  public handleUniqueDates(
-    _id: ISubject["_id"],
-    uniqueDateIndex: number,
-    textContent: string
-  ): ISubject["uniqueDates"] {
-    const subj: ISubject = subjects.find(s => s._id === _id);
-    if (typeof subj.uniqueDates[uniqueDateIndex] !== "string") {
-      subj.uniqueDates.push(textContent);
-    } else {
-      subj.uniqueDates[uniqueDateIndex] = textContent;
-    }
-    return subj.uniqueDates;
+
+  public addUniqueDate(_id: (string|number), date: number): void {
+    subjects.filter(sub => sub._id === _id)[0].uniqueDates.push(date);
   }
+
+  public getUniqueDate(_id: (string|number)): Observable<number[]> {
+    return from(subjects.filter(sub => sub._id === _id)[0].uniqueDates);
+  }
+
 }

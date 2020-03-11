@@ -1,4 +1,4 @@
 export const getAverageMark: Function = (arr: []): number => {
-  const filtered: number[] = arr.filter(mark => typeof mark === 'number');
-  return (filtered.reduce((cur, acc) => cur + acc) / filtered.length);
+  const filtered: number[] = arr.filter(mark => mark);
+  return (filtered.reduce((cur, acc) => +cur + +acc, 0) / filtered.length);
 };

@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import {from, Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
-import {patchTsGetExpandoInitializer} from "@angular/compiler-cli/ngcc/src/packages/patch_ts_expando_initializer";
 
 const students: IStudent[] = [
   {
@@ -209,5 +208,13 @@ export class StudentsServiceService {
   }
   public getOfStudents(): Observable<IStudent> {
     return of(...this.students);
+  }
+
+  public getStudentIdByName(name: string, surname: string): IStudent {
+    return this.students.filter(student => student.name === name && student.surname === surname)[0];
+  }
+
+  public findStudentById(id): IStudent {
+    return students.filter(student => student._id === id)[0];
   }
 }

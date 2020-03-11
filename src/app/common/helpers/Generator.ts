@@ -2,7 +2,6 @@ import {Renderer2} from "@angular/core";
 import {FormControlType} from "../models/IFormConfig";
 import {ISubject} from "../models/ISubject";
 import {DatePipe} from "@angular/common";
-
 export class Generator {
   constructor(private render: Renderer2) {
     this.render = render;
@@ -41,6 +40,20 @@ export class Generator {
     return this.render.listen(element, eventName, cb);
   }
 
+  public generateForm(): any {
+    const form: any = this.generateElement("form");
+    this.renderer.addClass(form, "generated-form");
+    return form;
+  }
+
+  public generateSubmitBtn(): any {
+    const submitBtn: any = this.generateElement("button");
+    this.generateAttributes(submitBtn, {type: "submit"});
+    this.appendChild(submitBtn, this.renderer.createText("Submit"));
+    this.renderer.addClass(submitBtn, "generated-submit");
+    return submitBtn;
+  }
+
 }
 
 export class DatePicker extends Generator {
@@ -53,26 +66,38 @@ export class DatePicker extends Generator {
     element: any,
     uniqueDates: ISubject["uniqueDates"],
     pipe: DatePipe,
+    onsubmitAction: Function
   ): number[] {
-      const inputContainer: ParentNode = element.parentNode;
+      const container: ParentNode = element.parentNode;
       const initialValue: string = element.textContent;
-      this.removeChild(inputContainer, element);
+      this.removeChild(container, element);
       const dateInput: any = this.generateElement("input");
       this.renderer.addClass(dateInput, "date-input");
       if (!uniqueDates.length) {
         this.generateAttributes(dateInput, {
           type: FormControlType.date,
-          value: initialValue
+          value: initialValue,
+          name: FormControlType.date
         });
       } else {
         const minDate: number = (uniqueDates.sort((a, b) => b - a)[0]);
         this.generateAttributes(dateInput, {
           type: FormControlType.date,
           value: initialValue,
+          name: FormControlType.date,
           min: pipe.transform((minDate + this.ONE_DAY_CONSTANT), "yyyy-MM-dd")
         });
       }
-      this.appendChild(inputContainer, dateInput);
+      const form: any = this.generateForm();
+      const submitBtn: any = this.generateSubmitBtn();
+
+      this.appendChild(container, form);
+      this.appendChild(form, dateInput);
+      this.appendChild(form, submitBtn);
+      this.renderer.listen(form, "submit", (e) => {
+        e.preventDefault();
+        onsubmitAction(e.target[FormControlType.date].value);
+      });
   }
 }
 
@@ -81,18 +106,32 @@ export class NumberPicker extends Generator {
     super(renderer);
     this.min = min;
     this.max = max;
+    this.validation = "^(?:[1-9]|0[1-9]|10)$";
   }
 
-  public generateNumberPicker(element: any): void {
-    const inputContainer: ParentNode = element.parentNode;
-    this.removeChild(inputContainer, element);
+  public generateNumberPicker(element: any, onsubmitAction: Function): void {
+    const container: ParentNode = element.parentNode;
+    this.removeChild(container, element);
+    const form: any = this.generateForm();
+    const submitBtn: any = this.generateSubmitBtn();
     const numberInput: any = this.generateElement("input");
     this.renderer.addClass(numberInput, "number-input");
     this.generateAttributes(numberInput, {
       type: FormControlType.number,
       min: this.min,
-      max: this.max
+      max: this.max,
+      pattern: this.validation,
+      name: FormControlType.number
     });
-    this.appendChild(inputContainer, numberInput);
+    this.appendChild(container, form);
+    this.appendChild(form, numberInput);
+    this.appendChild(form, submitBtn);
+    this.renderer.listen(form, "submit", (e) => {
+      e.preventDefault();
+      onsubmitAction(e.target[FormControlType.number].value);
+    });
   }
 }
+
+
+
