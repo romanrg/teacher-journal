@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from "@angular/core";
 
-const sortingFunctionForStringsHight: Function = (index: number) => (a: string[], b: string[]) => {
+const sortingFunctionForStringsHigh: Function = (index: number) => (a: string[], b: string[]) => {
   if (a[index] < b[index]) {
     return -1;
   }
@@ -9,25 +9,11 @@ const sortingFunctionForStringsHight: Function = (index: number) => (a: string[]
   }
   return 0;
 };
-
-
-const sortingFunctionForStringsLow: Function = (index: number) => (a: string[], b: string[]) => {
-  if (a[index] < b[index]) {
-    return 1;
-  }
-  if (a[index] > b[index]) {
-    return -1;
-  }
-  return 0;
-};
-
-
 const sortingFunctionForNumbersHigh: Function = (index: number) => (a: number[], b: number[]) => {
   let curr: (number) = a[index];
   let next: (number)  = b[index];
   if (!curr) {
-    curr = 0;
-  }
+    curr = 0;  }
 
   if (!next) {
     next = 0;
@@ -35,20 +21,9 @@ const sortingFunctionForNumbersHigh: Function = (index: number) => (a: number[],
   return  next - curr;
 };
 
-const sortingFunctionForNumbersLow: Function = (index: number) => (a: number[], b: number[]) => {
-  let curr: (number) = a[index];
-  let next: (number)  = b[index];
-  if (!curr) {
-    curr = 0;
-  }
-
-  if (!next) {
-    next = 0;
-  }
-  return  curr - next;
-};
 
 let wasSorted: number;
+let isLow: boolean = false;
 
 @Pipe({
   name: "sortBy"
@@ -56,9 +31,9 @@ let wasSorted: number;
 export class SortByPipe implements PipeTransform {
   public transform(value: (string|number)[][], index: number): string[][] {
     let shouldSortNumbers: boolean = false;
-    if (!wasSorted) {
+    if (!wasSorted || wasSorted !== index) {
       wasSorted = index;
-      wasSorted = index;
+      isLow = false;
       value.forEach(row => {
         if (typeof row[0] === "number") {
           return;
@@ -66,7 +41,7 @@ export class SortByPipe implements PipeTransform {
           shouldSortNumbers = true;
         }
       });
-      const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHight(index);
+      const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
       return value.sort(compareFn);
     } else {
       if (wasSorted === index) {
@@ -77,19 +52,16 @@ export class SortByPipe implements PipeTransform {
             shouldSortNumbers = true;
           }
         });
-        const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersLow(index) : sortingFunctionForStringsLow(index);
-        return value.sort(compareFn);
-      } else {
-        wasSorted = index;
-        value.forEach(row => {
-          if (typeof row[0] === "number") {
-            return;
-          } else if (index > 1) {
-            shouldSortNumbers = true;
-          }
-        });
-        const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHight(index);
-        return value.sort(compareFn);
+        if (isLow) {
+          isLow = !isLow;
+          const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
+          return value.sort(compareFn);
+        } else {
+          isLow = !isLow;
+          const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
+          return value.sort(compareFn).reverse();
+        }
+
       }
     }
 

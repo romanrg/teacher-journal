@@ -14,7 +14,6 @@ export class TableCellComponent implements OnInit {
   @Input() public cell: string;
   @Input() public cellType: string;
   @Input() public isSorted: boolean;
-  @Input() public lowOrHigh: boolean;
   @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
