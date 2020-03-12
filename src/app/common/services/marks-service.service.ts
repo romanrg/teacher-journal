@@ -20,14 +20,12 @@ export class MarksServiceService {
       const filtered: number = this._marks.findIndex(
         m => (m.student === mark.student) && (m.time === mark.time) && (m.subject === mark.subject)
       );
-      console.log(filtered, mark);
       if (filtered === -1) {
         this._marks.push(mark);
         return true;
       } else {
         this._marks[filtered] = mark;
       }
-      console.log(this._marks);
   }
 
   public mergeDataForMarks(

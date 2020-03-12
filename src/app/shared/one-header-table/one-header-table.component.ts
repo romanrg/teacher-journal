@@ -49,6 +49,7 @@ export class OneHeaderTableComponent implements OnInit, DoCheck {
 
 
   public executeSorting($event: Event): void {
+
     this.config.body = this.sortPipe.transform(this.config.body, $event);
     this.dataForBody = this.cutBodyDataForPagination(
       this.config.body, this.paginationConstant, this.currentPagination

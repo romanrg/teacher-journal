@@ -4,7 +4,6 @@ import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
 import {SUBJECT_HEADERS} from "../../../common/constants/SUBJECT_HEADERS";
 
-
 @Component({
   selector: "app-table-cell",
   templateUrl: "./table-cell.component.html",
@@ -15,6 +14,7 @@ export class TableCellComponent implements OnInit {
   @Input() public cell: string;
   @Input() public cellType: string;
   @Input() public isSorted: boolean;
+  @Input() public lowOrHigh: boolean;
   @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
@@ -24,6 +24,9 @@ export class TableCellComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
+    if (!this.cell) {
+      this.cell = "";
+    }
   }
 
   public numberCheck(cell: any): boolean {
@@ -43,8 +46,8 @@ export class TableCellComponent implements OnInit {
   }
 
   public dateTransformer(cell: String): number {
-    if (typeof cell === 'number') {
-      return this.datePipe.transform(cell, 'yyyy-MM-dd');
+    if (typeof cell === "number") {
+      return this.datePipe.transform(cell, "yyyy-MM-dd");
     } else {
       return cell;
     }

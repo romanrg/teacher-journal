@@ -76,7 +76,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return (
       target.tagName.toLowerCase() === "th" &&
       !this.subjectHeadersConstantNames.includes(target.textContent) &&
-      target.textContent === "Select date"
+      target.textContent === "Select date ^"
     );
   }
 
@@ -116,7 +116,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       marksService.addMarks(newMarkObject);
       renderer.removeChild(arr[0], arr[1]);
       marksRenderFn(marksService, studentsService, subjectsService, subject, config);
-      console.log(config);
     };
   }
 
@@ -174,9 +173,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       }),
       map(mark => {
         const student: IStudent = studentsService.findStudentById(mark.student);
+        const markRow: IMark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
         config.body.forEach(row => {
           if (row[0] === student.name && row[1] === student.surname) {
-            row[config.headers.indexOf(mark.time)] = mark.value;
+            row[config.headers.indexOf(mark.time)] = markRow[0];
             row[2] = getAverageMark(row.slice(3, row.length));
           } else {
             if (row.length < config.headers.length) {
