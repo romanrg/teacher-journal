@@ -50,6 +50,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.newTeacherConfig.formGroupName.formControls[0].name
       ];
     this.subject.teacher = newTeacher;
+    this.subjectsService.patchSubject(this.subject);
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
 
@@ -159,6 +160,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     subject: ISubject,
     config: ITableConfig ): void {
     marksService.getMarks().pipe(
+      tap(data => console.log(data)),
       filter(mark => mark.subject === subject._id),
       map(mark => {
         if (!config.headers.includes(mark.time)) {
@@ -183,38 +185,44 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           }
         });
       })
-    ).subscribe().unsubscribe();
+    ).subscribe();
   }
   public ngOnInit(): void {
-    this.manager.addSubscription(
-      this.subjectsService.getSubjectByIdFromRoute(this.route.params).subscribe(data => this.subject = data[0])
-    );
-    this.newTeacherConfig = {
-      legend: "Change Subject Teacher",
-      formGroupName: {
-        name: "form",
-        formControls: [
-          {
-            name: "teacher: ",
-            initialValue: "",
-            type: FormControlType.text,
-            validators: [Validators.required],
-            errorMessages: ["This field is required"],
-            placeholder: this.subject.teacher,
-          }
-        ]
+    this.route.params.subscribe(data => {
+      const name: string = data.name;
+      if (this.subjectsService.subjects) {
+        this.subject = this.subjectsService.subjects.filter(subj => subj.name === name)[0];
+        this.newTeacherConfig = {
+          legend: "Change Subject Teacher",
+          formGroupName: {
+            name: "form",
+            formControls: [
+              {
+                name: "teacher: ",
+                initialValue: "",
+                type: FormControlType.text,
+                validators: [Validators.required],
+                errorMessages: ["This field is required"],
+                placeholder: this.subject.teacher,
+              }
+            ]
 
-      },
-    };
-    this.subjectTableConfig = {
-      headers: [...this.subjectHeadersConstantNames, ...this.subjectsService.getUniqueDatesById(this.subject._id)],
-      caption: `${this.subject.name} class students:`,
-      body: [],
-    };
-    this.generateBodyDataFromStudents(this.subjectTableConfig.body);
-    this.addMarksToTheView(
-      this.marksService, this.studentsService, this.subjectsService, this.subject, this.subjectTableConfig
-    );
+          },
+        };
+        this.subjectTableConfig = {
+          headers: [...this.subjectHeadersConstantNames, ...this.subject.uniqueDates],
+          caption: `${this.subject.name} class students:`,
+          body: [],
+        };
+        this.generateBodyDataFromStudents(this.subjectTableConfig.body);
+        this.addMarksToTheView(
+          this.marksService, this.studentsService, this.subjectsService, this.subject, this.subjectTableConfig
+        );
+      } else {
+        this.subjectsService.fetchSubjects().subscribe(data => this.subjectsService.subjects = data);
+        this.subject = this.subjectsService.subjects.filter(subj => subj.name === name)[0];
+      }
+    });
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

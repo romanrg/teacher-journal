@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import {from, Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
+import {HttpClient} from "@angular/common/http";
+import {API, STUDENTS_ROUTE} from "../constants/API";
 
 const students: IStudent[] = [
   {
@@ -195,15 +197,14 @@ const students: IStudent[] = [
 export class StudentsServiceService {
 
   private students: IStudent[];
-  constructor() {
+  private URL: string = `${API}${STUDENTS_ROUTE}`
+  constructor(
+    private http: HttpClient,
+  ) {
     this.students = students;
   }
-
-  public getStudents(): Observable<IStudent[]> {
-    return from([this.students]);
-  }
   public addStudent(student: IStudent): void {
-    student.id = students.length;
+    this.http.post(this.URL, student).subscribe(data => console.log(data));
     this.students.push(student);
   }
   public getOfStudents(): Observable<IStudent> {
@@ -216,5 +217,9 @@ export class StudentsServiceService {
 
   public findStudentById(id): IStudent {
     return students.filter(student => student._id === id)[0];
+  }
+
+  public fetchStudents(): Observable<IStudent[]> {
+    return this.http.get(this.URL);
   }
 }

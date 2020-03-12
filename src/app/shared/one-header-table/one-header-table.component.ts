@@ -1,7 +1,6 @@
 import {Component, DoCheck, Input, OnInit} from "@angular/core";
 import {ITableConfig, tableRow} from "../../common/models/ITableConfig";
 import {SortByPipe} from "../../common/pipes/sort-by.pipe";
-import {config} from "rxjs";
 
 @Component({
   selector: "app-one-header-table",
@@ -19,11 +18,17 @@ export class OneHeaderTableComponent implements OnInit, DoCheck {
   ) { }
 
   public ngOnInit(): void {
-    this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+    if (this.config) {
+      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+
+    }
   }
 
   public ngDoCheck(): void {
-    this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+    if (this.config) {
+      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+
+    }
   }
 
   public changeCurrent($event: number): void {

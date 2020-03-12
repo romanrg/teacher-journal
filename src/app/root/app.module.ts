@@ -31,6 +31,7 @@ import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
+import {HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -66,6 +67,7 @@ import {MarksHighlightDirective} from "../common/directives/marks-highlight.dire
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    HttpClientModule
   ],
   providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe],
   bootstrap: [AppComponent]

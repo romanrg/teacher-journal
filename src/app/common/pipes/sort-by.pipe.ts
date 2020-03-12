@@ -20,8 +20,6 @@ const sortingFunctionForNumbersHigh: Function = (index: number) => (a: number[],
   }
   return  next - curr;
 };
-
-
 let wasSorted: number;
 let isLow: boolean = false;
 
@@ -33,16 +31,22 @@ export class SortByPipe implements PipeTransform {
     let shouldSortNumbers: boolean = false;
     if (!wasSorted || wasSorted !== index) {
       wasSorted = index;
-      isLow = false;
       value.forEach(row => {
         if (typeof row[0] === "number") {
-          return;
+          return
         } else if (index > 1) {
           shouldSortNumbers = true;
         }
       });
-      const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
-      return value.sort(compareFn);
+      if (isLow) {
+        isLow = !isLow;
+        const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
+        return value.sort(compareFn);
+      } else {
+        isLow = !isLow;
+        const compareFn: Function = shouldSortNumbers ? sortingFunctionForNumbersHigh(index) : sortingFunctionForStringsHigh(index);
+        return value.sort(compareFn).reverse();
+      }
     } else {
       if (wasSorted === index) {
         value.forEach(row => {

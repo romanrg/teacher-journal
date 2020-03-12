@@ -72,6 +72,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate {
 
   public submit($event: IStudent): void {
     this.isSaved = true;
+    console.log($event);
     this.studentsService.addStudent($event);
     this.router.navigate(["/students"]);
   }

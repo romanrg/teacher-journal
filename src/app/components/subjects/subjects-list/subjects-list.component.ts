@@ -1,22 +1,36 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {SubjectsService} from "../../../common/services/subjects.service";
+import {ISubject} from "../../../common/models/ISubject";
+import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 
 @Component({
   selector: "app-subjects-list",
   templateUrl: "./subjects-list.component.html",
   styleUrls: ["./subjects-list.component.sass"]
 })
-export class SubjectsListComponent implements OnInit {
+export class SubjectsListComponent implements OnInit, OnDestroy {
 
+  public manager: SubscriptionManager;
+  public subjects: ISubject[];
   constructor(
     public subjectService: SubjectsService,
-    // public route: Router
-  ) { }
+  ) {
+    this.manager = new SubscriptionManager();
+  }
 
   public ngOnInit(): void {
+    this.manager.addSubscription(this.subjectService.fetchSubjects().subscribe(data => {
+      this.subjects = data;
+      this.subjectService.subjects = this.subjects;
+      console.log(this.subjectService.subjects);
+    }));
+
   }
 
   public addNewSubject(): void {
-    // this.route.navigate("/new-subject");
+  }
+
+  public ngOnDestroy(): void {
+    this.manager.removeAllSubscription();
   }
 }
