@@ -1,9 +1,5 @@
 <ng-container [ngSwitch]="cellType">
   <td *ngSwitchCase="tdType" class="table-cell table-cell__td"><ng-container appMarksHighlight>{{cellCut(cell)}}</ng-container></td>
-  <div class="wrapper" *ngSwitchCase="thType"><th  class="table-cell table-cell__th">{{dateTransformer(cell)}}</th><app-button
-    class="table-cell__btn"
-    [textContent]="'V'"
-    (click)="sortColumn()"
-    contenteditable="false"
-  ></app-button></div>
+  <th *ngSwitchCase="thType" (click)="sortColumn()" class="table-cell table-cell__th">{{dateTransformer(cell)}}
+    <span class="table-cell__span" [class.table-cell__span--invisible]="!isSorted">^</span></th>
 </ng-container>

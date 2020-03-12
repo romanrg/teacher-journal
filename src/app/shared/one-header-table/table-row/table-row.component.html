@@ -3,9 +3,11 @@
       <app-table-cell
         (sortEmitter)="emitTopLevel(i)"
         [attr.index]="i"
-        [ngStyle]="{'width': getCellWidth()}"
+        [isSorted]="sortedCell === i"
         [cell]="cell"
         [cellType]="cellType"
         class="table-row__cell"></app-table-cell>
     </ng-container>
 </tr>
+
+<!--[ngStyle]="{'width': getCellWidth()}"-->

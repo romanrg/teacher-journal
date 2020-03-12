@@ -10,6 +10,7 @@ export class TableRowComponent implements OnInit {
   @Input() public cellType: string;
   @Input() public row: string[];
   @Output() public emitSorting: EventEmitter = new EventEmitter();
+  public sortedCell: number;
   constructor() { }
 
   ngOnInit(): void {
@@ -21,5 +22,6 @@ export class TableRowComponent implements OnInit {
 
   public emitTopLevel(index: number): void {
     this.emitSorting.emit(index);
+    this.sortedCell = index;
   }
 }

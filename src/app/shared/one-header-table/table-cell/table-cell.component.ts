@@ -14,10 +14,10 @@ export class TableCellComponent implements OnInit {
 
   @Input() public cell: string;
   @Input() public cellType: string;
+  @Input() public isSorted: boolean;
   @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
-
   constructor(
     private numberPipe: DecimalPipe,
     private datePipe: DatePipe
