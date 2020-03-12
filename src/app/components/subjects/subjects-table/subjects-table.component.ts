@@ -10,13 +10,11 @@ import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {ITableConfig} from "../../../common/models/ITableConfig";
 import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
-import {getAverageMark} from "../../../common/helpers/getAverageMark";
 import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
 import {DatePipe} from "@angular/common";
 import {MarksServiceService} from "../../../common/services/marks-service.service";
 import {IStudent} from "../../../common/models/IStudent";
-import {IMark} from "../../../common/models/IMark";
-import Func = jasmine.Func;
+import {IMark, Mark} from "../../../common/models/IMark";
 
 @Component({
   selector: "app-subjects-table",
@@ -110,10 +108,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return function (value: number, arr): void {
       const uniqueDateIndex: number = arr[0].getAttribute("index") - 3;
       const markDate: number = timeStampArray[uniqueDateIndex];
-      const newMarkObject: IMark = marksService.mergeDataForMarks(
-        student._id, subject._id, markDate, +value
+      const newMark: Mark = new Mark(
+        student._id, subject._id, +value, markDate
       );
-      marksService.addMarks(newMarkObject);
+      marksService.addMarks(newMark);
       renderer.removeChild(arr[0], arr[1]);
       marksRenderFn(marksService, studentsService, subjectsService, subject, config);
     };
@@ -173,11 +171,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       }),
       map(mark => {
         const student: IStudent = studentsService.findStudentById(mark.student);
-        const markRow: IMark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
+        const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
         config.body.forEach(row => {
           if (row[0] === student.name && row[1] === student.surname) {
             row[config.headers.indexOf(mark.time)] = markRow[0];
-            row[2] = getAverageMark(row.slice(3, row.length));
+            row[2] = Mark.getAverageMark(row.slice(3, row.length));
           } else {
             if (row.length < config.headers.length) {
               row.length = config.headers.length;

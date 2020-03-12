@@ -8,6 +8,5 @@ export interface ISubject {
   address?: string;
   _id: string | number;
   marks?: (string|number)[];
-  students?: Map<string, number[]>;
   uniqueDates?: number[];
 }

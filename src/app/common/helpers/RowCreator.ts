@@ -4,7 +4,7 @@ export class RowCreator {
     this.row = [];
   }
 
-  public generateRowFromObject(object: { [name: string]: any }, config: string[]): string[] {
+  public generateRowFromObject(object: { [name: string]: string }, config: string[]): string[] {
     [...config.values()].map(prop => this.row.push(object[prop]));
     return this.row;
   }
