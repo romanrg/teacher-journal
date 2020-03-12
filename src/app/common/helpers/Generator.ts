@@ -55,7 +55,6 @@ export class Generator {
   }
 
 }
-
 export class DatePicker extends Generator {
   constructor(private renderer: Renderer2) {
     super(renderer);
@@ -100,7 +99,6 @@ export class DatePicker extends Generator {
       });
   }
 }
-
 export class NumberPicker extends Generator {
   constructor(private renderer: Renderer2, min: number, max: number) {
     super(renderer);
@@ -128,7 +126,7 @@ export class NumberPicker extends Generator {
     this.appendChild(form, submitBtn);
     this.renderer.listen(form, "submit", (e) => {
       e.preventDefault();
-      onsubmitAction(e.target[FormControlType.number].value);
+      onsubmitAction(e.target[FormControlType.number].value,  [container, form]);
     });
   }
 }

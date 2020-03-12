@@ -9,5 +9,5 @@ export interface ISubject {
   _id: string | number;
   marks?: (string|number)[];
   students?: Map<string, number[]>;
-  uniqueDates?: string[];
+  uniqueDates?: number[];
 }

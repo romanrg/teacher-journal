@@ -20,7 +20,7 @@ const subjects: ISubject[] = [
     "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
     "anim id est laborum.",
     students: new Map(),
-    uniqueDates: [1583193600000],
+    uniqueDates: [1581193600000, 1583193600000],
   },
   {
     _id: 1,
@@ -82,29 +82,12 @@ export class SubjectsService {
       );
   }
 
-  public addStudentsWithMarkToTheSubject(
-    _id: ISubject["_id"], student: IStudent, dateIndex: string, mark: number
-  ): void {
-    const subj: ISubject = subjects.find(s => s._id === _id);
-    const mapKey: string = JSON.stringify(student);
-    const marksArray: number[] = Array(subj.uniqueDates.length).fill("");
-    marksArray[dateIndex] = mark;
-    if (!subj.students.has(mapKey)) {
-      subj.students.set(mapKey, marksArray);
-    } else {
-      const prevMarks: number[] = subj.students.get(mapKey);
-      prevMarks[dateIndex] = mark;
-      subj.students.set(mapKey, prevMarks);
-    }
-  }
-
-
   public addUniqueDate(_id: (string|number), date: number): void {
     subjects.filter(sub => sub._id === _id)[0].uniqueDates.push(date);
   }
 
-  public getUniqueDate(_id: (string|number)): Observable<number[]> {
-    return from(subjects.filter(sub => sub._id === _id)[0].uniqueDates);
+  public getUniqueDatesById(_id: string ): number[] {
+    return subjects.filter(sub => sub._id === _id)[0].uniqueDates.filter((a, b) => a - b);
   }
 
 }
