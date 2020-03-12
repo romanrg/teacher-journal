@@ -1,4 +1,5 @@
 import {ITeacher} from "./ITeacher";
+import {ValidatorFn} from "@angular/forms";
 
 export interface IFormConfig {
   legend: string;
@@ -10,7 +11,7 @@ export interface IFormControlConfig {
   name: string;
   initialValue: string;
   type: FormControlType;
-  validators: any;
+  validators: ValidatorFn[];
   errorMessages: string[];
   placeholder?: string | ITeacher;
 }

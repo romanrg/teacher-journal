@@ -1,9 +1,5 @@
-import {RowCreator} from "../helpers/RowCreator";
-
 export interface ITableConfig {
   caption: string;
   headers: string[];
-  body: tableRow[];
+  body: string[][];
 }
-
-export type tableRow = RowCreator;

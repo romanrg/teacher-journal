@@ -20,7 +20,7 @@ const subjects: ISubject[] = [
     "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
     "anim id est laborum.",
     students: new Map(),
-    uniqueDates: [1581193600000, 1583193600000],
+    uniqueDates: [],
   },
   {
     _id: 1,

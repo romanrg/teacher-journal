@@ -1,11 +1,3 @@
-export interface IMark {
-  student: (string|number);
-  subject: (string|number);
-  value: (number);
-  time: number;
-  id: (string|number);
-}
-
 export class Mark {
   constructor(
     public student: (string|number),
