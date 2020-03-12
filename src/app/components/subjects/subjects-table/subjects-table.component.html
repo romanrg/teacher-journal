@@ -1,0 +1,14 @@
+<!--(keydown.enter)="applyNewValue($event.target)"-->
+<div class="container" >
+  <app-one-header-table
+    [config]="subjectTableConfig"
+    (click)="generateInput($event.target)"
+  ></app-one-header-table>
+  <app-button
+    class="subject-table__btn"
+    [textContent]="'+'"
+    [screenReader]="'Add new date'"
+    (click)="addNewColumn()"
+  ></app-button>
+  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
+</div>

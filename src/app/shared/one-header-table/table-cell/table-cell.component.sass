@@ -1,0 +1,26 @@
+@import "src/styles/variables.sass"
+.table-cell
+  display: flex
+  flex-grow: 1
+  padding: 1rem
+  align-items: center
+  justify-content: center
+.table-cell__th
+  display: flex
+  justify-content: center
+  align-items: center
+  text-transform: uppercase
+  border-bottom: 0.01rem solid transparent
+  transition: all 0.3s
+  &:hover
+    border-bottom: 0.01rem solid $color
+    cursor: pointer
+    color: $active-color
+.table-cell__span
+  color: $active-color
+  padding-left: 0.5rem
+  transition: all 0.3s
+  &--invisible
+    display: none
+  &--top
+    transform: rotate(180deg) scaleX(-1)

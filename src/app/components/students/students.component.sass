@@ -1,0 +1,26 @@
+@import "src/styles/variables.sass"
+.container
+  display: flex
+  flex-direction: column
+.students__button
+  box-sizing: border-box
+  background: transparent
+  display: flex
+  font-size: 2rem
+  min-height: 4rem
+  width: 4rem
+  cursor: pointer
+  color: $color
+  border-radius: 10px
+  box-shadow:  15px 15px 29px #272727, -15px -15px 29px #353535
+  transition: all 0.3s
+  &:hover
+    border-radius: 10px
+    box-shadow: inset 15px 15px 29px #272727, inset -15px -15px 29px #353535
+
+.table__link
+  text-decoration: none
+  display: flex
+  align-self: center
+  margin-top: 2rem
+  cursor: pointer

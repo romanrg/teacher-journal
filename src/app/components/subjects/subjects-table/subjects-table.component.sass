@@ -1,0 +1,28 @@
+@import "src/styles/variables.sass"
+.container
+  display: flex
+  flex-direction: column
+  margin: 0 auto
+.subject-table__form
+  margin-top: 3rem
+  display: flex
+  flex-direction: column
+  max-width: 20rem
+  padding: 2rem
+  align-self: center
+  border-radius: 30px
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.subject-table__btn
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  display: flex
+  align-self: center
+  color: $color
+  font-size: 2rem
+  position: absolute
+  left: 75vw
+  transition: all 0.3s
+  &:hover
+    color: $active-color
+    cursor: pointer

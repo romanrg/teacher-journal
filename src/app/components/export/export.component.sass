@@ -1,0 +1,43 @@
+@import "src/styles/variables.sass"
+.container
+  display: flex
+  flex-wrap: wrap
+  margin: 3rem auto
+  max-width: 60rem
+  align-items: center
+  justify-content: center
+  flex-direction: column
+.container--btn
+  max-width: 30rem
+  flex-grow: 1
+  justify-content: space-between
+  flex-direction: row
+.export__header
+  text-transform: uppercase
+  color: $active-color
+  display: flex
+  user-select: none
+.export__btn
+  height: 10rem
+  width: 10rem
+  display: flex
+  margin-right: 1rem
+  &:hover
+    cursor: pointer
+.export__btn--pdf
+  -webkit-mask-image: url("src/assets/icon-pdf.svg")
+  mask-image: url("src/assets/icon-pdf.svg")
+.export__btn--excel
+  -webkit-mask-image: url("src/assets/icon-excel.svg")
+  mask-image: url("src/assets/icon-excel.svg")
+.export__btn--pdf,
+.export__btn--excel
+  background-color: $color
+  mask-size: 50%
+  mask-repeat: no-repeat
+  mask-position: center
+  transition: all  0.3s
+  &:hover
+    mask-size: 70%
+    background-color: $active-color
+

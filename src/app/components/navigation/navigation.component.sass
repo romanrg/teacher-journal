@@ -1,0 +1,24 @@
+@import "src/styles/variables.sass"
+.app-navigation__list
+  background: inherit
+  display: flex
+  align-items: center
+  justify-content: space-between
+  max-width: 40rem
+  margin: 0 auto
+
+.app-navigation__item
+  padding: 1rem
+  list-style: none
+
+
+.app-navigation__link
+  text-decoration: none
+  color: $color
+  transition: all 0.3s
+  &:hover
+    color: $active-color
+
+.active
+  border-bottom: 0.125rem solid white
+  color: $active-color

@@ -1,0 +1,16 @@
+
+<div class="container">
+  <app-one-header-table
+    [config]="tableConfig"
+    class="student-table__table"
+  ></app-one-header-table>
+  <a routerLink="/students/new-student" class="table__link">
+    <app-button
+      class="students__button"
+      screenReader="Add new student"
+      textContent="+"
+    ></app-button>
+  </a>
+</div>
+
+

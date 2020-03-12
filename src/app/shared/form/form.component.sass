@@ -1,0 +1,80 @@
+$color: #FFFFFF
+$active-color: #ffa500
+$error: red
+.form
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: space-between
+  max-width: 40rem
+  border-radius: 30px
+  background: transparent
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  padding: 2rem
+  box-sizing: border-box
+  margin: 3rem auto
+
+.form__legend
+  text-transform: uppercase
+  color: $active-color
+  padding: 1rem
+  box-sizing: border-box
+  display: flex
+  align-self: center
+  user-select: none
+.form__label
+  color: $color
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-grow: 1
+  width: 90%
+  padding: 1rem
+.form__input-wrapper
+  flex-grow: 1
+  display: flex
+  flex-direction: column
+.form__label-name
+  width: 15%
+  display: flex
+  align-self: flex-end
+  justify-content: flex-end
+  text-transform: capitalize
+
+.form__input
+  margin-left: 1rem
+  padding: 0.5rem
+  font: inherit
+  flex-grow: 1
+  border: none
+  background: transparent
+  border-bottom: 0.05rem solid $active-color
+  color: $color
+
+.form__submit
+  flex-grow: 1
+  background: transparent
+  border: none
+  padding: 2rem
+  display: flex
+  tab-index: 1
+  color: $active-color
+  align-self: center
+  text-transform: uppercase
+  font: inherit
+  align-items: center
+  justify-content: center
+  cursor: pointer
+  border-radius: 10px
+  box-shadow: 9px 9px 18px #272727, -9px -9px 18px #353535
+  &[disabled]
+    filter: grayscale(100%)
+
+.form__span--error
+  color: $error
+  font-size: 0.8rem
+  padding-left: 1rem
+  display: flex
+  align-self: center
+  margin-top: 0.3rem
+  margin-bottom: 1rem
