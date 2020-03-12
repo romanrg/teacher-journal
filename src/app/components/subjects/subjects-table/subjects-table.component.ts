@@ -74,7 +74,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return (
       target.tagName.toLowerCase() === "th" &&
       !this.subjectHeadersConstantNames.includes(target.textContent) &&
-      target.textContent === "Select date ^"
+      target.textContent.includes("Select date")
     );
   }
 

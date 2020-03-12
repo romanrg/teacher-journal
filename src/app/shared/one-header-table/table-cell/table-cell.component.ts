@@ -17,6 +17,7 @@ export class TableCellComponent implements OnInit {
   @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
+  public sortCount: number = 1;
   constructor(
     private numberPipe: DecimalPipe,
     private datePipe: DatePipe
@@ -42,6 +43,11 @@ export class TableCellComponent implements OnInit {
 
   public sortColumn(): void {
     this.sortEmitter.emit();
+    this.sortCount++;
+  }
+
+  public isEven(): boolean {
+    return !(this.sortCount & 1);
   }
 
   public dateTransformer(cell: String): number {

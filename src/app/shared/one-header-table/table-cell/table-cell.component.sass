@@ -16,8 +16,11 @@
     border-bottom: 0.01rem solid $color
     cursor: pointer
     color: $active-color
-.table-cell__span--invisible
-  display: none
 .table-cell__span
   color: $active-color
   padding-left: 0.5rem
+  transition: all 0.3s
+  &--invisible
+    display: none
+  &--top
+    transform: rotate(180deg) scaleX(-1)
