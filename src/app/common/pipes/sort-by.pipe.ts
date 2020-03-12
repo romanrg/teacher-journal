@@ -11,8 +11,15 @@ const sortingFunctionForStrings: Function = (index: number) => (a: string[], b: 
 };
 
 const sortingFunctionForNumbers: Function = (index: number) => (a: number[], b: number[]) => {
-  let curr: (number|string) = a[index];
-  let next: (number|string)  = b[index];
+  let curr: (number) = a[index];
+  let next: (number)  = b[index];
+  if (!curr) {
+    curr = 0;
+  }
+
+  if (!next) {
+    next = 0;
+  }
   return  next - curr;
 };
 

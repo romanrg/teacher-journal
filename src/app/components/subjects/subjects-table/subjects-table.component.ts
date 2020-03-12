@@ -46,7 +46,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.dateGenerator = new DatePicker(this.renderer);
     this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
   }
-  // kk
+
   public changeTeacher($event: Event): void {
     const newTeacher: string = $event[
       this.newTeacherConfig.formGroupName.formControls[0].name
@@ -55,23 +55,23 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
 
-  // kk
+
   public getCellIndex(target: EventTarget): number {
     return +target.parentNode.getAttribute("index");
   }
 
-  // kk
+
   public addNewColumn(): void {
     this.subjectTableConfig.headers.push("Select date");
     this.subjectTableConfig.body.forEach(row => row.length = this.subjectTableConfig.headers.length);
   }
 
-  // kk
+
   public shouldAddNumberInput(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
   }
 
-  // kk
+
   public shouldAddDateInput(target: EventTarget): boolean {
     return (
       target.tagName.toLowerCase() === "th" &&
@@ -80,7 +80,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     );
   }
 
-  // kk
+
   public submitDate(
     subjectsService: SubjectsService,
     subject: ISubject,
@@ -91,7 +91,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       config.headers = [...config.headers.slice(0, 3), ...subjectsService.getUniqueDatesById(subject._id)];
     };
   }
-  //kk
+
   public submitMark(
     target: EventTarget,
     studentsService: StudentsServiceService,
@@ -119,6 +119,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       console.log(config);
     };
   }
+
   public generateInput(target: EventTarget): void {
       if (this.shouldAddDateInput(target)) {
         this.dateGenerator.generateDatePicker(
@@ -222,4 +223,3 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
 
 }
-const wrapper: Function = (fn: Function, ...args: any): Function => (last: any): void => fn(...args, last);
