@@ -3,7 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {filter, map, tap} from "rxjs/internal/operators";
+import {concatMap, filter, last, map, mergeAll, pluck, tap, flatMap, concat} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
@@ -15,6 +15,7 @@ import {DatePipe} from "@angular/common";
 import {MarksServiceService} from "../../../common/services/marks-service.service";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
+import {merge} from "rxjs";
 
 @Component({
   selector: "app-subjects-table",
@@ -54,22 +55,18 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
 
-
   public getCellIndex(target: EventTarget): number {
     return +target.parentNode.getAttribute("index");
   }
-
 
   public addNewColumn(): void {
     this.subjectTableConfig.headers.push("Select date");
     this.subjectTableConfig.body.forEach(row => row.length = this.subjectTableConfig.headers.length);
   }
 
-
   public shouldAddNumberInput(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
   }
-
 
   public shouldAddDateInput(target: EventTarget): boolean {
     return (
@@ -78,7 +75,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       target.textContent.includes("Select date")
     );
   }
-
 
   public submitDate(
     subjectsService: SubjectsService,
@@ -122,7 +118,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       if (this.shouldAddDateInput(target)) {
         this.dateGenerator.generateDatePicker(
           target,
-          this.subjectsService.getUniqueDatesById(this.subject._id),
+          this.subjectsService.getUniqueDatesById(this.subject.id),
           this.datePipe,
           this.submitDate(this.subjectsService, this.subject, this.subjectTableConfig)
         );
@@ -142,16 +138,25 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         );
       }
   }
-  public generateBodyDataFromStudents(bodyData: ITableConfig["body"]): void {
-    this.studentsService.getOfStudents().pipe(
+  public generateBodyDataFromStudents(): void {
+    const result: string[][] = [];
+    this.manager.addSubscription(this.studentsService.getOfStudents().pipe(
       map(data => {
         const creator: RowCreator = new RowCreator();
         const row: string[] = creator.generateRowFromObject(
           data, ["name", "surname", "average mark"]
         );
-        bodyData.push(row);
-      })
-    ).subscribe().unsubscribe();
+        result.push(row);
+        if (this.studentsService.getStudents().length) {
+          if (!this.studentsService.getStudents().includes(data)) {
+            this.studentsService.pushStudent(data);
+          }
+        } else {
+          this.studentsService.pushStudent(data);
+        }
+      }),
+    ).subscribe());
+    return result;
   }
   public addMarksToTheView(
     marksService: MarksServiceService,
@@ -159,73 +164,97 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     subjectService: SubjectsService,
     subject: ISubject,
     config: ITableConfig ): void {
-    marksService.getMarks().pipe(
-      tap(data => console.log(data)),
-      filter(mark => mark.subject === subject._id),
-      map(mark => {
-        if (!config.headers.includes(mark.time)) {
-          config.headers.push(mark.time);
-        }
-        if (!subjectService.getUniqueDatesById(subject._id).includes(mark.time)) {
-          subjectService.addUniqueDate(subject._id, mark.time);
-        }
-        return mark;
-      }),
-      map(mark => {
-        const student: IStudent = studentsService.findStudentById(mark.student);
-        const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
-        config.body.forEach(row => {
-          if (row[0] === student.name && row[1] === student.surname) {
-            row[config.headers.indexOf(mark.time)] = markRow[0];
-            row[2] = Mark.getAverageMark(row.slice(3, row.length));
-          } else {
-            if (row.length < config.headers.length) {
-              row.length = config.headers.length;
-            }
+    return marksService.getSubjectMarks(subject.id)
+      .pipe(
+        map(marks => {
+          if (marks.length) {
+            marks.forEach(mark => {
+              if (!subject.uniqueDates.includes(mark.time)) {
+                console.log(subject.id, mark.time);
+                subjectService.addUniqueDate(subject.id, mark.time);
+              }
+              if (!config.headers.includes(mark.time)) {
+                config.headers.push(mark.time);
+              }
+
+            });
           }
-        });
-      })
-    ).subscribe();
+          return marks;
+        }),
+        map(marks => {
+          marks.forEach(mark => {
+            const student: IStudent = studentsService.findStudentById(mark.student);
+            const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
+            config.body
+              .forEach(row => {
+                if (row[0] === student.name && row[1] === student.surname) {
+                  row[config.headers.indexOf(mark.time)] = markRow[0];
+                  row[2] = Mark.getAverageMark(row.slice(3, row.length));
+                } else {
+                  if (row.length < config.headers.length) {
+                    row.length = config.headers.length;
+                  }
+                }
+              });
+
+          });
+        })
+      ).subscribe();
   }
   public ngOnInit(): void {
-    this.route.params.subscribe(data => {
-      const name: string = data.name;
-      if (this.subjectsService.subjects) {
-        this.subject = this.subjectsService.subjects.filter(subj => subj.name === name)[0];
-        this.newTeacherConfig = {
-          legend: "Change Subject Teacher",
-          formGroupName: {
-            name: "form",
-            formControls: [
-              {
-                name: "teacher: ",
-                initialValue: "",
-                type: FormControlType.text,
-                validators: [Validators.required],
-                errorMessages: ["This field is required"],
-                placeholder: this.subject.teacher,
-              }
-            ]
-
-          },
-        };
-        this.subjectTableConfig = {
-          headers: [...this.subjectHeadersConstantNames, ...this.subject.uniqueDates],
-          caption: `${this.subject.name} class students:`,
-          body: [],
-        };
-        this.generateBodyDataFromStudents(this.subjectTableConfig.body);
-        this.addMarksToTheView(
-          this.marksService, this.studentsService, this.subjectsService, this.subject, this.subjectTableConfig
-        );
-      } else {
-        this.subjectsService.fetchSubjects().subscribe(data => this.subjectsService.subjects = data);
-        this.subject = this.subjectsService.subjects.filter(subj => subj.name === name)[0];
+    this.manager.addSubscription(this.route.params.pipe(
+      pluck("name"),
+      tap(data => {
+        if (this.subjectsService.subjects.length) {
+          this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
+        } else {
+          this.manager.addSubscription(
+            this.subjectsService.fetchSubjects().subscribe(subs => {
+              this.subjectsService.subjects = subs;
+              this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
+            })
+          );
+        }
+        this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
+        this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+        this.manager.addSubscription(this.addMarksToTheView(
+          this.marksService,
+          this.studentsService,
+          this.subjectsService,
+          this.subject,
+          this.subjectTableConfig
+        ));
       }
-    });
+    )).subscribe());
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
 
+  public getTeacherFormConfig(subject: ISubject): IFormConfig {
+    return {
+      legend: "Change Subject Teacher",
+      formGroupName: {
+        name: "form",
+        formControls: [
+          {
+            name: "teacher: ",
+            initialValue: "",
+            type: FormControlType.text,
+            validators: [Validators.required],
+            errorMessages: ["This field is required"],
+            placeholder: subject.teacher,
+          }
+        ]
+
+      },
+    };
+  }
+  public getInitialTableConfig(constants: string[], subject: ISubject): ITableConfig {
+    return {
+      headers: [...constants, ...subject.uniqueDates],
+      caption: `${subject.name} class students:`,
+      body: this.generateBodyDataFromStudents(),
+    };
+  }
 }

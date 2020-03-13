@@ -19,12 +19,14 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.manager.addSubscription(this.subjectService.fetchSubjects().subscribe(data => {
-      this.subjects = data;
-      this.subjectService.subjects = this.subjects;
-      console.log(this.subjectService.subjects);
-    }));
-
+    if (this.subjectService.subjects.length) {
+      this.subjects = this.subjectService.subjects;
+    } else {
+      this.manager.addSubscription(this.subjectService.fetchSubjects().subscribe(data => {
+        this.subjects = data;
+        this.subjectService.subjects = this.subjects;
+      }));
+    }
   }
 
   public addNewSubject(): void {

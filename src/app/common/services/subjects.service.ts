@@ -83,26 +83,23 @@ export class SubjectsService {
     return this._subjects;
   }
 
-  public fetchSubjectById(id: string): Observable<ISubject> {
-    return this.http.get(this.URL);
-  }
-
   public addSubject(subject: ISubject): void {
     console.log(subject);
     this.http.post(this.URL, subject).subscribe(data => console.log(data));
   }
 
   public patchSubject(subject: ISubject): void {
-    this.http.post(this.URL, subject);
+    this.http.patch(`${this.URL}/${subject.id}`, subject).subscribe();
   }
 
-  public addUniqueDate(_id: (string|number), date: number): void {
-    this._subjects.filter(sub => sub._id === _id)[0].uniqueDates.push(date);
-    this.patchSubject(subjects.filter(sub => sub._id === _id)[0]);
+  public addUniqueDate(id: (string|number), date: number): void {
+    this._subjects.filter(sub => sub.id === id)[0].uniqueDates.push(date);
+    const subject: ISubject = this._subjects.filter(sub => sub.id === id)[0];
+    this.patchSubject(subject);
   }
 
-  public getUniqueDatesById(_id: string ): number[] {
-    return this._subjects.filter(sub => sub._id === _id)[0].uniqueDates.filter((a, b) => a - b);
+  public getUniqueDatesById(id: string ): number[] {
+    return this._subjects.filter(sub => sub.id === id)[0].uniqueDates.filter((a, b) => a - b);
   }
 
 }

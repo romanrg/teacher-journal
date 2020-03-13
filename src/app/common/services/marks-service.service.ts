@@ -42,4 +42,9 @@ export class MarksServiceService {
     // return from(this._marks);
   }
 
+  public getSubjectMarks(subject: string): Observable<Mark[]> {
+    const queryParams = {subject};
+    return this.http.get(this.URL, {params: queryParams});
+  }
+
 }
