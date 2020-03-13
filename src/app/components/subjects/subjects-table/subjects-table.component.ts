@@ -82,8 +82,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     config: ITableConfig,
   ): void {
     return function(value: string): void {
-      subjectsService.addUniqueDate(subject._id, (new Date(value)).getTime());
-      config.headers = [...config.headers.slice(0, 3), ...subjectsService.getUniqueDatesById(subject._id)];
+      subjectsService.addUniqueDate(subject.id, (new Date(value)).getTime());
+      config.headers = [...config.headers.slice(0, 3), ...subjectsService.getUniqueDatesById(subject.id)];
     };
   }
 
@@ -101,12 +101,12 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     const student: IStudent = studentsService.getStudentIdByName(
       config.body[studentRow][0], config.body[studentRow][1]
     );
-    const timeStampArray: number[] = subjectsService.getUniqueDatesById(subject._id);
+    const timeStampArray: number[] = subjectsService.getUniqueDatesById(subject.id);
     return function (value: number, arr): void {
       const uniqueDateIndex: number = arr[0].getAttribute("index") - 3;
       const markDate: number = timeStampArray[uniqueDateIndex];
       const newMark: Mark = new Mark(
-        student._id, subject._id, +value, markDate
+        student.id, subject.id, +value, markDate
       );
       marksService.addMarks(newMark);
       renderer.removeChild(arr[0], arr[1]);
@@ -182,24 +182,34 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           return marks;
         }),
         map(marks => {
-          marks.forEach(mark => {
-            const student: IStudent = studentsService.findStudentById(mark.student);
-            const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
-            config.body
-              .forEach(row => {
-                if (row[0] === student.name && row[1] === student.surname) {
-                  row[config.headers.indexOf(mark.time)] = markRow[0];
-                  row[2] = Mark.getAverageMark(row.slice(3, row.length));
-                } else {
-                  if (row.length < config.headers.length) {
-                    row.length = config.headers.length;
-                  }
-                }
-              });
+          if(marks.length) {
+            marks.forEach(mark => {
+              const student: IStudent = studentsService.findStudentById(mark.student);
+              const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
 
-          });
+              config.body
+                .forEach(row => {
+                  if (row[0] === student.name && row[1] === student.surname) {
+                    row[config.headers.indexOf(mark.time)] = markRow[0];
+                    row[2] = Mark.getAverageMark(row.slice(3, row.length));
+                  } else {
+
+                    if (row.length < config.headers.length) {
+                      row.length = config.headers.length;
+                    }
+                  }
+                });
+            });
+          } else {
+            config.body.forEach(row => {
+              if (row.length < config.headers.length) {
+                row.length = config.headers.length;
+              }
+            });
+          }
+
         })
-      ).subscribe();
+      ).subscribe(data => console.log(config.body));
   }
   public ngOnInit(): void {
     this.manager.addSubscription(this.route.params.pipe(

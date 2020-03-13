@@ -27,10 +27,15 @@ export class MarksServiceService {
       mark.id = idGeneretor();
       if (filtered === -1) {
         this._marks.push(mark);
+        this.submitMark(mark);
         return true;
       } else {
         this._marks[filtered] = mark;
       }
+  }
+
+  public submitMark(mark: Mark): void {
+    this.http.post(this.URL, mark).subscribe().unsubscribe();
   }
 
   get marks(): Mark[] {
