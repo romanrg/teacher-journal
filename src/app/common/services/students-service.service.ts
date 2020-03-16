@@ -30,7 +30,6 @@ export class StudentsServiceService {
 
   public searchStudent(searchString: string): Observable<IStudent[]> {
     if (this.lastSearchString !== searchString) {
-      console.log(searchString);
       this.lastSearchString = searchString;
       const params: HttpParams = new HttpParams()
         .set("q", searchString);

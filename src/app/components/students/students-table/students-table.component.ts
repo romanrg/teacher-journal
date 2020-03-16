@@ -65,6 +65,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   }
 
   public deleteStudent($event: Event): void {
+    $event.preventDefault()
     const studentId: string = $event.target.parentNode.parentNode.parentNode.getAttribute("rowindex");
     this.manager.addSubscription(this.studentsService.removeStudent(this.studentsService.getStudents()[studentId].id)
       .subscribe(data => {

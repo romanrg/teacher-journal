@@ -34,6 +34,7 @@ import {MarksHighlightDirective} from "../common/directives/marks-highlight.dire
 import {HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
+import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {modifyHeadersProvider} from "../common/interceptors/modify-headers.inter
     TableCellComponent,
     HighlightDirective,
     MarksHighlightDirective,
-    SearchBarComponent
+    SearchBarComponent,
+    EmptyDataComponent
   ],
   imports: [
     BrowserModule,

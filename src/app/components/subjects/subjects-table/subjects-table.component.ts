@@ -278,24 +278,40 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
 
   public deleteDate($event: Event): void {
+    $event.preventDefault();
     const dateIndex: number = $event.target.parentNode.getAttribute("index") - 3;
     const date = this.subject.uniqueDates[dateIndex];
-    this.subject.uniqueDates = this.subject.uniqueDates.filter((ts, i) => i !== dateIndex);
-    this.subjectTableConfig.headers = this.subjectTableConfig.headers.filter((ts, i) => i !== dateIndex);
-    this.marksService.deleteMarks(this.subject.id, date).forEach(obs => {
-      obs.subscribe(data => {
-        this.marksService.getMarks().subscribe(marks => {
-          this.marksService.marks = marks;
-          this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
-          this.manager.addSubscription(this.addMarksToTheView(
-            this.marksService,
-            this.studentsService,
-            this.subjectsService,
-            this.subject,
-            this.subjectTableConfig
-          ));
-        })
-      });
-    })
+    if (this.marksService.deleteMarks(this.subject.id, date).length) {
+      this.marksService.deleteMarks(this.subject.id, date).forEach(obs => {
+        obs.subscribe(data => {
+          this.marksService.getMarks().subscribe(marks => {
+            this.marksService.marks = marks;
+            this.subject.uniqueDates = this.subject.uniqueDates.filter((ts) => ts !== date);
+            console.log(this.subject.uniqueDates);
+            this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+            this.manager.addSubscription(this.addMarksToTheView(
+              this.marksService,
+              this.studentsService,
+              this.subjectsService,
+              this.subject,
+              this.subjectTableConfig
+            ));
+
+          })
+        });
+      })
+    } else {
+      this.subjectsService.patchSubject(this.subject);
+      this.subject.uniqueDates = this.subject.uniqueDates.filter((ts, i) => i !== dateIndex);
+      this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+      this.manager.addSubscription(this.addMarksToTheView(
+        this.marksService,
+        this.studentsService,
+        this.subjectsService,
+        this.subject,
+        this.subjectTableConfig
+      ));
+    }
+
   }
 }

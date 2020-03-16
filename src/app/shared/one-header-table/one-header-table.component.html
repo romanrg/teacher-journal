@@ -1,5 +1,5 @@
 <ng-container *ngIf="config.body.length === 0; else table">
-  <p class="table__text--empty">No data available...</p>
+  <app-empty-data></app-empty-data>
 </ng-container>
 <ng-template #table>
   <table class="table" >
