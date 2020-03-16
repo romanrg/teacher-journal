@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
-import {debounceTime, switchMap, first, startWith} from "rxjs/internal/operators";
+import {debounceTime, switchMap, first, startWith, share} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../common/services/students-service.service";
 
 @Component({
@@ -28,11 +28,8 @@ export class SearchBarComponent implements OnInit {
     this.searchBar.valueChanges
       .pipe(
         startWith(this.searchBar.value),
-        debounceTime(600),
-        switchMap(searchInput => {
-          return this.studentsService.searchStudent(searchInput.search);
-        }),
-        first(),
+        debounceTime(200),
+        switchMap(searchInput => this.studentsService.searchStudent(searchInput.search)),
       )
       .subscribe(data => this.searchRes.emit(data));
 

@@ -1,16 +1,21 @@
-<table class="table" >
-  <app-table-caption class="table__caption" [caption]="config.caption"></app-table-caption>
-  <app-table-head (emitSortingEvent)="executeSorting($event)" class="table__head" [headers]="config.headers"></app-table-head>
-  <app-table-body class="table__body"
-                  [bodyData]="dataForBody"
-                  [paginationConstant]="paginationConstant"
-                  [currentPagination]="currentPagination"
-  ></app-table-body>
-  <app-table-foot class="table__foot"
-    [itemsAmount]="config.body.length"
-    [paginationConstant]="paginationConstant"
-    [currentPagination]="currentPagination"
-                  (changeCurrentPage)="changeCurrent($event)"
-                  (changePaginationConstant)="changeConstant($event)"
-  ></app-table-foot>
-</table>
+<ng-container *ngIf="config.body.length === 0; else table">
+  <p class="table__text--empty">No data available...</p>
+</ng-container>
+<ng-template #table>
+  <table class="table" >
+    <app-table-caption class="table__caption" [caption]="config.caption"></app-table-caption>
+    <app-table-head (emitSortingEvent)="executeSorting($event)" class="table__head" [headers]="config.headers"></app-table-head>
+    <app-table-body class="table__body"
+                    [bodyData]="dataForBody"
+                    [paginationConstant]="paginationConstant"
+                    [currentPagination]="currentPagination"
+    ></app-table-body>
+    <app-table-foot class="table__foot"
+                    [itemsAmount]="config.body.length"
+                    [paginationConstant]="paginationConstant"
+                    [currentPagination]="currentPagination"
+                    (changeCurrentPage)="changeCurrent($event)"
+                    (changePaginationConstant)="changeConstant($event)"
+    ></app-table-foot>
+  </table>
+</ng-template>

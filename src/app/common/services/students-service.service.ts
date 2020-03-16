@@ -12,10 +12,12 @@ export class StudentsServiceService {
 
   private students: IStudent[];
   private URL: string = `${API}${STUDENTS_ROUTE}`;
+  private lastSearchString: string = "";
   constructor(
     private http: HttpClient,
   ) {
     this.students = [];
+
   }
 
   public pushStudent(student: IStudent): void {
@@ -27,11 +29,16 @@ export class StudentsServiceService {
   }
 
   public searchStudent(searchString: string): Observable<IStudent[]> {
-    const params: HttpParams = new HttpParams()
-      .set("q", searchString);
-    return this.http.get(this.URL, {
-      params
-    });
+    if (this.lastSearchString !== searchString) {
+      console.log(searchString);
+      this.lastSearchString = searchString;
+      const params: HttpParams = new HttpParams()
+        .set("q", searchString);
+      return this.http.get(this.URL, {
+        params
+      });
+    }
+
   }
 
   public setStudents(students: IStudent[]): IStudent[] {
