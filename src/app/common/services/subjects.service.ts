@@ -84,7 +84,7 @@ export class SubjectsService {
   }
 
   public addSubject(subject: ISubject): void {
-    console.log(subject);
+    subject.uniqueDates = [];
     this.http.post(this.URL, subject).subscribe(data => console.log(data));
   }
 

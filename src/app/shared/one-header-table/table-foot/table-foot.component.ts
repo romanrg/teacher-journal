@@ -25,6 +25,11 @@ export class TableFootComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.itemsAmount) {
+      this.pageList = makePaginationArray(
+        Math.ceil(changes.itemsAmount.currentValue / this.paginationConstant)
+      );
+    }
     if (changes.paginationConstant) {
       this.pageList = makePaginationArray(
         Math.ceil(this.itemsAmount / changes.paginationConstant.currentValue)

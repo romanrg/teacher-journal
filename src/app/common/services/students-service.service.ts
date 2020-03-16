@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import {Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, STUDENTS_ROUTE} from "../constants/API";
 import {map, tap, flatMap} from "rxjs/internal/operators";
 
@@ -24,6 +24,14 @@ export class StudentsServiceService {
 
   public getStudents(): IStudent[] {
     return this.students;
+  }
+
+  public searchStudent(searchString: string): Observable<IStudent[]> {
+    const params: HttpParams = new HttpParams()
+      .set("q", searchString);
+    return this.http.get(this.URL, {
+      params
+    });
   }
 
   public setStudents(students: IStudent[]): IStudent[] {

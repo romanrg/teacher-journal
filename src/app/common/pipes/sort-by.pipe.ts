@@ -21,7 +21,7 @@ const sortingFunctionForNumbersHigh: Function = (index: number) => (a: number[],
   return  next - curr;
 };
 let wasSorted: number;
-let isLow: boolean = false;
+let isLow: boolean = true;
 
 @Pipe({
   name: "sortBy"

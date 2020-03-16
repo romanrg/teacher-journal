@@ -37,20 +37,30 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   }
 
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
-    const bodyData: string[][] = [];
     const headers: string[] = ["id", "name", "surname", "address", "description"];
     const caption: string = "Students list:";
-    students.forEach((student, index) => {
+    return {
+      headers, caption, body: this.createBody(students, headers)
+    };
+  }
+
+  public renderSearch($event: Event): void {
+    const headers: string[] = ["id", "name", "surname", "address", "description"];
+    this.tableConfig.body = this.createBody(<IStudent[]>$event, headers);
+  }
+
+  public createBody(students: IStudent[], config: string[]): string[][] {
+    const newBody: string[][] = [];
+    <IStudent[]>students.forEach((student, index) => {
       const creator: RowCreator = new RowCreator();
+      const headers: string[] = config;
       const row: string[] = creator.generateRowFromObject(
         student,
         headers
       );
       row[0] = index + 1;
-      bodyData.push(row);
+      newBody.push(row);
     });
-    return {
-      headers, caption, body: bodyData
-    };
+    return newBody;
   }
 }

@@ -32,6 +32,7 @@ import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 import {HttpClientModule} from "@angular/common/http";
+import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 
 
 @NgModule({
@@ -61,6 +62,7 @@ import {HttpClientModule} from "@angular/common/http";
     TableCellComponent,
     HighlightDirective,
     MarksHighlightDirective,
+    SearchBarComponent
   ],
   imports: [
     BrowserModule,
