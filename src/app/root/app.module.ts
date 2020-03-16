@@ -33,6 +33,7 @@ import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 import {HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
+import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 
 
 @NgModule({
@@ -71,7 +72,7 @@ import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
     FormsModule,
     HttpClientModule
   ],
-  providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe],
+  providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe, modifyHeadersProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

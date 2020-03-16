@@ -254,12 +254,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.manager.addSubscription(this.route.params.pipe(
       pluck("name"),
       tap(data => {
-        if (!this.studentsService.getStudents().length) {
-          this.manager.addSubscription(this.studentsService.fetchStudents().subscribe(stud => {
-            this.studentsService.setStudents(stud);
-          }));
-        }
-
         if (!this.subjectsService.subjects.length) {
           this.manager.addSubscription(this.subjectsService.fetchSubjects().subscribe(subj => {
             this.subjectsService.subjects = subj;
@@ -267,12 +261,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           }));
         } else {
           this.compileInitialComponentState(data);
-        }
-
-        if (!this.marksService.marks.length) {
-          this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
-            this.marksService.marks = marks;
-          }));
         }
       }
     )).subscribe());
