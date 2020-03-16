@@ -262,6 +262,14 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         } else {
           this.compileInitialComponentState(data);
         }
+
+        if (!this.marksService.marks.length) {
+          this.manager.addSubscription(
+            this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
+              this.marksService.marks = marks;
+            }))
+          );
+        }
       }
     )).subscribe());
   }
@@ -269,4 +277,25 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.manager.removeAllSubscription();
   }
 
+  public deleteDate($event: Event): void {
+    const dateIndex: number = $event.target.parentNode.getAttribute("index") - 3;
+    const date = this.subject.uniqueDates[dateIndex];
+    this.subject.uniqueDates = this.subject.uniqueDates.filter((ts, i) => i !== dateIndex);
+    this.subjectTableConfig.headers = this.subjectTableConfig.headers.filter((ts, i) => i !== dateIndex);
+    this.marksService.deleteMarks(this.subject.id, date).forEach(obs => {
+      obs.subscribe(data => {
+        this.marksService.getMarks().subscribe(marks => {
+          this.marksService.marks = marks;
+          this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+          this.manager.addSubscription(this.addMarksToTheView(
+            this.marksService,
+            this.studentsService,
+            this.subjectsService,
+            this.subject,
+            this.subjectTableConfig
+          ));
+        })
+      });
+    })
+  }
 }

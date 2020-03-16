@@ -54,4 +54,14 @@ export class MarksServiceService {
     return this.http.get(this.URL, {params: queryParams});
   }
 
+  public deleteMarks(id: string, timestamp: number): Observable<Mark[]> {
+    console.log(id, timestamp);
+    return this._marks
+      .filter(m => m.subject === id && m.time === timestamp)
+      .map(mark => {
+        return this.http.delete(`${this.URL}/${mark.id}`);
+      })
+    ;
+  }
+
 }

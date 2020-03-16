@@ -4,6 +4,7 @@
   <app-one-header-table
     [config]="subjectTableConfig"
     (click)="generateInput($event.target)"
+    (dblclick)="deleteDate($event)"
   ></app-one-header-table>
   <app-button
     class="subject-table__btn"
