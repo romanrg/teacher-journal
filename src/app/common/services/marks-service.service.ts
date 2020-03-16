@@ -41,7 +41,9 @@ export class MarksServiceService {
   get marks(): Mark[] {
     return this._marks;
   }
-
+  set marks(marks: Mark[]): Mark[] {
+    this._marks = marks;
+  }
   public getMarks(): Observable<Mark> {
     return this.http.get(this.URL);
     // return from(this._marks);

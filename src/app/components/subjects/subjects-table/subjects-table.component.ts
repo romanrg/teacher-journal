@@ -209,36 +209,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           }
 
         })
-      ).subscribe(data => console.log(config.body));
-  }
-  public ngOnInit(): void {
-    this.manager.addSubscription(this.route.params.pipe(
-      pluck("name"),
-      tap(data => {
-        if (this.subjectsService.subjects.length) {
-          this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
-        } else {
-          this.manager.addSubscription(
-            this.subjectsService.fetchSubjects().subscribe(subs => {
-              this.subjectsService.subjects = subs;
-              this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
-            })
-          );
-        }
-        this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
-        this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
-        this.manager.addSubscription(this.addMarksToTheView(
-          this.marksService,
-          this.studentsService,
-          this.subjectsService,
-          this.subject,
-          this.subjectTableConfig
-        ));
-      }
-    )).subscribe());
-  }
-  public ngOnDestroy(): void {
-    this.manager.removeAllSubscription();
+      ).subscribe();
   }
 
   public getTeacherFormConfig(subject: ISubject): IFormConfig {
@@ -267,4 +238,47 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       body: this.generateBodyDataFromStudents(),
     };
   }
+  public compileInitialComponentState(data: string): void {
+    this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
+    this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
+    this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+    this.manager.addSubscription(this.addMarksToTheView(
+      this.marksService,
+      this.studentsService,
+      this.subjectsService,
+      this.subject,
+      this.subjectTableConfig
+    ));
+  }
+  public ngOnInit(): void {
+    this.manager.addSubscription(this.route.params.pipe(
+      pluck("name"),
+      tap(data => {
+        if (!this.studentsService.getStudents().length) {
+          this.manager.addSubscription(this.studentsService.fetchStudents().subscribe(stud => {
+            this.studentsService.setStudents(stud);
+          }));
+        }
+
+        if (!this.subjectsService.subjects.length) {
+          this.manager.addSubscription(this.subjectsService.fetchSubjects().subscribe(subj => {
+            this.subjectsService.subjects = subj;
+            this.compileInitialComponentState(data);
+          }));
+        } else {
+          this.compileInitialComponentState(data);
+        }
+
+        if (!this.marksService.marks.length) {
+          this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
+            this.marksService.marks = marks;
+          }));
+        }
+      }
+    )).subscribe());
+  }
+  public ngOnDestroy(): void {
+    this.manager.removeAllSubscription();
+  }
+
 }
