@@ -3,7 +3,15 @@
   <ul class="subjects__list">
     <li *ngFor="let subject of subjects"
         class="subjects__item"
+
     >
+      <app-button
+        (click)="deleteSubject($event)"
+        class="subjects__btn subjects__btn--delete"
+        textContent="{{'X'}}"
+        screenReader="delete subject"
+        [attr.subject]="subject.name"
+      ></app-button>
       <a class="subjects__link"
          routerLink="{{subject.name}}"
       >

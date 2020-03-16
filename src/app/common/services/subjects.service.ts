@@ -8,56 +8,7 @@ import {HttpClient} from "@angular/common/http";
 import {API, SUBJECTS_ROUTE} from "../constants/API";
 import {ITeacher} from "../models/ITeacher";
 
-const subjects: ISubject[] = [
-  {
-    _id: 0,
-    name: "math",
-    teacher: "Ivanova A.",
-    address: "pr. Zhukova 29",
-    description: "Lorem ipsum dolor sit amet, " +
-    "consectetur adipiscing elit, sed do eiusmod tempor incididunt " +
-    "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis " +
-    "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo " +
-    "consequat. Duis aute irure dolor in reprehenderit in voluptate velit" +
-    " esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaeca" +
-    "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
-    "anim id est laborum.",
-    students: new Map(),
-    uniqueDates: [],
-  },
-  {
-    _id: 1,
-    name: "chemistry",
-    teacher: "Ivanova V.",
-    address: "pr. Zhukova 29",
-    description: "Lorem ipsum dolor sit amet, " +
-    "consectetur adipiscing elit, sed do eiusmod tempor incididunt " +
-    "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis " +
-    "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo " +
-    "consequat. Duis aute irure dolor in reprehenderit in voluptate velit" +
-    " esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaeca" +
-    "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
-    "anim id est laborum.",
-    students: new Map(),
-    uniqueDates: [],
-  },
-  {
-    _id: 2,
-    name: "history",
-    teacher: "Ivanova A.",
-    address: "pr. Zhukova 29",
-    description: "Lorem ipsum dolor sit amet, " +
-    "consectetur adipiscing elit, sed do eiusmod tempor incididunt " +
-    "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis " +
-    "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo " +
-    "consequat. Duis aute irure dolor in reprehenderit in voluptate velit" +
-    " esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaeca" +
-    "t cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
-    "anim id est laborum.",
-    students: new Map(),
-    uniqueDates: [],
-  }
-];
+
 
 @Injectable({
   providedIn: "root"
@@ -100,6 +51,10 @@ export class SubjectsService {
 
   public getUniqueDatesById(id: string ): number[] {
     return this._subjects.filter(sub => sub.id === id)[0].uniqueDates.filter((a, b) => a - b);
+  }
+  public deleteSubject(name: string): Observable<ISubject[]> {
+    const id: string = this._subjects.filter(sub => sub.name === name)[0].id;
+    return this.http.delete(`${this.URL}/${id}`);
   }
 
 }

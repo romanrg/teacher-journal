@@ -63,4 +63,17 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     });
     return newBody;
   }
+
+  public deleteStudent($event: Event): void {
+    const studentId: string = $event.target.parentNode.parentNode.parentNode.getAttribute("rowindex");
+    this.manager.addSubscription(this.studentsService.removeStudent(this.studentsService.getStudents()[studentId].id)
+      .subscribe(data => {
+        this.manager.addSubscription(this.studentsService.fetchStudents().subscribe(
+          students => {
+            this.studentsService.setStudents(students);
+            this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents());
+          }
+        ));
+      }));
+  }
 }

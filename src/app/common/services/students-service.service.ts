@@ -47,7 +47,6 @@ export class StudentsServiceService {
 
   public addStudent(student: IStudent): void {
     return this.http.post(this.URL, student);
-    // this.students.push(student);
   }
   public getOfStudents(): Observable<IStudent> {
     if (this.students.length) {
@@ -70,5 +69,9 @@ export class StudentsServiceService {
 
   public fetchStudents(): Observable<IStudent[]> {
     return this.http.get(this.URL);
+  }
+
+  public removeStudent(studentId: string): void {
+    return this.http.delete(`${this.URL}/${studentId}`);
   }
 }

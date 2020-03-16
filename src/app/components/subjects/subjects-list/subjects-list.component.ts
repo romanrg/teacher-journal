@@ -35,4 +35,17 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
+
+  public deleteSubject($event: Event): void {
+    const subjName: string = $event.target.parentNode.getAttribute("subject");
+    this.manager.addSubscription(this.subjectService.deleteSubject(subjName).subscribe(
+      data => {
+        this.manager.addSubscription(this.subjectService.fetchSubjects()
+          .subscribe(subs => {
+            this.subjectService.subjects = subs;
+            this.subjects = this.subjectService.subjects;
+          }));
+      }
+    ));
+  }
 }
