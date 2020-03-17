@@ -8,6 +8,9 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {Observable} from "rxjs";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../@ngrx/app.state";
+import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 
 @Component({
   selector: "app-student-form",
@@ -21,7 +24,8 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
 
   constructor(
     private studentsService: StudentsServiceService,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>
   ) { }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
@@ -32,11 +36,15 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public submit($event: IStudent): void {
     this.isSaved = true;
+    this.store.dispatch(StudentsActions.createStudent($event));
+    this.router.navigate(["/students"]);
+    /*
     this.manager.addSubscription(this.studentsService.addStudent($event).subscribe(
       data => {
         this.studentsService.setStudents([...this.studentsService.getStudents(), data]);
         this.router.navigate(["/students"]);
       }));
+    */
   }
   public ngOnInit(): void {
     const errorMessages: string[] = ["This field is required"];

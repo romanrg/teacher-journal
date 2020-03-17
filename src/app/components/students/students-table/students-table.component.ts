@@ -38,6 +38,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     this.tableConfig.body = this.createBody(<IStudent[]>$event, headers);
   }
   public createBody(students: IStudent[], config: ReadonlyArray<string>): string[][] {
+    console.log(students);
     const newBody: string[][] = [];
     <IStudent[]>students.forEach((student, index) => {
       const creator: RowCreator = new RowCreator();
@@ -58,33 +59,8 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       student = students.data.filter(stud => stud.name === name && stud.surname === surname)[0];
     }).unsubscribe();
     this.store.dispatch(StudentsActions.deleteStudent(student));
-
-
-    /*
-    const studentId: string = $event.target.parentNode.parentNode.parentNode.getAttribute("rowindex");
-    this.manager.addSubscription(this.studentsService.removeStudent(this.studentsService.getStudents()[studentId].id)
-      .subscribe(data => {
-        this.manager.addSubscription(this.studentsService.fetchStudents().subscribe(
-          students => {
-            this.studentsService.setStudents(students);
-            this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents());
-          }
-        ));
-      }));
-      */
   }
   public ngOnInit(): void {
-    /*
-    if (this.studentsService.getStudents().length) {
-      this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents());
-    } else {
-      this.manager.addSubscription(this.studentsService.fetchStudents()
-        .pipe(
-          tap(data => this.studentsService.setStudents(data)),
-          tap(data => this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents()))
-        ).subscribe());
-    }
-    */
     this.studentsState$ = this.store.pipe(select("students"));
 
     this.manager.addSubscription(
