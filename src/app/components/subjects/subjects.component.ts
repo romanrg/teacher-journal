@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import {SubjectsService} from "../../common/services/subjects.service";
 
 @Component({
   selector: "app-subjects",
@@ -8,15 +7,9 @@ import {SubjectsService} from "../../common/services/subjects.service";
 })
 export class SubjectsComponent implements OnInit {
 
-  constructor(
-    public subjectService: SubjectsService,
-    // public route: Router
-  ) { }
+  constructor() { }
 
   public ngOnInit(): void {
   }
 
-  public addNewSubject(): void {
-    // this.route.navigate("/new-subject");
-  }
 }

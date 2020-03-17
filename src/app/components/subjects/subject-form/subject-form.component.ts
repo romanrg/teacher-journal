@@ -24,7 +24,28 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
   ) {
     this.manager = new SubscriptionManager();
   }
+  public submit($event: ISubject): void {
+    this.isSaved = true;
+    this.manager.addSubscription(this.subjectsService.addSubject($event)
+      .subscribe(
+        data => {
+          this.subjectsService.fetchSubjects().subscribe(
+            subjects => {
+              this.subjectsService.subjects = subjects;
+              this.router.navigate(["/subjects"]);
+            }
+          );
+        }
+      ));
 
+  }
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.isSaved === false) {
+      return confirm(CONFIRMATION_MESSAGE);
+    } else {
+      return true;
+    }
+  }
   public ngOnInit(): void {
     const errorMessages: string[] = ["This field is required"];
     this.formConfig = {
@@ -65,32 +86,7 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
 
     };
   }
-
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
-  }
-
-  public submit($event: ISubject): void {
-    this.isSaved = true;
-    this.manager.addSubscription(this.subjectsService.addSubject($event)
-      .subscribe(
-        data => {
-          this.subjectsService.fetchSubjects().subscribe(
-            subjects => {
-              this.subjectsService.subjects = subjects;
-              console.log(this.subjectsService.subjects);
-              this.router.navigate(["/subjects"]);
-            }
-          );
-        }
-      ));
-
-  }
-  public canDeactivate(): boolean | Observable<boolean> {
-    if (this.isSaved === false) {
-      return confirm(CONFIRMATION_MESSAGE);
-    } else {
-      return true;
-    }
   }
 }

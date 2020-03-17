@@ -23,7 +23,21 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
     private studentsService: StudentsServiceService,
     private router: Router
   ) { }
-
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.isSaved === false) {
+      return confirm(CONFIRMATION_MESSAGE);
+    } else {
+      return true;
+    }
+  }
+  public submit($event: IStudent): void {
+    this.isSaved = true;
+    this.manager.addSubscription(this.studentsService.addStudent($event).subscribe(
+      data => {
+        this.studentsService.setStudents([...this.studentsService.getStudents(), data]);
+        this.router.navigate(["/students"]);
+      }));
+  }
   public ngOnInit(): void {
     const errorMessages: string[] = ["This field is required"];
     this.formConfig = {
@@ -64,25 +78,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
 
     };
   }
-
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
-  }
-
-  public canDeactivate(): boolean | Observable<boolean> {
-    if (this.isSaved === false) {
-      return confirm(CONFIRMATION_MESSAGE);
-    } else {
-      return true;
-    }
-  };
-
-  public submit($event: IStudent): void {
-    this.isSaved = true;
-    this.manager.addSubscription(this.studentsService.addStudent($event).subscribe(
-      data => {
-        this.studentsService.setStudents([...this.studentsService.getStudents(), data]);
-        this.router.navigate(["/students"]);
-      }));
   }
 }
