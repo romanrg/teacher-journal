@@ -24,7 +24,7 @@ export class MarksServiceService {
       const filtered: number = this._marks.findIndex(
         m => (m.student === mark.student) && (m.time === mark.time) && (m.subject === mark.subject)
       );
-      mark.id = idGeneretor();
+      // mark.id = idGeneretor();
       if (filtered === -1) {
         this._marks.push(mark);
         this.submitMark(mark);
