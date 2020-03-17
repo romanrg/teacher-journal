@@ -15,6 +15,7 @@ export class StatisticsComponent implements OnInit {
     public subjectService: SubjectsService,
   ) { }
 
-  public ngOnInit(): void {}
+  public ngOnInit(): void {
+  }
 
 }

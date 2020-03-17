@@ -35,6 +35,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
+import {RootStoreModule} from "../@ngrx/core-store.module";
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RootStoreModule,
   ],
   providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe, modifyHeadersProvider],
   bootstrap: [AppComponent]

@@ -3,9 +3,14 @@ import {StudentsServiceService} from "../../../common/services/students-service.
 import {ITableConfig} from "../../../common/models/ITableConfig";
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {map, tap} from "rxjs/internal/operators";
-import {IStudent} from "../../../common/models/IStudent";
+import {IStudent, StudentModel} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
+import {select, Store} from "@ngrx/store";
+import {AppState} from "../../../@ngrx/app.state";
+import {Observable} from "rxjs";
+import {StudentsState} from "../../../@ngrx/students/students.state";
+import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 
 @Component({
   selector: "app-students-table",
@@ -16,8 +21,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   private manager: SubscriptionManager = new SubscriptionManager();
   public tableConfig: ITableConfig;
   public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
+  public studentsState$: Observable<StudentsState>;
   constructor(
     private studentsService: StudentsServiceService,
+    private store: Store<AppState>
   ) {}
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
     const headers: ReadonlyArray<string> = this.tableHeaders;
@@ -44,7 +51,16 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     return newBody;
   }
   public deleteStudent($event: Event): void {
-    $event.preventDefault()
+    const name: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[1].textContent;
+    const surname: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[2].textContent;
+    let student: string;
+    this.studentsState$.subscribe(students => {
+      student = students.data.filter(stud => stud.name === name && stud.surname === surname)[0];
+    }).unsubscribe();
+    this.store.dispatch(StudentsActions.deleteStudent(student));
+
+
+    /*
     const studentId: string = $event.target.parentNode.parentNode.parentNode.getAttribute("rowindex");
     this.manager.addSubscription(this.studentsService.removeStudent(this.studentsService.getStudents()[studentId].id)
       .subscribe(data => {
@@ -55,8 +71,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
           }
         ));
       }));
+      */
   }
   public ngOnInit(): void {
+    /*
     if (this.studentsService.getStudents().length) {
       this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents());
     } else {
@@ -66,6 +84,14 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
           tap(data => this.tableConfig = this.createStudentsTableConfig(this.studentsService.getStudents()))
         ).subscribe());
     }
+    */
+    this.studentsState$ = this.store.pipe(select("students"));
+
+    this.manager.addSubscription(
+      this.studentsState$.subscribe(students => {
+        this.tableConfig = this.createStudentsTableConfig(students.data);
+      })
+    );
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

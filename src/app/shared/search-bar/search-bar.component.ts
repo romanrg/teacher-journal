@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {debounceTime, switchMap, first, startWith, share} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../common/services/students-service.service";
+import {IStudent} from "../../common/models/IStudent";
 
 @Component({
   selector: "app-search-bar",
