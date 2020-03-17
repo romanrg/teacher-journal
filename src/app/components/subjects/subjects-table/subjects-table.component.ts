@@ -163,7 +163,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           if (marks.length) {
             marks.forEach(mark => {
               if (!subject.uniqueDates.includes(mark.time)) {
-                console.log(subject.id, mark.time);
                 subjectService.addUniqueDate(subject.id, mark.time);
               }
               if (!config.headers.includes(mark.time)) {

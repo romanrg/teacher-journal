@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import {Mark} from "../models/IMark";
 import {from, Observable} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, MARKS_ROUTE} from "../constants/API";
 export const idGeneretor: Function = () => `f${(~~(Math.random()*1e8)).toString(16)}`;
 @Injectable({
@@ -46,12 +46,12 @@ export class MarksServiceService {
   }
   public getMarks(): Observable<Mark> {
     return this.http.get(this.URL);
-    // return from(this._marks);
   }
 
   public getSubjectMarks(subject: string): Observable<Mark[]> {
-    const queryParams = {subject};
-    return this.http.get(this.URL, {params: queryParams});
+    const params: HttpParams = new HttpParams()
+      .set("subject", subject);
+    return this.http.get(this.URL, {params});
   }
 
   public deleteMarks(id: string, timestamp: number): Observable<Mark[]> {
