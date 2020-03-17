@@ -36,7 +36,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public submit($event: IStudent): void {
     this.isSaved = true;
-    this.store.dispatch(StudentsActions.createStudent($event));
+    this.store.dispatch(StudentsActions.createStudent({student: $event}));
     this.router.navigate(["/students"]);
     /*
     this.manager.addSubscription(this.studentsService.addStudent($event).subscribe(

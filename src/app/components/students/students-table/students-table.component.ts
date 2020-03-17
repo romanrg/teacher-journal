@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {ITableConfig} from "../../../common/models/ITableConfig";
 import {RowCreator} from "../../../common/helpers/RowCreator";
-import {map, tap} from "rxjs/internal/operators";
 import {IStudent, StudentModel} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
@@ -23,8 +22,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
   public studentsState$: Observable<StudentsState>;
   constructor(
-    private studentsService: StudentsServiceService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
   ) {}
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
     const headers: ReadonlyArray<string> = this.tableHeaders;
@@ -38,7 +36,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     this.tableConfig.body = this.createBody(<IStudent[]>$event, headers);
   }
   public createBody(students: IStudent[], config: ReadonlyArray<string>): string[][] {
-    console.log(students);
     const newBody: string[][] = [];
     <IStudent[]>students.forEach((student, index) => {
       const creator: RowCreator = new RowCreator();
@@ -58,11 +55,12 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     this.studentsState$.subscribe(students => {
       student = students.data.filter(stud => stud.name === name && stud.surname === surname)[0];
     }).unsubscribe();
+
     this.store.dispatch(StudentsActions.deleteStudent(student));
   }
   public ngOnInit(): void {
     this.studentsState$ = this.store.pipe(select("students"));
-
+    this.store.dispatch(StudentsActions.getStudents());
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
         this.tableConfig = this.createStudentsTableConfig(students.data);

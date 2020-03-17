@@ -1,7 +1,8 @@
 import { StoreModule} from "@ngrx/store";
 import { NgModule } from "@angular/core";
 import { StudentsStoreModule } from "./students/students-store.module";
-
+import { environment } from "../../environments/environment";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 @NgModule({
   imports: [
     StoreModule.forRoot({}, {
@@ -10,7 +11,8 @@ import { StudentsStoreModule } from "./students/students-store.module";
         strictActionImmutability: true,
       }
     }),
-    StudentsStoreModule
+    StudentsStoreModule,
+    !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
 })
 

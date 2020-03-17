@@ -1,4 +1,4 @@
-<ng-container *ngIf="tableConfig">
+<ng-container *ngIf="(studentsState$ | async).loaded">
 <div class="container">
   <app-search-bar class="students__search" (searchRes)="renderSearch($event)"></app-search-bar>
   <app-one-header-table

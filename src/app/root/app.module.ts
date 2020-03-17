@@ -36,6 +36,7 @@ import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
+import {EffectsModule} from "@ngrx/effects";
 
 
 @NgModule({
@@ -75,6 +76,7 @@ import {RootStoreModule} from "../@ngrx/core-store.module";
     FormsModule,
     HttpClientModule,
     RootStoreModule,
+    EffectsModule.forRoot([])
   ],
   providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe, modifyHeadersProvider],
   bootstrap: [AppComponent]
