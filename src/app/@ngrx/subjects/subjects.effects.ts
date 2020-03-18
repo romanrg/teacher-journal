@@ -27,7 +27,7 @@ export class SubjectsEffects {
       ofType(SubjectsActions.createSubject),
       switchMap(action => this.subjectsService.addSubject(action.subject).pipe(
         map(subjects => {
-          return SubjectsActions.createSubjectSuccess(action.subject);
+          return SubjectsActions.createSubjectSuccess({subject: action.subject});
         }),
         catchError(error => SubjectsActions.createSubjectError({error}))
       ))
