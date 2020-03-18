@@ -1,3 +1,17 @@
-<app-table
-  [config]="tableConfig"
-></app-table>
+<ng-container *ngIf="(studentsState$ | async).loaded">
+<div class="container">
+  <app-search-bar class="students__search" (searchRes)="renderSearch($event)"></app-search-bar>
+  <app-one-header-table
+    [config]="tableConfig"
+    (contextmenu)="deleteStudent($event)"
+    class="student-table__table"
+  ></app-one-header-table>
+  <a routerLink="/students/new-student" class="table__link">
+    <app-button
+      class="students__button"
+      screenReader="Add new student"
+      textContent="+"
+    ></app-button>
+  </a>
+</div>
+</ng-container>

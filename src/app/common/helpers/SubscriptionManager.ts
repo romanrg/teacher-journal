@@ -10,7 +10,7 @@ export class SubscriptionManager {
   }
 
   public removeAllSubscription(): void {
-    this._subscription.forEach(sub => sub.unsubscribe());
+    this._subscription.filter(sub => sub ).forEach(sub => sub.unsubscribe());
   }
 
   get subscriptions(): Subscription[] {

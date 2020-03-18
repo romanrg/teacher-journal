@@ -17,8 +17,7 @@
       </label>
       <span
         class="form__span--error"
-        *ngIf="!getControlName(input.name).valid &&
-            getControlName(input.name).touched && getControlName(input.name).errors.required"
+        *ngIf="isShowErrorMessage(getControlName(input.name))"
       >
         {{input.errorMessages[0]}}
       </span>

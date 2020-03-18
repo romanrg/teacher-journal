@@ -1,63 +1,21 @@
-<!--<ng-container *ngFor="let subject of subject$ | async">
-  <div class="container">
-    <h2 class="subject-table__title">{{subject.name}}</h2>
-
-    <table class="subject-table__table">
-      <caption class="subject-table__caption">{{subject.name}} students: {{(students$ | async).length}}</caption>
-      <thead class="subject-table__head">
-      <tr class="subject-table__row">
-        <th class="subject-table__header">Name</th>
-        <th class="subject-table__header">Surname</th>
-        <ng-container *ngIf="subject.marks">
-          <th class="subject-table__header">Average Mark</th>
-          <ng-container *ngFor="let date of subject.marks">
-            <th class="subject-table__header">{{date | date:"dd/MM"}}</th>
-          </ng-container>
-        </ng-container>
-        <th class="students-table__header">
-          <app-button
-            class="students-table__new-date"
-            screenReader="Add new date"
-            textContent="+"
-            (click)="addNewDate()"
-          ></app-button>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <ng-container *ngFor="let student of students$| async; let i = index">
-        <tr *ngIf="i >= ((currentPaginationNumber - 1) * paginationConstant) &&
-           i < (paginationConstant * currentPaginationNumber)">
-          <td class="subject-table__cell">{{student.name}}</td>
-          <td class="subject-table__cell">{{student.surname}}</td>
-          <ng-container *ngIf="subject.marks">
-            <td class="subject-table__cell">Average placeholder</td>
-            <ng-container *ngFor="let date of subject.marks">
-              <td class="subject-table__cell subject-table__cell--mark">mark...</td>
-            </ng-container>
-          </ng-container>
-        </tr>
-      </ng-container>
-      </tbody>
-      <app-pagination
-        class="pagination"
-        [paginationConstant]="paginationConstant"
-        [students]="students$"
-        (changePagination)="setPaginationConstant($event)"
-      ></app-pagination>
-    </table>
-
-
-  </div>
-</ng-container>-->
-
-
+<ng-container *ngIf="subjectTableConfig">
+  <ng-container *ngIf="subjectTableConfig.body.length; else empty">
 <div class="container" >
-  <app-table [config]="tableConfig"
-             (onTrigger)="addNewDate()"
-             (changeDate)="updateDay($event)"
-             (click)="handleClick($event)"
-             (keydown.enter)="addMarkToStudent($event)"
-  ></app-table>
+  <app-one-header-table
+    [config]="subjectTableConfig"
+    (click)="generateInput($event.target)"
+    (contextmenu)="deleteDate($event)"
+  ></app-one-header-table>
+  <app-button
+    class="subject-table__btn"
+    [textContent]="'+'"
+    [screenReader]="'Add new date'"
+    (click)="addNewColumn()"
+  ></app-button>
   <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
 </div>
+  </ng-container>
+  <ng-template #empty>
+    <app-empty-data></app-empty-data>
+  </ng-template>
+</ng-container>

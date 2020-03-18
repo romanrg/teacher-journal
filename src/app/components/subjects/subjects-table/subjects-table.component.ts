@@ -3,77 +3,19 @@ import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {map} from "rxjs/internal/operators";
-import {Observable, of, Subscription} from "rxjs";
-import {IStudent} from "../../../common/models/IStudent";
+import {map, pluck, tap} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
-import {ITableConfig} from "../../../common/models/ITableConfig";
-import {IPerson} from "../../../common/models/IPerson";
-import {MarkMaximumValue, MarkMinimumValue} from "../../../common/constants/MarkMinMax";
-import {IMetaOfNewMarkInput} from "../../../common/models/IMetaOfNewMarkInput";
-import {IInputNumberConfig} from "../../../common/models/IInputNumberConfig";
-import {Generator} from "../../../common/helpers/Generator";
-import {checkNumberRange} from "../../../common/helpers/checkNumberRange";
-import {IFormConfig} from "../../../common/models/IFormConfig";
+import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
-
-const addMarkToTheView: Function = (mark, element, generator): void => {
-  generator.createText(element.parentNode, `${mark}`);
-  generator.removeChild(element.parentNode, element);
-};
-
-const mergeSubjectAndStudents: Function = (
-  subject: Observable<ISubject>,
-  persons: Observable<IPerson>,
-  config: string[]
-): Observable<any> => {
-  let result: Observable<any> = undefined;
-  const aux1: Subscription = subject.subscribe(data => {
-    data.students = [];
-    const aux2: Subscription = persons.subscribe(person =>  {
-      const pushable: [] = [];
-      for (let prop of config) {
-        if (typeof prop === "function") {
-          pushable.push(prop);
-        } else {
-          pushable.push(person[prop]);
-        }
-
-      }
-      data.students.push([...pushable]);
-    });
-    aux2.unsubscribe();
-    result = of(data.students);
-  });
-  aux1.unsubscribe();
-  return result;
-};
-
-const getMetaDataOfClick: Function = (
-  $event: Event
-): IMetaOfNewMarkInput => {
-  let clickCloumn: number = 0;
-  let person: {name: string; surname: string} = {name: "", surname: ""};
-  let colLength: number = 0;
-  Array.from($event.target.parentNode.childNodes)
-    .filter(node => node.classList)
-    .map(data => {
-      colLength = colLength + 1;
-      return data;
-    })
-    .map((node, i) => {
-      node === $event.target ? clickCloumn = i : "";
-      return node;
-    })
-    .map((data, i) => {
-      if (i === 0) {
-        person.name = data.innerText;
-      } else if (i === 1) {
-        person.surname = data.innerText;
-      }
-    });
-  return {clickCloumn, colLength, person};
-};
+import {RowCreator} from "../../../common/helpers/RowCreator";
+import {ITableConfig} from "../../../common/models/ITableConfig";
+import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
+import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
+import {DatePipe} from "@angular/common";
+import {MarksServiceService} from "../../../common/services/marks-service.service";
+import {IStudent} from "../../../common/models/IStudent";
+import {IMark, Mark} from "../../../common/models/IMark";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-subjects-table",
@@ -81,22 +23,27 @@ const getMetaDataOfClick: Function = (
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-  public tableConfig: ITableConfig = {};
   public newTeacherConfig: IFormConfig;
-
-  public subject$: Observable<ISubject[]>;
-  public students$: Observable<IStudent[]>;
-  public tableData$: Observable<any>;
   public subject: ISubject;
-
+  public subjectTableConfig: ITableConfig;
+  public manager: SubscriptionManager;
+  public generator: Generator;
+  public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
+  public headersRightShift: number = SUBJECT_HEADERS_LENGTH;
+  public dateGenerator: DatePicker;
+  public numberGenerator: NumberPicker;
   constructor(
     private subjectsService: SubjectsService,
     private route: ActivatedRoute,
     private studentsService: StudentsServiceService,
-    private render: Renderer2
+    private renderer: Renderer2,
+    private datePipe: DatePipe,
+    private marksService: MarksServiceService
   ) {
-    this.generator = new Generator(this.render);
     this.manager = new SubscriptionManager();
+    this.generator = new Generator(this.renderer);
+    this.dateGenerator = new DatePicker(this.renderer);
+    this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
   }
 
   public changeTeacher($event: Event): void {
@@ -104,89 +51,160 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.newTeacherConfig.formGroupName.formControls[0].name
       ];
     this.subject.teacher = newTeacher;
+    this.subjectsService.patchSubject(this.subject);
     this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
   }
-  public addNewDate(): void {
-    this.tableConfig.tableHeader.push(new Date());
+  public getCellIndex(target: EventTarget): number {
+    return +target.parentNode.getAttribute("index");
   }
-  public updateDay($event: {date: string}): void {
-    this.tableConfig.tableHeader.pop();
-    this.tableConfig.tableHeader.push($event.date);
-    const aux$: Observable<any[]> = this.tableData$.pipe(
-      map(data => data.forEach(row => {
-        row.push("");
-      }))
+  public addNewColumn(): void {
+    this.subjectTableConfig.headers.push("Select date");
+    this.subjectTableConfig.body.forEach(row => row.length = this.subjectTableConfig.headers.length);
+  }
+  public shouldAddNumberInput(target: EventTarget): boolean {
+    return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
+  }
+  public shouldAddDateInput(target: EventTarget): boolean {
+    return (
+      target.tagName.toLowerCase() === "th" &&
+      !this.subjectHeadersConstantNames.includes(target.textContent) &&
+      target.textContent.includes("Select date")
     );
-    const auxSub: Subscription = aux$.subscribe();
-    this.manager.addSubscription(auxSub);
   }
-  public addMarkToStudent($event: Event): void {
-    const newMark: number = $event.target.value;
-    if (checkNumberRange(newMark, [MarkMinimumValue, MarkMaximumValue])) {
-      addMarkToTheView(newMark, $event.target, this.generator);
-    }
-  }
-  public handleClick($event: Event): void {
-    if ($event.target.classList[0] === "table__cell" && $event.target.innerText === "") {
-      const meta: IMetaOfNewMarkInput = getMetaDataOfClick($event);
-      if (checkNumberRange(meta.clickCloumn, [2, meta.colLength - 1], false)) {
-        const inputConfig: IInputNumberConfig = {
-          attributes: {
-            name: meta.person.name,
-            col: meta.clickCloumn,
-            surname: meta.person.surname,
-          },
-          properties: {
-            min: MarkMinimumValue,
-            max: MarkMaximumValue,
-            step: 1,
-            placeholder: $event.target.innerText,
-            type: "number",
-          }
-        };
-        this.generator.appendChild($event.target, this.generateNumberInput(inputConfig));
-      }
-    }
-  }
-  public generateNumberInput(config: IInputNumberConfig): any {
-    const input: any = this.generator.generateElement("input");
-    this.generator.generateProperties(input, config.properties);
-    this.generator.generateAttributes(input, config.attributes);
-    return input;
-  }
-
-  public ngOnInit(): void {
-    this.subject$ = this.subjectsService.getSubjectByIdFromRoute(this.route.params);
-    this.students$ = this.studentsService.getStudents();
-    this.manager.addSubscription(this.subject$.subscribe(data => this.subject = data[0]));
-
-    let aux$: Observable<IStudent> = this.studentsService.getOfStudents()
-      .pipe(
-        map(data => ({
-          id: data._id, name: data.name, surname: data.surname
-        }))
-    );
-    let auxSubject$: Observable<ISubject> = this.subject$.pipe(
-      map(data => data[0])
-    );
-    this.tableData$ = mergeSubjectAndStudents(auxSubject$, aux$, ["name", "surname", "average"]);
-
-    this.tableConfig = {
-      tableHeader: ["name", "surname", "average mark"],
-      caption: [`${this.subject.name} class students:`],
-      tableBody: [this.tableData$, ["all"]],
-      pagination: {
-        paginationConstant: 10,
-        data: this.tableData$
-      },
-      tableHeaderCell: {
-        position: "last",
-        action: this.addNewDate,
-        screenReader: "Add new date",
-        textContent: "+"
-      }
+  public submitDate(
+    subjectsService: SubjectsService,
+    subject: ISubject,
+    config: ITableConfig,
+  ): void {
+    return function(value: string): void {
+      subjectsService.addUniqueDate(subject.id, (new Date(value)).getTime());
+      config.headers = [...config.headers.slice(0, 3), ...subjectsService.getUniqueDatesById(subject.id)];
     };
-    this.newTeacherConfig = {
+  }
+  public submitMark(
+    target: EventTarget,
+    studentsService: StudentsServiceService,
+    subjectsService: SubjectsService,
+    marksService: MarksServiceService,
+    subject: ISubject,
+    config: ITableConfig,
+    renderer: Renderer2,
+    marksRenderFn: Function
+  ): void {
+    const studentRow: number = +target.parentNode.parentNode.getAttribute("rowIndex");
+    const student: IStudent = studentsService.getStudentIdByName(
+      config.body[studentRow][0], config.body[studentRow][1]
+    );
+    const timeStampArray: number[] = subjectsService.getUniqueDatesById(subject.id);
+    return function (value: number, arr): void {
+      const uniqueDateIndex: number = arr[0].getAttribute("index") - 3;
+      const markDate: number = timeStampArray[uniqueDateIndex];
+      const newMark: Mark = new Mark(
+        student.id, subject.id, +value, markDate
+      );
+      marksService.addMarks(newMark);
+      renderer.removeChild(arr[0], arr[1]);
+      marksRenderFn(marksService, studentsService, subjectsService, subject, config);
+    };
+  }
+  public generateInput(target: EventTarget): void {
+      if (this.shouldAddDateInput(target)) {
+        this.dateGenerator.generateDatePicker(
+          target,
+          this.subjectsService.getUniqueDatesById(this.subject.id),
+          this.datePipe,
+          this.submitDate(this.subjectsService, this.subject, this.subjectTableConfig)
+        );
+      } else if (this.shouldAddNumberInput(target)) {
+        this.numberGenerator.generateNumberPicker(
+          target,
+          this.submitMark(
+            target.parentNode,
+            this.studentsService,
+            this.subjectsService,
+            this.marksService,
+            this.subject,
+            this.subjectTableConfig,
+            this.renderer,
+            this.addMarksToTheView
+          )
+        );
+      }
+  }
+  public generateBodyDataFromStudents(): void {
+    const result: string[][] = [];
+    this.manager.addSubscription(this.studentsService.getOfStudents().pipe(
+      map(data => {
+        const creator: RowCreator = new RowCreator();
+        const row: string[] = creator.generateRowFromObject(
+          data, ["name", "surname", "average mark"]
+        );
+        result.push(row);
+        if (this.studentsService.getStudents().length) {
+          if (!this.studentsService.getStudents().includes(data)) {
+            this.studentsService.pushStudent(data);
+          }
+        } else {
+          this.studentsService.pushStudent(data);
+        }
+      }),
+    ).subscribe());
+    return result;
+  }
+  public addMarksToTheView(
+    marksService: MarksServiceService,
+    studentsService: StudentsServiceService,
+    subjectService: SubjectsService,
+    subject: ISubject,
+    config: ITableConfig ): void {
+    return marksService.getSubjectMarks(subject.id)
+      .pipe(
+        map(marks => {
+          if (marks.length) {
+            marks.forEach(mark => {
+              if (!subject.uniqueDates.includes(mark.time)) {
+                subjectService.addUniqueDate(subject.id, mark.time);
+              }
+              if (!config.headers.includes(mark.time)) {
+                config.headers.push(mark.time);
+              }
+
+            });
+          }
+          return marks;
+        }),
+        map(marks => {
+          if(marks.length) {
+            marks.forEach(mark => {
+              const student: IStudent = studentsService.findStudentById(mark.student);
+              const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
+
+              config.body
+                .forEach(row => {
+                  if (row[0] === student.name && row[1] === student.surname) {
+                    row[config.headers.indexOf(mark.time)] = markRow[0];
+                    row[2] = Mark.getAverageMark(row.slice(3, row.length));
+                  } else {
+
+                    if (row.length < config.headers.length) {
+                      row.length = config.headers.length;
+                    }
+                  }
+                });
+            });
+          } else {
+            config.body.forEach(row => {
+              if (row.length < config.headers.length) {
+                row.length = config.headers.length;
+              }
+            });
+          }
+
+        })
+      ).subscribe();
+  }
+  public getTeacherFormConfig(subject: ISubject): IFormConfig {
+    return {
       legend: "Change Subject Teacher",
       formGroupName: {
         name: "form",
@@ -194,19 +212,92 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           {
             name: "teacher: ",
             initialValue: "",
-            type: "text",
+            type: FormControlType.text,
             validators: [Validators.required],
             errorMessages: ["This field is required"],
-            placeholder: this.subject.teacher,
+            placeholder: subject.teacher,
           }
         ]
 
       },
     };
+  }
+  public getInitialTableConfig(constants: string[], subject: ISubject): ITableConfig {
+    return {
+      headers: [...constants, ...subject.uniqueDates],
+      caption: `${subject.name} class students:`,
+      body: this.generateBodyDataFromStudents(),
+    };
+  }
+  public compileInitialComponentState(data: string): void {
+    this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
+    this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
+    this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+    this.manager.addSubscription(this.addMarksToTheView(
+      this.marksService,
+      this.studentsService,
+      this.subjectsService,
+      this.subject,
+      this.subjectTableConfig
+    ));
+  }
+  public deleteDate($event: Event): void {
+    const dateIndex: number = $event.target.parentNode.getAttribute("index") - this.headersRightShift;
+    const date: number = this.subject.uniqueDates[dateIndex];
+    const deletedMarksArray: Observable<any>[] = this.marksService.deleteMarks(this.subject.id, date);
+    if (deletedMarksArray.length) {
+      deletedMarksArray.forEach(obs => obs.subscribe().unsubscribe())
+      this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
+        this.marksService.marks = marks;
+        this.subject.uniqueDates = this.subject.uniqueDates.filter((ts) => ts !== date);
+        this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+        this.manager.addSubscription(this.addMarksToTheView(
+          this.marksService,
+          this.studentsService,
+          this.subjectsService,
+          this.subject,
+          this.subjectTableConfig
+        ));
 
+      }));
+    } else {
+      this.subjectsService.patchSubject(this.subject);
+      this.subject.uniqueDates = this.subject.uniqueDates.filter((ts, i) => i !== dateIndex);
+      this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
+      this.manager.addSubscription(this.addMarksToTheView(
+        this.marksService,
+        this.studentsService,
+        this.subjectsService,
+        this.subject,
+        this.subjectTableConfig
+      ));
+    }
+
+  }
+  public ngOnInit(): void {
+    this.manager.addSubscription(this.route.params.pipe(
+      pluck("name"),
+      tap(data => {
+        if (!this.subjectsService.subjects.length) {
+          this.manager.addSubscription(this.subjectsService.fetchSubjects().subscribe(subj => {
+            this.subjectsService.subjects = subj;
+            this.compileInitialComponentState(data);
+          }));
+        } else {
+          this.compileInitialComponentState(data);
+        }
+
+        if (!this.marksService.marks.length) {
+          this.manager.addSubscription(
+            this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
+              this.marksService.marks = marks;
+            }))
+          );
+        }
+      }
+    )).subscribe());
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
-
 }

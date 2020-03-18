@@ -8,19 +8,103 @@ import {PageNotFoundComponent} from "../components/page-not-found/page-not-found
 import {StudentFormComponent} from "../components/students/student-form/student-form.component";
 import {SubjectsTableComponent} from "../components/subjects/subjects-table/subjects-table.component";
 import {SubjectFormComponent} from "../components/subjects/subject-form/subject-form.component";
+import {StudentsTableComponent} from "../components/students/students-table/students-table.component";
+import {SubjectsListComponent} from "../components/subjects/subjects-list/subjects-list.component";
+import {ExitFormGuard} from "../common/guards/exit-form.guard";
 
-const routes: Routes = [
-  {path: "", redirectTo: "students", pathMatch: "full"},
-  {path: "students", component: StudentsComponent},
-  {path: "subjects", component: SubjectsComponent},
-  {path: "subjects/:id",  component: SubjectsTableComponent},
-  {path: "new-subject", component: SubjectFormComponent},
-  {path: "statistics", component: StatisticsComponent},
-  {path: "export", component: ExportComponent},
-  {path: "new-student", component: StudentFormComponent},
-  {path: "**", component: PageNotFoundComponent},
+const studentsRoutes: Routes = [
+  {
+    path: "new-student",
+    component: StudentFormComponent,
+    canDeactivate: [ExitFormGuard],
+    data : {
+      breadcrumb: "add new student"
+    }
+  },
+  {
+    path: "",
+    component: StudentsTableComponent,
+    data : {
+      breadcrumb: ""
+    }
+  },
 ];
 
+const subjectsRoutes: Routes = [
+  {
+    path: "new-subject",
+    component: SubjectFormComponent,
+    canDeactivate: [ExitFormGuard],
+    data : {
+      breadcrumb: "new subject"
+    }
+  },
+  {
+    path: "",
+    component: SubjectsListComponent,
+    pathMatch: "full",
+    data : {
+      breadcrumb: ""
+    }
+  },
+  {
+    path: ":name",
+    component: SubjectsTableComponent,
+    data : {
+      breadcrumb: `subject journal`
+    }
+  },
+];
+
+const routes: Routes = [
+  {
+    path: "",
+    redirectTo: "students",
+    pathMatch: "full",
+    data : {
+      breadcrumb: "home"
+    }
+  },
+  {
+    path: "students",
+    component: StudentsComponent,
+    children: studentsRoutes,
+    data : {
+      breadcrumb: ""
+    }
+  },
+  {
+    path: "subjects",
+    component: SubjectsComponent,
+    children: subjectsRoutes,
+    data : {
+      breadcrumb: "subjects"
+    }
+  },
+
+  {
+    path: "statistics",
+    component: StatisticsComponent,
+    data : {
+      breadcrumb: "statistics"
+    }
+  },
+  {
+    path: "export",
+    component: ExportComponent,
+    data : {
+      breadcrumb: "export"
+    }
+  },
+
+  {
+    path: "**",
+    component: PageNotFoundComponent,
+    data : {
+      breadcrumb: "404"
+    }
+  },
+];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

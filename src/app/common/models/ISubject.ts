@@ -7,6 +7,6 @@ export interface ISubject {
   description?: string;
   address?: string;
   _id: string | number;
-  marks?: [];
-  students?: [];
+  marks?: (string|number)[];
+  uniqueDates?: number[];
 }

@@ -1,6 +1,8 @@
-import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {IFormConfig, IFormControlConfig} from "../../common/models/IFormConfig";
 import {AbstractControl, FormControl, FormGroup} from "@angular/forms";
+import {ComponentCanDeactivate} from "../../common/guards/exit-form.guard";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-form",
@@ -11,8 +13,8 @@ export class FormComponent implements OnInit {
 
   @Input("config") public config: IFormConfig;
   @Output() public onSubmit: EventEmitter<any> = new EventEmitter<any>();
-  public initialConfig: IFormConfig;
   public form: FormGroup;
+  public isSaved: boolean = false;
   constructor() {
   }
   private createFormFromConfig: Function = (config: IFormConfig): FormGroup => {
@@ -21,7 +23,7 @@ export class FormComponent implements OnInit {
     );
   }
 
-  private createFormControlFromConfig: Function = (config: IFormControlConfig[]): FormControl => {
+  private createFormControlFromConfig(config: IFormControlConfig[]): FormControl {
     let result: any = {};
     config.forEach(control => {
       if (!result[control.name]) {
@@ -35,7 +37,12 @@ export class FormComponent implements OnInit {
     return this.form.get(name);
   }
 
+  public isShowErrorMessage(control: AbstractControl): boolean {
+    return (!control.valid && control.touched && control.errors.required);
+  }
+
   public submit(): void {
+    this.isSaved = true;
     this.onSubmit.emit(this.form.value);
     this.form.reset();
   }
