@@ -27,3 +27,17 @@ export const createSubjectError: ActionCreator = createAction(
   "[Create Subject Effect] CREATE_SUBJECT_ERROR",
   props<{error: Error | string}>()
 );
+
+
+export const deleteSubject: ActionCreator = createAction(
+  "[Subjects List Page] DELETE_SUBJECT",
+  props<{subject: string}>()
+);
+export const deleteSubjectSuccess: ActionCreator = createAction(
+  "[Delete Subject Effect] DELETE_SUBJECT_SUCCESS",
+  props<{subject: string}>()
+);
+export const deleteSubjectError: ActionCreator = createAction(
+  "[Delete Subject Effect] DELETE_SUBJECT_ERROR",
+  props<{error: Error | string}>()
+);

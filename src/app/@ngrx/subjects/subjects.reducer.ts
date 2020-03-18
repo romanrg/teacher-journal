@@ -56,7 +56,34 @@ const reducer: ActionReducer = createReducer(
     loaded: false,
     error
   };
-})
+}),
+  on(SubjectsActions.deleteSubject, ((state, {subject}) => {
+    console.log("DELETE_SUBJECT action being handled");
+    return {
+      ...state,
+      loading: true,
+      loaded: false,
+    };
+  })),
+  on(SubjectsActions.deleteSubjectSuccess, ((state, {subject}) => {
+    console.log("DELETE_SUBJECT_SUCCESS action being handled");
+    const newState: SubjectsState = {...state};
+    newState.data = [...state.data].filter(subj => subj.id !== subject);
+    newState.loading = false;
+    newState.loaded = true;
+    return {
+      ...newState,
+    }
+  })),
+  on(SubjectsActions.deleteSubjectError, ((state, {error}) => {
+    console.log("DELETE_SUBJECT_ERROR action being handled");
+    return {
+      ...state,
+      error,
+      loaded: false,
+      loading: false
+    }
+  }))
 );
 
 

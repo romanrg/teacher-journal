@@ -51,8 +51,7 @@ export class SubjectsService {
   public getUniqueDatesById(id: string ): number[] {
     return this._subjects.filter(sub => sub.id === id)[0].uniqueDates.filter((a, b) => a - b);
   }
-  public deleteSubject(name: string): Observable<ISubject[]> {
-    const id: string = this._subjects.filter(sub => sub.name === name)[0].id;
+  public deleteSubject(id: string): Observable<ISubject[]> {
     return this.http.delete(`${this.URL}/${id}`);
   }
 

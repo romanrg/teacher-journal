@@ -34,6 +34,18 @@ export class SubjectsEffects {
     )
   );
 
+  public deleteSubjects$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SubjectsActions.deleteSubject),
+      switchMap(action => this.subjectsService.deleteSubject(action.subject).pipe(
+        map(subject => {
+          return SubjectsActions.deleteSubjectSuccess({subject: action.subject});
+        }),
+        catchError(error => SubjectsActions.deleteSubjectError({error}))
+      ))
+    )
+  );
+
   /*
   public deleteStudents$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(

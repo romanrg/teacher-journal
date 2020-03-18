@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {AppState} from "../../../@ngrx/app.state";
@@ -18,22 +17,14 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
   public subjects: ISubject[];
   public subjectsState$: Observable<SubjectsState>;
   constructor(
-    public subjectService: SubjectsService,
     private store: Store<AppState>,
   ) {
     this.manager = new SubscriptionManager();
   }
   public deleteSubject($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");
-    this.manager.addSubscription(this.subjectService.deleteSubject(subjName).subscribe(
-      data => {
-        this.manager.addSubscription(this.subjectService.fetchSubjects()
-          .subscribe(subs => {
-            this.subjectService.subjects = subs;
-            this.subjects = this.subjectService.subjects;
-          }));
-      }
-    ));
+    const subjId: string = this.subjects.filter(subj => subj.name === subjName)[0].id;
+    this.store.dispatch(SubjectsActions.deleteSubject({subject: subjId}));
   }
   public ngOnInit(): void {
     this.store.dispatch(SubjectsActions.getSubjects());
