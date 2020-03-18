@@ -46,7 +46,6 @@ const reducer: ActionReducer = createReducer(
   on(StudentsActions.createStudentError, (state, error) => {
     console.log("CREATE_STUDENT action being handled");
     const newStudent: StudentModel = new StudentModel(
-      `f${(~~(Math.random() * 1e8)).toString(16)}`,
       student.name,
       student.surname,
       student.address,

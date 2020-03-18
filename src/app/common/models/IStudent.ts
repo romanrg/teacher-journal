@@ -7,7 +7,6 @@ export interface IStudent extends IPerson {
 
 export class StudentModel implements IStudent {
   constructor(
-    public id: string = "",
     public name: string = "",
     public surname: string = "",
     public address: string = "",
