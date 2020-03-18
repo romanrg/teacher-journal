@@ -67,10 +67,14 @@ const reducer: ActionReducer = createReducer(
     console.log("DELETE_STUDENT_SUCCESS action being handled");
     let newState = {
       data: [...state.data].filter(student => student.id !== id),
+      searchedStudents: null,
       loading: false,
       loaded: true,
     };
     console.log(state, newState);
+    if (state.searchedStudents !== null) {
+      newState.searchedStudents = [...state.searchedStudents].filter(student => student.id !== id);
+    }
     return {...newState};
   }),
   on(StudentsActions.deleteStudentError, (state, {error} ) => {
