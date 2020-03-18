@@ -3,7 +3,7 @@ import {Observable, of} from "rxjs";
 import {IStudent} from "../models/IStudent";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, STUDENTS_ROUTE} from "../constants/API";
-import {map, tap, flatMap} from "rxjs/internal/operators";
+import {map, tap, flatMap, skip} from "rxjs/internal/operators";
 
 @Injectable({
   providedIn: "root"
@@ -29,14 +29,12 @@ export class StudentsServiceService {
   }
 
   public searchStudent(searchString: string): Observable<IStudent[]> {
-    if (this.lastSearchString !== searchString) {
-      this.lastSearchString = searchString;
-      const params: HttpParams = new HttpParams()
-        .set("q", searchString);
-      return this.http.get(this.URL, {
-        params
-      });
-    }
+    console.log(searchString);
+    const params: HttpParams = new HttpParams()
+      .set("q", searchString);
+    return this.http.get(this.URL, {
+      params
+    })
 
   }
 

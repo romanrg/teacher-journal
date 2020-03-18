@@ -5,6 +5,7 @@ export interface StudentsState {
   readonly loading: boolean;
   readonly loaded: boolean;
   readonly error: Error | string;
+  searchedStudents?: ReadonlyArray<IStudent>;
 }
 
 export const initialStudentsState: StudentsState = {
@@ -12,4 +13,5 @@ export const initialStudentsState: StudentsState = {
   loading: false,
   loaded: false,
   error: null,
+  searchedStudents: null,
 };

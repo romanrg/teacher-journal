@@ -5,7 +5,7 @@ import * as StudentsActions from "./students.actions";
 import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { StudentsServiceService} from "../../common/services/students-service.service";
-import {catchError, map, tap} from "rxjs/internal/operators";
+import {catchError, map, skip, startWith} from "rxjs/internal/operators";
 
 @Injectable()
 export class StudentsEffects {
@@ -15,7 +15,7 @@ export class StudentsEffects {
       ofType(StudentsActions.getStudents),
       switchMap(action => this.studentsService.fetchStudents().pipe(
         map(students => {
-          return StudentsActions.getStudentsSuccess({students})
+          return StudentsActions.getStudentsSuccess({students});
         }),
         catchError(error => StudentsActions.getStudentsError({error}))
       ))
@@ -44,7 +44,16 @@ export class StudentsEffects {
       ))
     )
   );
-
+  public searchStudents$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(StudentsActions.searchStudentsBar),
+      switchMap(action => this.studentsService.searchStudent(action.searchString).pipe(
+        map(studentsArray => {
+          return StudentsActions.searchStudentsBarSuccess({students: studentsArray});
+        })
+      ))
+    )
+  );
 
   constructor(
     private actions$: Actions,

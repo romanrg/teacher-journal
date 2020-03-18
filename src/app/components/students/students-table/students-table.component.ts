@@ -7,7 +7,7 @@ import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
 import {select, Store} from "@ngrx/store";
 import {AppState} from "../../../@ngrx/app.state";
-import {Observable} from "rxjs";
+import {from, Observable} from "rxjs";
 import {StudentsState} from "../../../@ngrx/students/students.state";
 import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 
@@ -32,8 +32,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     };
   }
   public renderSearch($event: Event): void {
-    const headers: string[] = this.tableHeaders;
-    this.tableConfig.body = this.createBody(<IStudent[]>$event, headers);
+    this.store.dispatch(StudentsActions.searchStudentsBar({searchString: $event}));
   }
   public createBody(students: IStudent[], config: ReadonlyArray<string>): string[][] {
     const newBody: string[][] = [];
@@ -63,7 +62,11 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     this.store.dispatch(StudentsActions.getStudents());
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
-        this.tableConfig = this.createStudentsTableConfig(students.data);
+        if (students.searchedStudents) {
+          this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
+        } else {
+          this.tableConfig = this.createStudentsTableConfig(students.data);
+        }
       })
     );
   }

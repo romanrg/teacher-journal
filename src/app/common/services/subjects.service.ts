@@ -23,7 +23,7 @@ export class SubjectsService {
   }
 
   public fetchSubjects(): Observable<ISubject[]> {
-    return this.http.get(this.URL);
+    return <Observable<ISubject[]>>this.http.get(this.URL);
   }
 
   set subjects(arr: ISubject[]): ISubject[] {

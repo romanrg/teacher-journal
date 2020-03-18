@@ -32,10 +32,6 @@ const reducer: ActionReducer = createReducer(
       error
     };
   }),
-  on(StudentsActions.getStudent, state => {
-    console.log("GET_STUDENT action being handled");
-    return {...state};
-  }),
   on(StudentsActions.createStudent, (state, {student}) => {
     console.log("CREATE_STUDENT action being handled", student);
     return {...state, loading: true};
@@ -51,7 +47,7 @@ const reducer: ActionReducer = createReducer(
   on(StudentsActions.createStudentError, (state, error) => {
     console.log("CREATE_STUDENT action being handled");
     const newStudent: StudentModel = new StudentModel(
-      `f${(~~(Math.random()*1e8)).toString(16)}`,
+      `f${(~~(Math.random() * 1e8)).toString(16)}`,
       student.name,
       student.surname,
       student.address,
@@ -86,7 +82,20 @@ const reducer: ActionReducer = createReducer(
       error
     };
   }),
-);
+  on(StudentsActions.searchStudentsBar, ((state, {searchString}) => {
+    console.log("STUDENT_SEARCH_BAR action being handled");
+    return {
+      ...state
+    };
+  })),
+  on(StudentsActions.searchStudentsBarSuccess, ((state, {students}) => {
+    console.log("STUDENT_SEARCH_BAR_SUCCESS action being handled");
+    return {
+      ...state,
+      searchedStudents: students
+    };
+  }))
+)
 export function studentsReducer(state: StudentsState | undefined, action: Action): any {
   return reducer(state, action);
 }

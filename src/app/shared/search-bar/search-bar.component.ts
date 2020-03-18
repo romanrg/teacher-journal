@@ -26,13 +26,6 @@ export class SearchBarComponent implements OnInit {
   }
 
   public showSearchResult(): void {
-    this.searchBar.valueChanges
-      .pipe(
-        startWith(this.searchBar.value),
-        debounceTime(200),
-        switchMap(searchInput => this.studentsService.searchStudent(searchInput.search)),
-      )
-      .subscribe(data => this.searchRes.emit(data));
-
+    this.searchRes.emit(this.searchBar.get("search").value);
   }
 }
