@@ -23,7 +23,6 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   public isSaved: boolean = false;
 
   constructor(
-    private studentsService: StudentsServiceService,
     private router: Router,
     private store: Store<AppState>
   ) { }
@@ -38,13 +37,6 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
     this.isSaved = true;
     this.store.dispatch(StudentsActions.createStudent({student: $event}));
     this.router.navigate(["/students"]);
-    /*
-    this.manager.addSubscription(this.studentsService.addStudent($event).subscribe(
-      data => {
-        this.studentsService.setStudents([...this.studentsService.getStudents(), data]);
-        this.router.navigate(["/students"]);
-      }));
-    */
   }
   public ngOnInit(): void {
     const errorMessages: string[] = ["This field is required"];

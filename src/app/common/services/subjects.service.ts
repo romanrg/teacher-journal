@@ -34,8 +34,7 @@ export class SubjectsService {
     return this._subjects;
   }
 
-  public addSubject(subject: ISubject): Observable<any> {
-    subject.uniqueDates = [];
+  public addSubject(subject: ISubject): Observable<ISubject[]> {
     return this.http.post(this.URL, subject);
   }
 

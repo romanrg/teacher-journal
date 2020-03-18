@@ -22,6 +22,21 @@ const reducer: ActionReducer = createReducer(
       loaded: true,
       loading: false
     };
+  }),
+  on(SubjectsActions.getSubjectsError, (state, {error}) => {
+  console.log("GET_SUBJECTS_ERROR action being handled");
+  return {
+    ...state,
+    error,
+    loaded: false,
+    loading: false
+  };
+}),
+  on(SubjectsActions.createSubject, state => {
+    console.log("CREATE_SUBJECT action being handled");
+    return {
+      ...state
+    };
   })
 );
 

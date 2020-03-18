@@ -8,6 +8,9 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {Observable} from "rxjs";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../@ngrx/app.state";
+import * as SubjectsActions from "src/app/@ngrx/subjects/subjects.actions";
 
 @Component({
   selector: "app-subject-form",
@@ -19,25 +22,16 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
   public isSaved: boolean = false;
   public manager: SubscriptionManager;
   constructor(
-    private subjectsService: SubjectsService,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>,
   ) {
     this.manager = new SubscriptionManager();
   }
   public submit($event: ISubject): void {
     this.isSaved = true;
-    this.manager.addSubscription(this.subjectsService.addSubject($event)
-      .subscribe(
-        data => {
-          this.subjectsService.fetchSubjects().subscribe(
-            subjects => {
-              this.subjectsService.subjects = subjects;
-              this.router.navigate(["/subjects"]);
-            }
-          );
-        }
-      ));
-
+    $event.uniqueDates = [];
+    this.store.dispatch(SubjectsActions.createSubject({subject: $event}));
+    this.router.navigate(["/subjects"]);
   }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
