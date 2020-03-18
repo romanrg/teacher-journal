@@ -1,5 +1,4 @@
-import {Action, ActionReducer, createReducer, on, props} from "@ngrx/store";
-
+import {Action, ActionReducer, createReducer, on} from "@ngrx/store";
 import { StudentsState, initialStudentsState} from "./students.state";
 import * as StudentsActions from "./students.actions";
 import {IStudent, StudentModel} from "../../common/models/IStudent";
@@ -65,7 +64,7 @@ const reducer: ActionReducer = createReducer(
   }),
   on(StudentsActions.deleteStudentSuccess, (state, {id} ) => {
     console.log("DELETE_STUDENT_SUCCESS action being handled");
-    let newState = {
+    let newState: StudentsState = {
       data: [...state.data].filter(student => student.id !== id),
       searchedStudents: null,
       loading: false,
@@ -99,7 +98,7 @@ const reducer: ActionReducer = createReducer(
       searchedStudents: students
     };
   }))
-)
+);
 export function studentsReducer(state: StudentsState | undefined, action: Action): any {
   return reducer(state, action);
 }
