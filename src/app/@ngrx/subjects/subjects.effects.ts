@@ -46,6 +46,41 @@ export class SubjectsEffects {
     )
   );
 
+  public getCurrentSubject$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SubjectsActions.addCurrent),
+      switchMap(action => this.subjectsService.getSubjectByName(action.current).pipe(
+        map(subjects => {
+          return SubjectsActions.addCurrentSuccess({subject: subjects[0]});
+        }),
+        catchError(error => SubjectsActions.getSubjectsError({error}))
+      ))
+    )
+  );
+  public changeTeacher$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SubjectsActions.changeTeacher),
+      switchMap(action => this.subjectsService.patchSubject(action.patchedSubject).pipe(
+        map(subjects => {
+          return SubjectsActions.changeTeacherSuccess({patchedSubject: action.patchedSubject});
+        }),
+        catchError(error => SubjectsActions.changeTeacherError({error}))
+      ))
+    )
+  );
+  /*
+  public changeTeacher$: Observable<Action> = createEffect(() => {
+    this.actions$.pipe(
+      ofType(SubjectsActions.changeTeacher),
+      switchMap(action => this.subjectsService.patchSubject(action.patchedSubject).pipe(
+        map(subjects => {
+          return SubjectsActions.changeTeacherSuccess({patchSubject: patchedSubject});
+        }),
+        catchError(error => SubjectsActions.changeTeacherError({error}))
+      ))
+    )
+  });
+  */
   /*
   public deleteStudents$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(

@@ -4,7 +4,7 @@ import {from, Observable, of} from "rxjs";
 import {map, withLatestFrom} from "rxjs/internal/operators";
 import {Params} from "@angular/router";
 import {IStudent} from "../models/IStudent";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, SUBJECTS_ROUTE} from "../constants/API";
 import {ITeacher} from "../models/ITeacher";
 
@@ -39,7 +39,7 @@ export class SubjectsService {
   }
 
   public patchSubject(subject: ISubject): void {
-    this.http.patch(`${this.URL}/${subject.id}`, subject).subscribe();
+    return this.http.patch(`${this.URL}/${subject.id}`, subject);
   }
 
   public addUniqueDate(id: (string|number), date: number): void {
@@ -53,6 +53,14 @@ export class SubjectsService {
   }
   public deleteSubject(id: string): Observable<ISubject[]> {
     return this.http.delete(`${this.URL}/${id}`);
+  }
+
+  public getSubjectByName(current: string): Observable<ISubject[]> {
+    const params: HttpParams = new HttpParams()
+      .set("name", current);
+    return this.http.get(this.URL, {
+      params
+    });
   }
 
 }

@@ -4,6 +4,7 @@ import { IStudent } from "../../common/models/IStudent";
 export const getStudents: ActionCreator = createAction(
   "[Students Table Page] GET_STUDENTS"
 );
+
 export const getStudentsSuccess: ActionCreator = createAction(
   "[Get Students Effect] GET_STUDENTS_SUCCESS",
   props<{students: IStudent[]}>()
@@ -12,6 +13,7 @@ export const getStudentsError: ActionCreator = createAction(
   "[Get Students Effect] GET_STUDENTS_ERROR",
   props<{error: Error | string}>()
 );
+
 export const createStudent: ActionCreator = createAction(
   "[Students Form Page] CREATE_STUDENT",
   props<{student: IStudent}>()

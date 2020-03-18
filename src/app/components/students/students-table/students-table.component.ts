@@ -59,7 +59,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   }
   public ngOnInit(): void {
     this.studentsState$ = this.store.pipe(select("students"));
-    this.store.dispatch(StudentsActions.getStudents());
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
         if (students.searchedStudents) {
@@ -69,6 +68,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
         }
       })
     );
+    if (!this.tableConfig.body.length) {
+      this.store.dispatch(StudentsActions.getStudents());
+    }
+
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

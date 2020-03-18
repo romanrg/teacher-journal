@@ -5,6 +5,7 @@ export interface SubjectsState {
   readonly loading: boolean;
   readonly loaded: boolean;
   readonly error: Error | string;
+  readonly currentSubject: ISubject;
 }
 
 export const initialSubjectsState: SubjectsState = {
@@ -12,4 +13,5 @@ export const initialSubjectsState: SubjectsState = {
   loading: false,
   loaded: false,
   error: null,
+  currentSubject: null,
 };

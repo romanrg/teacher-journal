@@ -17,6 +17,13 @@ import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
 import {Observable} from "rxjs";
 
+import {AppState} from "../../../@ngrx/app.state";
+import {SubjectsState} from "../../../@ngrx/subjects/subjects.state";
+import {select, Store} from "@ngrx/store";
+import * as SubjectsActions from "src/app/@ngrx/subjects/subjects.actions";
+import {StudentsState} from "../../../@ngrx/students/students.state";
+import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
+
 @Component({
   selector: "app-subjects-table",
   templateUrl: "./subjects-table.component.html",
@@ -32,13 +39,17 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public headersRightShift: number = SUBJECT_HEADERS_LENGTH;
   public dateGenerator: DatePicker;
   public numberGenerator: NumberPicker;
+
+  public subjectsState$: Observable<SubjectsState>;
+  public studentsState$: Observable<StudentsState>;
   constructor(
     private subjectsService: SubjectsService,
     private route: ActivatedRoute,
     private studentsService: StudentsServiceService,
     private renderer: Renderer2,
     private datePipe: DatePipe,
-    private marksService: MarksServiceService
+    private marksService: MarksServiceService,
+    private store: Store<AppState>
   ) {
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer);
@@ -50,9 +61,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     const newTeacher: string = $event[
       this.newTeacherConfig.formGroupName.formControls[0].name
       ];
-    this.subject.teacher = newTeacher;
-    this.subjectsService.patchSubject(this.subject);
-    this.newTeacherConfig.formGroupName.formControls[0].placeholder = newTeacher;
+    const patchedSubject: ISubject = {...this.subject};
+    patchedSubject.teacher = newTeacher
+    this.store.dispatch(SubjectsActions.changeTeacher({patchedSubject: patchedSubject}));
   }
   public getCellIndex(target: EventTarget): number {
     return +target.parentNode.getAttribute("index");
@@ -174,7 +185,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           return marks;
         }),
         map(marks => {
-          if(marks.length) {
+          if (marks.length) {
             marks.forEach(mark => {
               const student: IStudent = studentsService.findStudentById(mark.student);
               const markRow: Mark[] = (new RowCreator()).generateRowFromObject(mark, ["value"]);
@@ -246,7 +257,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     const date: number = this.subject.uniqueDates[dateIndex];
     const deletedMarksArray: Observable<any>[] = this.marksService.deleteMarks(this.subject.id, date);
     if (deletedMarksArray.length) {
-      deletedMarksArray.forEach(obs => obs.subscribe().unsubscribe())
+      deletedMarksArray.forEach(obs => obs.subscribe().unsubscribe());
       this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
         this.marksService.marks = marks;
         this.subject.uniqueDates = this.subject.uniqueDates.filter((ts) => ts !== date);
@@ -275,27 +286,31 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   }
   public ngOnInit(): void {
-    this.manager.addSubscription(this.route.params.pipe(
-      pluck("name"),
-      tap(data => {
-        if (!this.subjectsService.subjects.length) {
-          this.manager.addSubscription(this.subjectsService.fetchSubjects().subscribe(subj => {
-            this.subjectsService.subjects = subj;
-            this.compileInitialComponentState(data);
-          }));
-        } else {
-          this.compileInitialComponentState(data);
-        }
-
-        if (!this.marksService.marks.length) {
-          this.manager.addSubscription(
-            this.manager.addSubscription(this.marksService.getMarks().subscribe(marks => {
-              this.marksService.marks = marks;
-            }))
-          );
-        }
-      }
-    )).subscribe());
+    this.subjectsState$ = this.store.pipe(select("subjects"));
+    this.studentsState$ = this.store.pipe(select("students"));
+    const subjectName: string = this.route.snapshot.params.name;
+    this.subjectTableConfig = {
+      caption: `${subjectName} class journal:`,
+      headers: this.subjectHeadersConstantNames,
+      body: []
+    };
+    this.store.dispatch(SubjectsActions.addCurrent({current: subjectName}));
+    this.store.dispatch(StudentsActions.getStudents());
+    this.manager.addSubscription(this.subjectsState$.subscribe(state => {
+      this.subject = state.currentSubject;
+      this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
+    }));
+    this.manager.addSubscription(this.studentsState$.subscribe(state => {
+      const result: string[][] = [];
+      state.data.map(student => {
+        const creator: RowCreator = new RowCreator();
+        const row: string[] = creator.generateRowFromObject(
+          student, ["name", "surname", "average mark"]
+        );
+        result.push(row);
+      });
+      this.subjectTableConfig.body = result;
+    }));
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

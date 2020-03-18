@@ -83,7 +83,38 @@ const reducer: ActionReducer = createReducer(
       loaded: false,
       loading: false
     }
-  }))
+  })),
+  on(SubjectsActions.addCurrent, (state, {current}) => {
+    console.log("ADD_CURRENT_SUBJECT action being handled", current);
+    return {
+      ...state,
+      currentSubject: current
+    };
+  }),
+  on(SubjectsActions.addCurrentSuccess, (state, {subject}) => {
+    console.log("ADD_CURRENT_SUBJECT_SUCCESS action being handled");
+    return {
+      ...state,
+      currentSubject: subject
+    };
+  }),
+  on(SubjectsActions.changeTeacher, (state, {patchedSubject}) => {
+    console.log("CHANGE_TEACHER action being handled", patchedSubject);
+    return {
+      ...state,
+      loading: true,
+      loaded: false,
+    };
+  }),
+  on(SubjectsActions.changeTeacherSuccess, (state, {patchedSubject}) => {
+    console.log("CHANGE_TEACHER_SUCCESS action being handled");
+    return {
+      ...state,
+      loading: false,
+      loaded: true,
+      currentSubject: patchedSubject
+    };
+  })
 );
 
 
