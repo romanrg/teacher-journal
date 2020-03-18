@@ -29,6 +29,7 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public submit($event: ISubject): void {
     this.isSaved = true;
+    console.log($event);
     $event.uniqueDates = [];
     this.store.dispatch(SubjectsActions.createSubject({subject: $event}));
     this.router.navigate(["/subjects"]);
@@ -62,7 +63,7 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
             errorMessages,
           },
           {
-            name: "cabinet",
+            name: "address",
             initialValue: "",
             type: FormControlType.text,
             validators: [],

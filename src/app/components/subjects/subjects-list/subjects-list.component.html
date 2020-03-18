@@ -1,5 +1,5 @@
-<ng-container *ngIf="subjects">
-<nav class="subjects__nav">
+<ng-container *ngIf="(subjectsState$|async).loaded">
+  <nav class="subjects__nav">
   <ul class="subjects__list">
     <li *ngFor="let subject of subjects"
         class="subjects__item"
@@ -24,7 +24,7 @@
     </li>
   </ul>
 </nav>
-<a  class="subjects__link subjects__link--form"
+  <a  class="subjects__link subjects__link--form"
     routerLink="new-subject"
 >
   <app-button
