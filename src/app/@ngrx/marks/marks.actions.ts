@@ -15,6 +15,31 @@ export const getMarksError: ActionCreator = createAction(
   props<{error: Error | string}>()
 );
 
+export const addNewMark: ActionCreator = createAction(
+  "[New Mark Form] ADD_NEW_MARK",
+  props<{mark: Mark}>()
+);
+export const addNewMarkSuccess: ActionCreator = createAction(
+  "[Add New Mark Effect] ADD_NEW_MARK_SUCCESS",
+  props<{mark: Mark}>()
+);
+export const addNewMarkError: ActionCreator = createAction(
+  "[Add New Mark Effect] ADD_NEW_MARK_ERROR",
+  props<{error: Error | string}>()
+);
+export const changeMark: ActionCreator = createAction(
+  "[New Mark Form] CHANGE_MARK",
+  props<{mark: Mark}>()
+);
+export const changeMarkSuccess: ActionCreator = createAction(
+  "[Change Mark Effect] CHANGE_MARK_SUCCESS",
+  props<{mark: Mark}>()
+);
+export const changeMarkError: ActionCreator = createAction(
+  "[Change Mark Effect] CHANGE_MARK_ERROR",
+  props<{error: Error | string}>()
+);
+
 /*
 export const createStudent: ActionCreator = createAction(
   "[Students Form Page] CREATE_STUDENT",

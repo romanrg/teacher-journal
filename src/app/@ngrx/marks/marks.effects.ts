@@ -20,6 +20,43 @@ export class MarksEffects {
       ))
     )
   );
+
+  public addNewMark$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MarksActions.addNewMark),
+      switchMap(action => this.marksService.submitMark(action.mark).pipe(
+        map(marks => {
+          return MarksActions.addNewMarkSuccess({mark: marks});
+        }),
+        catchError(error => MarksActions.addNewMarkError({error}))
+      ))
+    )
+  );
+
+  public changeMark: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MarksActions.changeMark),
+      switchMap(action => this.marksService.patchMark(action.mark).pipe(
+        map(marks => {
+          return MarksActions.changeMarkSuccess({mark: marks});
+        }),
+        catchError(error => MarksActions.changeMarkError({error}))
+      ))
+    )
+  );
+  /*
+  public addNewMark$: Observable<Action> = createEffect(() => {
+    this.actions$.pipe(
+      ofType(MarksActions.addNewMark),
+      switchMap(action => this.marksService.submitMark(action.mark).pipe(
+        map(mark => {
+          return MarksActions.addNewMarkSuccess({mark});
+        }),
+        catchError(error => MarksActions.addNewMarkError({error}))
+      ))
+    )
+  });
+  */
   /*
   public getStudents$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(

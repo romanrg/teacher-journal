@@ -18,20 +18,8 @@ export class MarksServiceService {
 
   }
 
-  public addMarks(mark: Mark): void {
-      const filtered: number = this._marks.findIndex(
-        m => (m.student === mark.student) && (m.time === mark.time) && (m.subject === mark.subject)
-      );
-      if (filtered === -1) {
-        this._marks.push(mark);
-        this.submitMark(mark);
-        return true;
-      } else {
-        this._marks[filtered] = mark;
-      }
-  }
-  public submitMark(mark: Mark): void {
-    this.http.post(this.URL, mark).subscribe().unsubscribe();
+  public submitMark(mark: Mark): Observable<Mark[]> {
+    return this.http.post(this.URL, mark);
   }
   get marks(): Mark[] {
     return this._marks;
@@ -42,10 +30,8 @@ export class MarksServiceService {
   public getMarks(): Observable<Mark> {
     return this.http.get(this.URL);
   }
-  public getSubjectMarks(subject: string): Observable<Mark[]> {
-    const params: HttpParams = new HttpParams()
-      .set("subject", subject);
-    return this.http.get(this.URL, {params});
+  public patchMark(mark: Mark): Observable<Mark> {
+    return this.http.patch(`${this.URL}/${mark.id}`, mark);
   }
   public deleteMarks(id: string, timestamp: number): Observable<Mark[]> {
     return this._marks

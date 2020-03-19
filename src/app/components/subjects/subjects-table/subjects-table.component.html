@@ -1,4 +1,4 @@
-<ng-container *ngIf="isAllLoaded((componentState$ | async)); else empty">
+<ng-container *ngIf="isAllLoaded((componentState$ | async)); else loading">
   <div class="container" >
   <app-one-header-table
     [config]="subjectTableConfig"
@@ -13,7 +13,7 @@
   ></app-button>
 </div>
   <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
-  <ng-template #empty>
-    <app-empty-data></app-empty-data>
-  </ng-template>
 </ng-container>
+<ng-template #loading>
+  <p>Loading...</p>
+</ng-template>
