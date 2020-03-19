@@ -26,8 +26,8 @@ export class SubjectsEffects {
     this.actions$.pipe(
       ofType(SubjectsActions.createSubject),
       switchMap(action => this.subjectsService.addSubject(action.subject).pipe(
-        map(subjects => {
-          return SubjectsActions.createSubjectSuccess({subject: action.subject});
+        map(subject => {
+          return SubjectsActions.createSubjectSuccess({subject});
         }),
         catchError(error => SubjectsActions.createSubjectError({error}))
       ))
@@ -62,12 +62,25 @@ export class SubjectsEffects {
       ofType(SubjectsActions.changeTeacher),
       switchMap(action => this.subjectsService.patchSubject(action.patchedSubject).pipe(
         map(subjects => {
-          return SubjectsActions.changeTeacherSuccess({patchedSubject: action.patchedSubject});
+          return SubjectsActions.changeTeacherSuccess({patchedSubject: subjects});
         }),
         catchError(error => SubjectsActions.changeTeacherError({error}))
       ))
     )
   );
+  public addNewUniqueDate$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SubjectsActions.addNewUniqueDate),
+      switchMap(action => this.subjectsService.patchSubject(action.subject).pipe(
+        map(subject => {
+          return SubjectsActions.addNewUniqueDateSuccess({subject: subject});
+        }),
+        catchError(error => SubjectsActions.changeTeacherError({error}))
+      ))
+    )
+  );
+
+
   /*
   public changeTeacher$: Observable<Action> = createEffect(() => {
     this.actions$.pipe(

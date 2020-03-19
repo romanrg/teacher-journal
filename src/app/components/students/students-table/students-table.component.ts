@@ -1,13 +1,12 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {ITableConfig} from "../../../common/models/ITableConfig";
 import {RowCreator} from "../../../common/helpers/RowCreator";
-import {IStudent, StudentModel} from "../../../common/models/IStudent";
+import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
 import {select, Store} from "@ngrx/store";
 import {AppState} from "../../../@ngrx/app.state";
-import {from, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {StudentsState} from "../../../@ngrx/students/students.state";
 import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 
@@ -68,10 +67,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
         }
       })
     );
-    if (!this.tableConfig.body.length) {
-      this.store.dispatch(StudentsActions.getStudents());
-    }
-
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

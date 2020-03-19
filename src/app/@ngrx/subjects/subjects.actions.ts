@@ -2,7 +2,7 @@ import {ActionCreator, createAction, props} from "@ngrx/store";
 import { ISubject } from "../../common/models/IStudent";
 
 export const getSubjects: ActionCreator = createAction(
-  "[Subjects List Page] GET_SUBJECTS"
+  "[Main Page (App)] GET_SUBJECTS"
 );
 export const getSubjectsSuccess: ActionCreator = createAction(
   "[Get Subjects Effect] GET_SUBJECTS_SUCCESS",
@@ -12,8 +12,6 @@ export const getSubjectsError: ActionCreator = createAction(
   "[Get Subjects Effect] GET_SUBJECTS_ERROR",
   props<{error: Error | string}>()
 );
-
-
 
 export const createSubject: ActionCreator = createAction(
   "[Subjects Form Page] CREATE_SUBJECT",
@@ -27,6 +25,9 @@ export const createSubjectError: ActionCreator = createAction(
   "[Create Subject Effect] CREATE_SUBJECT_ERROR",
   props<{error: Error | string}>()
 );
+
+
+
 
 
 export const deleteSubject: ActionCreator = createAction(
@@ -62,9 +63,20 @@ export const changeTeacher: ActionCreator = createAction(
 export const changeTeacherSuccess: ActionCreator = createAction(
   "[Change Teacher Effect] CHANGE_TEACHER_SUCCESS",
   props<{patchedSubject: ISubject}>()
-)
+);
 
 export const changeTeacherError: ActionCreator = createAction(
   "[Change Teacher Effect] CHANGE_TEACHER_ERROR",
   props<{error: Error | string}>()
-)
+);
+
+
+export const addNewUniqueDate: ActionCreator = createAction(
+  "[New Date Column Form] ADD_NEW_UniqueDate",
+  props<{subject: ISubject}>()
+);
+
+export const addNewUniqueDateSuccess: ActionCreator = createAction(
+  "[Add new UniqueDate Effect] ADD_NEW_UniqueDate_Success",
+  props<{timestamp: number, subject: ISubject}>()
+);

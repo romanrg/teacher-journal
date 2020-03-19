@@ -1,17 +1,37 @@
 import {Action, ActionReducer, createReducer, on} from "@ngrx/store";
-import { StudentsState, initialStudentsState} from "./students.state";
-import * as StudentsActions from "./students.actions";
+import {initialMarksState, MarksState} from "./marks.state";
+import * as MarksActions from "./marks.actions";
 import {IStudent, StudentModel} from "../../common/models/IStudent";
 
 const reducer: ActionReducer = createReducer(
-  initialStudentsState,
-  on(StudentsActions.getStudents, state => {
-    console.log("GET_STUDENTS action being handled");
+  initialMarksState,
+  on(MarksActions.getMarks, state => {
+    console.log("GET_MARKS action being handled");
     return {
       ...state,
       loading: true
     };
   }),
+  on(MarksActions.getMarksSuccess, (state, { marks }) => {
+    console.log("GET_STUDENTS_SUCCESS action being handled");
+    const data: Mark[] = [...marks];
+    return {
+      ...state,
+      data,
+      loading: false,
+      loaded: true
+    };
+  }),
+  on(MarksActions.getMarksError, (state, { error }) => {
+    console.log("GET_STUDENTS_ERROR action being handled");
+    return {
+      ...state,
+      loading: false,
+      loaded: false,
+      error
+    };
+  }),
+  /*
   on(StudentsActions.getStudentsSuccess, (state, { students }) => {
     console.log("GET_STUDENTS_SUCCESS action being handled");
     const data: IStudent[] = [...students];
@@ -35,14 +55,10 @@ const reducer: ActionReducer = createReducer(
     console.log("CREATE_STUDENT action being handled", student);
     return {...state, loading: true};
   }),
-  on(StudentsActions.createStudentSuccess, (state, {student}) => {
+  on(StudentsActions.createStudentSuccess, (state, student) => {
     console.log("CREATE_STUDENT_SUCCESS action being handled", student);
-    const newState: StudentsState = {...state};
-    newState.data = [...state.data];
-    newState.data.push(student);
-    console.log(state, newState)
     return {
-      ...newState,
+      ...state,
       loading: false,
       loaded: true,
     };
@@ -101,7 +117,8 @@ const reducer: ActionReducer = createReducer(
       searchedStudents: students
     };
   }))
+  */
 );
-export function studentsReducer(state: StudentsState | undefined, action: Action): any {
+export function marksReducer(state: MarksState | undefined, action: Action): any {
   return reducer(state, action);
 }

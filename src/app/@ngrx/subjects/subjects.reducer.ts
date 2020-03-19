@@ -41,11 +41,15 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.createSubjectSuccess, (state, { subject }) => {
-    console.log("CREATE_SUBJECT_SUCCESS action being handled");
+    console.log("CREATE_SUBJECT_SUCCESS action being handled", subject);
+    const newState: SubjectsState = {...state};
+    newState.data = [...state.data];
+    newState.data.push(subject);
+    console.log(newState);
     return {
-      ...state,
+      ...newState,
       loading: false,
-      loaded: true
+      loaded: true,
     };
   }),
   on(SubjectsActions.createSubjectError, (state, { error }) => {
@@ -86,6 +90,7 @@ const reducer: ActionReducer = createReducer(
   })),
   on(SubjectsActions.addCurrent, (state, {current}) => {
     console.log("ADD_CURRENT_SUBJECT action being handled", current);
+    console.log(state.data.filter(subject => subject.name === current)[0]);
     return {
       ...state,
       currentSubject: current
@@ -108,11 +113,26 @@ const reducer: ActionReducer = createReducer(
   }),
   on(SubjectsActions.changeTeacherSuccess, (state, {patchedSubject}) => {
     console.log("CHANGE_TEACHER_SUCCESS action being handled");
+    const newState: SubjectsState = JSON.parse(JSON.stringify(state));
+    newState.data.filter(subj => subj.id === patchedSubject.id)[0].teacher = patchedSubject.teacher;
     return {
-      ...state,
+      ...newState,
       loading: false,
       loaded: true,
-      currentSubject: patchedSubject
+    };
+  }),
+  on(SubjectsActions.addNewUniqueDate, (state, { subject }) => {
+    console.log("ADD_NEW_UniqueDate action being handled");
+    return {
+      ...state,
+    }
+  }),
+  on(SubjectsActions.addNewUniqueDateSuccess, (state, { subject }) => {
+    console.log("ADD_NEW_UniqueDate_SUCCESS action being handled");
+    const newState: SubjectsState = JSON.parse(JSON.stringify(state));
+    newState.data.filter(subj => subj.id === subject.id)[0].uniqueDates = subject.uniqueDates;
+    return {
+      ...newState,
     };
   })
 );

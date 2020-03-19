@@ -1,6 +1,5 @@
-<ng-container *ngIf="subjectTableConfig">
-  <ng-container *ngIf="subjectTableConfig.body.length; else empty">
-<div class="container" >
+<ng-container *ngIf="isAllLoaded((componentState$ | async)); else empty">
+  <div class="container" >
   <app-one-header-table
     [config]="subjectTableConfig"
     (click)="generateInput($event.target)"
@@ -12,9 +11,8 @@
     [screenReader]="'Add new date'"
     (click)="addNewColumn()"
   ></app-button>
-  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
 </div>
-  </ng-container>
+  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
   <ng-template #empty>
     <app-empty-data></app-empty-data>
   </ng-template>

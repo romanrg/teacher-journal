@@ -3,19 +3,19 @@ import {ActivatedRoute} from "@angular/router";
 import {SubjectsService} from "../../../common/services/subjects.service";
 import {ISubject} from "../../../common/models/ISubject";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {map, pluck, tap} from "rxjs/internal/operators";
+import {map, tap} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {RowCreator} from "../../../common/helpers/RowCreator";
-import {ITableConfig} from "../../../common/models/ITableConfig";
+import {ITableConfig, TableRow} from "../../../common/models/ITableConfig";
 import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
 import {SUBJECT_HEADERS, SUBJECT_HEADERS_LENGTH} from "../../../common/constants/SUBJECT_HEADERS";
 import {DatePipe} from "@angular/common";
 import {MarksServiceService} from "../../../common/services/marks-service.service";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
-import {Observable} from "rxjs";
+import {from, Observable, of} from "rxjs";
 
 import {AppState} from "../../../@ngrx/app.state";
 import {SubjectsState} from "../../../@ngrx/subjects/subjects.state";
@@ -23,6 +23,9 @@ import {select, Store} from "@ngrx/store";
 import * as SubjectsActions from "src/app/@ngrx/subjects/subjects.actions";
 import {StudentsState} from "../../../@ngrx/students/students.state";
 import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
+import {MarksState} from "../../../@ngrx/marks/marks.state";
+import {pluck} from "../../../common/helpers/lib";
+import {element} from "protractor";
 
 @Component({
   selector: "app-subjects-table",
@@ -40,8 +43,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public dateGenerator: DatePicker;
   public numberGenerator: NumberPicker;
 
-  public subjectsState$: Observable<SubjectsState>;
-  public studentsState$: Observable<StudentsState>;
+  public public;
+  public componentState$: Observable<{
+    subjects: SubjectsState,
+    students: StudentsState,
+    marks: MarksState
+  }>;
+  public subjects: ISubject[];
+  public students: IStudent[];
+  public marks: Mark[];
+
   constructor(
     private subjectsService: SubjectsService,
     private route: ActivatedRoute,
@@ -57,23 +68,18 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
   }
 
+  // correctly works with @ngrx
   public changeTeacher($event: Event): void {
     const newTeacher: string = $event[
       this.newTeacherConfig.formGroupName.formControls[0].name
       ];
     const patchedSubject: ISubject = {...this.subject};
-    patchedSubject.teacher = newTeacher
+    patchedSubject.teacher = newTeacher;
     this.store.dispatch(SubjectsActions.changeTeacher({patchedSubject: patchedSubject}));
-  }
-  public getCellIndex(target: EventTarget): number {
-    return +target.parentNode.getAttribute("index");
   }
   public addNewColumn(): void {
     this.subjectTableConfig.headers.push("Select date");
     this.subjectTableConfig.body.forEach(row => row.length = this.subjectTableConfig.headers.length);
-  }
-  public shouldAddNumberInput(target: EventTarget): boolean {
-    return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
   }
   public shouldAddDateInput(target: EventTarget): boolean {
     return (
@@ -83,62 +89,43 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     );
   }
   public submitDate(
-    subjectsService: SubjectsService,
-    subject: ISubject,
-    config: ITableConfig,
+    dispatch: Function,
+    subject: ISubject
   ): void {
     return function(value: string): void {
-      subjectsService.addUniqueDate(subject.id, (new Date(value)).getTime());
-      config.headers = [...config.headers.slice(0, 3), ...subjectsService.getUniqueDatesById(subject.id)];
+      const copy: ISubject = JSON.parse(JSON.stringify(subject));
+      copy.uniqueDates.push((new Date(value)).getTime());
+      dispatch(copy);
     };
   }
+
+  public getCellIndex(target: EventTarget): number {
+    return +target.parentNode.getAttribute("index");
+  }
+  public shouldAddNumberInput(target: EventTarget): boolean {
+    return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.headersRightShift);
+  }
+
   public submitMark(
-    target: EventTarget,
-    studentsService: StudentsServiceService,
-    subjectsService: SubjectsService,
-    marksService: MarksServiceService,
-    subject: ISubject,
-    config: ITableConfig,
-    renderer: Renderer2,
-    marksRenderFn: Function
+    dispatch: Function,
   ): void {
-    const studentRow: number = +target.parentNode.parentNode.getAttribute("rowIndex");
-    const student: IStudent = studentsService.getStudentIdByName(
-      config.body[studentRow][0], config.body[studentRow][1]
-    );
-    const timeStampArray: number[] = subjectsService.getUniqueDatesById(subject.id);
     return function (value: number, arr): void {
-      const uniqueDateIndex: number = arr[0].getAttribute("index") - 3;
-      const markDate: number = timeStampArray[uniqueDateIndex];
-      const newMark: Mark = new Mark(
-        student.id, subject.id, +value, markDate
-      );
-      marksService.addMarks(newMark);
-      renderer.removeChild(arr[0], arr[1]);
-      marksRenderFn(marksService, studentsService, subjectsService, subject, config);
+      dispatch(value, arr);
     };
   }
   public generateInput(target: EventTarget): void {
       if (this.shouldAddDateInput(target)) {
+        const _dispatcher: Function = (store, dispatcher, name) => (value) => store.dispatch(dispatcher({[name]: value}));
         this.dateGenerator.generateDatePicker(
           target,
-          this.subjectsService.getUniqueDatesById(this.subject.id),
+          this.subjectTableConfig.headers.filter(head => typeof head === "number"),
           this.datePipe,
-          this.submitDate(this.subjectsService, this.subject, this.subjectTableConfig)
+          this.submitDate(_dispatcher(this.store, SubjectsActions.addNewUniqueDate, "subject"), this.subject)
         );
       } else if (this.shouldAddNumberInput(target)) {
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(
-            target.parentNode,
-            this.studentsService,
-            this.subjectsService,
-            this.marksService,
-            this.subject,
-            this.subjectTableConfig,
-            this.renderer,
-            this.addMarksToTheView
-          )
+          this.submitMark(console.log)
         );
       }
   }
@@ -240,18 +227,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       body: this.generateBodyDataFromStudents(),
     };
   }
-  public compileInitialComponentState(data: string): void {
-    this.subject = this.subjectsService.subjects.filter(subject => subject.name === data)[0];
-    this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
-    this.subjectTableConfig = this.getInitialTableConfig(this.subjectHeadersConstantNames, this.subject);
-    this.manager.addSubscription(this.addMarksToTheView(
-      this.marksService,
-      this.studentsService,
-      this.subjectsService,
-      this.subject,
-      this.subjectTableConfig
-    ));
-  }
+
   public deleteDate($event: Event): void {
     const dateIndex: number = $event.target.parentNode.getAttribute("index") - this.headersRightShift;
     const date: number = this.subject.uniqueDates[dateIndex];
@@ -285,33 +261,81 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     }
 
   }
+  public isAllLoaded(state: {
+    subjects: SubjectsState,
+    students: StudentsState,
+    marks: MarksState
+  }): boolean {
+    return Object.keys(state).every(key => state[key].loaded === true);
+  }
   public ngOnInit(): void {
-    this.subjectsState$ = this.store.pipe(select("subjects"));
-    this.studentsState$ = this.store.pipe(select("students"));
     const subjectName: string = this.route.snapshot.params.name;
     this.subjectTableConfig = {
       caption: `${subjectName} class journal:`,
       headers: this.subjectHeadersConstantNames,
       body: []
     };
-    this.store.dispatch(SubjectsActions.addCurrent({current: subjectName}));
-    this.store.dispatch(StudentsActions.getStudents());
-    this.manager.addSubscription(this.subjectsState$.subscribe(state => {
-      this.subject = state.currentSubject;
-      this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
-    }));
-    this.manager.addSubscription(this.studentsState$.subscribe(state => {
-      const result: string[][] = [];
-      state.data.map(student => {
-        const creator: RowCreator = new RowCreator();
-        const row: string[] = creator.generateRowFromObject(
-          student, ["name", "surname", "average mark"]
-        );
-        result.push(row);
-      });
-      this.subjectTableConfig.body = result;
-    }));
+    const mapFnForSelecting: Function = (state, props): {
+      subjects: SubjectsState,
+      students: StudentsState,
+      marks: MarksState
+    } => {
+      const componentsState: {
+        subjects: SubjectsState,
+        students: StudentsState,
+        marks: MarksState
+      } = {};
+      props.forEach(prop => componentsState[prop] = state[prop]);
+      return componentsState;
+    };
+    this.componentState$ = this.store.pipe(
+      select(mapFnForSelecting, ["subjects", "students", "marks"])
+    );
+    this.componentState$.subscribe(state => {
+      if (this.isAllLoaded(state)) {
+
+        // initialize subject
+        this.subject = state.subjects.data.filter(subj => subj.name === subjectName)[0];
+
+        // initialized new teacher form
+        this.newTeacherConfig = this.getTeacherFormConfig(this.subject);
+
+        // get all marks for particular subject
+        const subjectsMarks: Mark[] = state.marks.data.filter(mark => mark.subject === this.subject.id);
+
+        // initialize table headers with unique sorted dates
+        const datesPartOfHeaders: number[] = [
+          ...new Set(
+            [...this.subject.uniqueDates].concat(pluck(subjectsMarks, "time"))
+          )
+        ].sort();
+        this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...datesPartOfHeaders];
+
+        /// initialize students for table
+        this.subjectTableConfig.body = state.students.data.map(student => {
+          const studentRowForTable: (string|number)[] = (
+            new TableRow(this.subjectTableConfig.headers, student)
+          ).createRowFromObject();
+          let sum: number = 0;
+          let average: number;
+          subjectsMarks
+            .filter(mark => mark.student === student.id)
+            .forEach((mark, i) => {
+                sum = mark.value + sum;
+                average = sum / (i + 1);
+                studentRowForTable[this.subjectTableConfig.headers.indexOf(mark.time)] = mark.value;
+              }
+            );
+          if (average) {
+            studentRowForTable[2] = average;
+          }
+          return studentRowForTable;
+        });
+      }
+    });
+
   }
+
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }

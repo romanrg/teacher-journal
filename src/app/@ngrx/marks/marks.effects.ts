@@ -1,15 +1,26 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import {Action, createAction} from "@ngrx/store";
-import * as StudentsActions from "./students.actions";
+import * as MarksActions from "./marks.actions";
 import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { StudentsServiceService} from "../../common/services/students-service.service";
 import {catchError, map, skip, startWith} from "rxjs/internal/operators";
+import {MarksServiceService} from "../../common/services/marks-service.service";
 
 @Injectable()
-export class StudentsEffects {
-
+export class MarksEffects {
+  public getMarks$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MarksActions.getMarks),
+      switchMap(action => this.marksService.getMarks().pipe(
+        map(marks => {
+          return MarksActions.getMarksSuccess({marks});
+        }),
+        catchError(error => MarksActions.getMarksError({error}))
+      ))
+    )
+  );
+  /*
   public getStudents$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(
       ofType(StudentsActions.getStudents),
@@ -49,8 +60,8 @@ export class StudentsEffects {
     this.actions$.pipe(
       ofType(StudentsActions.createStudent),
       switchMap(action => this.studentsService.addStudent(action.student).pipe(
-        map(student => {
-          return StudentsActions.createStudentSuccess({student});
+        map(students => {
+          return StudentsActions.createStudentSuccess(action.student);
         }),
         catchError(error => StudentsActions.createStudentError({error}))
       ))
@@ -66,12 +77,12 @@ export class StudentsEffects {
       ))
     )
   );
-
+  */
   constructor(
     private actions$: Actions,
-    private studentsService: StudentsServiceService
+    private marksService: MarksServiceService
   ) {
-    console.log("[STUDENTS EFFECTS]");
+    console.log("[MARKS EFFECTS]");
   }
 
 }

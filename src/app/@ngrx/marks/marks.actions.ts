@@ -1,19 +1,21 @@
 import {ActionCreator, createAction, props} from "@ngrx/store";
-import { IStudent } from "../../common/models/IStudent";
+import {Mark} from "../../common/models/IMark";
 
-export const getStudents: ActionCreator = createAction(
-  "[Main Page (App)] GET_STUDENTS"
+
+export const getMarks: ActionCreator = createAction(
+  "[Main Page (App)] GET_MARKS"
 );
 
-export const getStudentsSuccess: ActionCreator = createAction(
-  "[Get Students Effect] GET_STUDENTS_SUCCESS",
-  props<{students: IStudent[]}>()
+export const getMarksSuccess: ActionCreator = createAction(
+  "[Get Marks Effect] GET_MARKS_SUCCESS",
+  props<{marks: Mark[]}>()
 );
-export const getStudentsError: ActionCreator = createAction(
-  "[Get Students Effect] GET_STUDENTS_ERROR",
+export const getMarksError: ActionCreator = createAction(
+  "[Get Marks Effect] GET_MARKS_ERROR",
   props<{error: Error | string}>()
 );
 
+/*
 export const createStudent: ActionCreator = createAction(
   "[Students Form Page] CREATE_STUDENT",
   props<{student: IStudent}>()
@@ -51,3 +53,4 @@ export const searchStudentsBarSuccess: ActionCreator = createAction(
 export const getStudentsForSubjects: ActionCreator = createAction(
   "[Subject Table Page] GET_STUDENTS"
 );
+*/
