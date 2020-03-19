@@ -123,8 +123,10 @@ const reducer: ActionReducer = createReducer(
   }),
   on(SubjectsActions.addNewUniqueDate, (state, { subject }) => {
     console.log("ADD_NEW_UniqueDate action being handled");
+    const newState: SubjectsState = JSON.parse(JSON.stringify(state));
+    newState.data.filter(subj => subj.id === subject.id)[0].uniqueDates = subject.uniqueDates;
     return {
-      ...state,
+      ...newState,
     }
   }),
   on(SubjectsActions.addNewUniqueDateSuccess, (state, { subject }) => {

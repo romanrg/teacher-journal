@@ -34,8 +34,11 @@ const reducer: ActionReducer = createReducer(
   }),
   on(MarksActions.addNewMark, (state, {mark}) => {
     console.log("ADD_NEW_MARK action being handled");
+    const newData: Mark[] = [...state.data];
+    newData.push(mark);
     return {
       ...state,
+      data: newData,
     };
   }),
   on(MarksActions.addNewMarkSuccess, (state, {mark}) => {
@@ -54,9 +57,14 @@ const reducer: ActionReducer = createReducer(
   };
 }),
   on(MarksActions.changeMark, (state, {mark}) => {
-    console.log("CHANGE_MARK action being handled");
+    console.log("CHANGE_MARK action being handled", mark);
+    const newData: Mark[] = JSON.parse(JSON.stringify(state.data));
+    console.log(newData.filter(m => m.id === mark.id)[0]);
+    newData.filter(m => m.id === mark.id)[0].value = mark.value;
+    console.log(newData.filter(m => m.id === mark.id)[0]);
     return {
-      ...state
+      ...state,
+      data: newData
     };
   }),
   on(MarksActions.changeMarkSuccess, (state, {mark}) => {
