@@ -9,6 +9,7 @@ export class TableBodyComponent implements OnInit {
   @Input() public bodyData: string[];
   @Input() public paginationConstant: number;
   @Input() public currentPagination: number;
+  @Input() public displayDelete: boolean;
   constructor() { }
 
   ngOnInit(): void {

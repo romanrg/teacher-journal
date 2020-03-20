@@ -18,7 +18,6 @@ import {select, Store} from "@ngrx/store";
 import * as SubjectsActions from "src/app/@ngrx/subjects/subjects.actions";
 import * as MarksActions from "src/app/@ngrx/marks/marks.actions";
 import {StudentsState} from "../../../@ngrx/students/students.state";
-// import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 import {MarksState} from "../../../@ngrx/marks/marks.state";
 import {pluck} from "../../../common/helpers/lib";
 @Component({
@@ -109,7 +108,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public isDeleteDateButton(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === "Delete column");
   }
-  public isAllLoaded( st: any): boolean {
+  public isAllLoaded( st: AppState): boolean {
     return Object.keys(st).every(key => st[key].loaded === true);
   }
 
@@ -154,7 +153,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       }
 
     } else if (this.isDeleteDateButton(target)) {
-      confirm("Do you want to delete this date?")
       const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode);
       const timestamp: number = this.subjectTableConfig.headers[uniqueIndex];
       let needToDelete: string[] = [];

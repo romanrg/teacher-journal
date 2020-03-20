@@ -7,7 +7,7 @@
         [cell]="cell"
         [cellType]="cellType"
         class="table-row__cell"></app-table-cell>
-      <ng-container *ngIf="(i === row.length - 1) && cellType !== 'th'">
+      <ng-container *ngIf="(i === row.length - 1) && cellType !== 'th' && displayDelete">
         <app-button
           [attr.data]="[row]"
           class="table-row__btn--delete"

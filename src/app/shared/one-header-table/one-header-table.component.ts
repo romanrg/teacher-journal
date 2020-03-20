@@ -8,7 +8,7 @@ import {SortByPipe} from "../../common/pipes/sort-by.pipe";
   styleUrls: ["./one-header-table.component.sass"],
 })
 export class OneHeaderTableComponent implements OnInit, DoCheck {
-
+  @Input() public displayDelete: boolean;
   @Input() public config: ITableConfig;
   public dataForBody: string[][];
   public paginationConstant: number = 5;

@@ -41,7 +41,7 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.createSubjectSuccess, (state, { subject }) => {
-    console.log("CREATE_SUBJECT_SUCCESS action being handled", subject);
+    console.log("CREATE_SUBJECT_SUCCESS action being handled");
     const newState: SubjectsState = {...state};
     newState.data = [...state.data];
     newState.data.push(subject);
