@@ -107,6 +107,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public shouldAddNumberInput(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.subjectHeadersConstantNames.length);
   }
+  public isDeleteDateButton(target: EventTarget): boolean {
+    return (target.tagName.toLowerCase() === "button");
+  }
   public isAllLoaded(state: {
     subjects: SubjectsState,
     students: StudentsState,
@@ -156,6 +159,12 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         );
       }
 
+    } else if (this.isDeleteDateButton(target)) {
+      const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode) - 3;
+      // delete uniqueDate: ts
+
+      // delete marks with this date: subject, ts...
+
     }
   }
   public addNewColumn(): void {
@@ -163,7 +172,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.subjectTableConfig.body.forEach(row => row.length = this.subjectTableConfig.headers.length);
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
-    return function(value: string): void {
+    return function(value: string, target: EventTarget): void {
       const copy: ISubject = JSON.parse(JSON.stringify(subject));
       copy.uniqueDates.push((new Date(value)).getTime());
       dispatch(copy);

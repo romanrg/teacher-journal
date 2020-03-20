@@ -17,10 +17,6 @@ export class TableRowComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public getCellWidth(): string {
-    return `${100 / this.row.length}%`;
-  }
-
   public emitTopLevel(index: number): void {
     this.emitSorting.emit(index);
     if (index === this.sortedCell) {

@@ -47,13 +47,13 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     return newBody;
   }
   public deleteStudent($event: Event): void {
-    const name: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[1].textContent;
-    const surname: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[2].textContent;
+
+    const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
     let student: string;
     this.studentsState$.subscribe(students => {
-      student = students.data.filter(stud => stud.name === name && stud.surname === surname)[0];
+      student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
     }).unsubscribe();
-
+    confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
     this.store.dispatch(StudentsActions.deleteStudent(student));
   }
   public ngOnInit(): void {
@@ -71,4 +71,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
+
+
 }

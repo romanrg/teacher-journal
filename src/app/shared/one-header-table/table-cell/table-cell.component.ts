@@ -41,9 +41,11 @@ export class TableCellComponent implements OnInit {
     }
   }
 
-  public sortColumn(): void {
-    this.sortEmitter.emit();
-    this.sortCount++;
+  public sortColumn($event): void {
+    if ($event.target.textContent.includes("V")) {
+      this.sortEmitter.emit();
+      this.sortCount++;
+    }
   }
 
   public isEven(): boolean {
@@ -56,5 +58,9 @@ export class TableCellComponent implements OnInit {
     } else {
       return cell;
     }
+  }
+
+  public doNothing($event): void {
+    $event.preventDefault()
   }
 }

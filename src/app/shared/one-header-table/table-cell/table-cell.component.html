@@ -1,11 +1,20 @@
 <ng-container [ngSwitch]="cellType">
   <td *ngSwitchCase="tdType" class="table-cell table-cell__td"><ng-container appMarksHighlight>{{cellCut(cell)}}</ng-container></td>
-  <th *ngSwitchCase="thType" (click)="sortColumn()" class="table-cell table-cell__th">
+  <th *ngSwitchCase="thType" (click)="sortColumn($event)" class="table-cell table-cell__th">
     {{dateTransformer(cell)}}
     <span class="table-cell__span"
           [class.table-cell__span--invisible]="!isSorted"
           [class.table-cell__span--top]="isEven()"
           [class.table-cell__span--bottom]="!isEven()"
     >V</span>
+    <ng-container *ngIf="numberCheck(cell)">
+      <app-button
+        (click)="doNothing($event)"
+        class="table-cell__btn--delete"
+        [textContent]="'X'"
+        [screenReader]="'Delete column'"
+        [attr.data]="dateTransformer(cell)"
+      ></app-button>
+    </ng-container>
   </th>
 </ng-container>

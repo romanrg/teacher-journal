@@ -1,3 +1,4 @@
+@import "src/styles/variables.sass"
 .table-row
   display: flex
   flex-grow: 1
@@ -7,3 +8,15 @@
   align-items: center
   justify-content: center
   width: 3rem
+  align-self: center
+.table-row__btn--delete
+  font: inherit
+  color: red
+  transition: all 0.3s
+  border-radius: 10px
+  box-shadow:  15px 15px 29px #272727, -15px -15px 29px #353535
+  display: flex
+  align-self: center
+  &:hover, &:focus
+    color: $active-color
+    cursor: pointer

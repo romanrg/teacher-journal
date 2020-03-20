@@ -57,7 +57,7 @@ const reducer: ActionReducer = createReducer(
   };
 }),
   on(MarksActions.changeMark, (state, {mark}) => {
-    console.log("CHANGE_MARK action being handled", mark);
+    console.log("CHANGE_MARK action being handled");
     const newData: Mark[] = JSON.parse(JSON.stringify(state.data));
     console.log(newData.filter(m => m.id === mark.id)[0]);
     newData.filter(m => m.id === mark.id)[0].value = mark.value;

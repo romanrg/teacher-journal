@@ -1,3 +1,4 @@
+///<reference path="../common/interceptors/modify-headers.interceptor.ts"/>
 import { BrowserModule } from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 
@@ -33,11 +34,10 @@ import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 import {HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
-import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
+import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
-
 
 @NgModule({
   declarations: [
@@ -78,7 +78,13 @@ import {EffectsModule} from "@ngrx/effects";
     RootStoreModule,
     EffectsModule.forRoot([])
   ],
-  providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe, modifyHeadersProvider],
+  providers: [
+    ExitFormGuard,
+    DecimalPipe,
+    SortByPipe,
+    DatePipe,
+    modifyHeadersProvider,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

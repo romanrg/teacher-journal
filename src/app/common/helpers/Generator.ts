@@ -95,7 +95,7 @@ export class DatePicker extends Generator {
       this.appendChild(form, submitBtn);
       this.renderer.listen(form, "submit", (e) => {
         e.preventDefault();
-        onsubmitAction(e.target[FormControlType.date].value);
+        onsubmitAction(e.target[FormControlType.date].value, e.target);
       });
   }
 }

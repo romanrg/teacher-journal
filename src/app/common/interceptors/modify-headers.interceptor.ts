@@ -4,9 +4,9 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HTTP_INTERCEPTORS
+  HTTP_INTERCEPTORS, HttpResponse
 } from "@angular/common/http";
-import { Observable } from "rxjs";
+import {Observable, Subject} from "rxjs";
 
 @Injectable()
 export class ModifyHeadersInterceptor implements HttpInterceptor {
@@ -25,3 +25,4 @@ export class ModifyHeadersInterceptor implements HttpInterceptor {
 export const modifyHeadersProvider: Provider[] = [
   {provide: HTTP_INTERCEPTORS, useClass: ModifyHeadersInterceptor, multi: true},
 ];
+
