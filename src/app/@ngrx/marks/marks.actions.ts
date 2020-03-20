@@ -1,5 +1,6 @@
 import {ActionCreator, createAction, props} from "@ngrx/store";
 import {Mark} from "../../common/models/IMark";
+import {ISubject} from "../../common/models/ISubject";
 
 
 export const getMarks: ActionCreator = createAction(
@@ -37,6 +38,18 @@ export const changeMarkSuccess: ActionCreator = createAction(
 );
 export const changeMarkError: ActionCreator = createAction(
   "[Change Mark Effect] CHANGE_MARK_ERROR",
+  props<{error: Error | string}>()
+);
+
+export const deleteMark: ActionCreator = createAction(
+  "[Delete Date Column] DELETE_MARKS",
+  props<{subject: ISubject, timestamp: number, needToDelete: string[]}>()
+);
+export const deleteMarksSuccess: ActionCreator = createAction(
+  "[Delete Marks Effect] DELETE_MARKS_SUCCESS",
+);
+export const deleteMarksError: ActionCreator = createAction(
+  "[Delete Marks Effect] DELETE_MARKS_ERROR",
   props<{error: Error | string}>()
 );
 

@@ -80,3 +80,18 @@ export const addNewUniqueDateSuccess: ActionCreator = createAction(
   "[Add new UniqueDate Effect] ADD_NEW_UniqueDate_Success",
   props<{timestamp: number, subject: ISubject}>()
 );
+
+
+
+export const deleteDate: ActionCreator = createAction(
+  "[Subjects List Page] DELETE_DATE",
+  props<{subject: ISubject, timestamp: number}>()
+);
+export const deleteDateSuccess: ActionCreator = createAction(
+  "[Delete Subject Effect] DELETE_DATE_SUCCESS",
+  props<{subject: string}>()
+);
+export const deleteDateError: ActionCreator = createAction(
+  "[Delete Subject Effect] DELETE_DATE_ERROR",
+  props<{error: Error | string}>()
+);

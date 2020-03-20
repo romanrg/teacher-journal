@@ -82,7 +82,20 @@ const reducer: ActionReducer = createReducer(
       ...state,
       error
     };
-  })
+  }),
+  on(MarksActions.deleteMark, (state, {needToDelete}) => {
+    console.log("DELETE MARKS action being handled");
+    return {
+      ...state,
+      data: [...state.data.filter(m => m.id !== needToDelete.id)]
+    }
+  }),
+  on(MarksActions.deleteMarksSuccess, (state) => {
+    console.log("DELETE MARKS SUCCESS action being handled");
+    return {
+      ...state
+    }
+  }),
 );
 export function marksReducer(state: MarksState | undefined, action: Action): any {
   return reducer(state, action);

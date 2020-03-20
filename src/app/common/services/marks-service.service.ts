@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import {Mark} from "../models/IMark";
-import {from, Observable} from "rxjs";
+import {forkJoin, from, Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, MARKS_ROUTE} from "../constants/API";
+import {concatMap} from "rxjs/internal/operators";
 @Injectable({
   providedIn: "root"
 })
@@ -26,13 +27,8 @@ export class MarksServiceService {
     }
 
   }
-  public deleteMarks(id: string, timestamp: number): Observable<Mark[]> {
-    return this._marks
-      .filter(m => m.subject === id && m.time === timestamp)
-      .map(mark => {
-        return this.http.delete(`${this.URL}/${mark.id}`);
-      })
-    ;
+  public deleteMarks(id: string): Observable<Mark[]> {
+    return this.http.delete(`${this.URL}/${id}`);
   }
 
 }

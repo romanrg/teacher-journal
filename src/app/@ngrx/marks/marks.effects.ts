@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import {catchError, map, skip, startWith} from "rxjs/internal/operators";
 import {MarksServiceService} from "../../common/services/marks-service.service";
+import {pluck} from "../../common/helpers/lib";
 
 @Injectable()
 export class MarksEffects {
@@ -44,7 +45,22 @@ export class MarksEffects {
       ))
     )
   );
-  /*
+
+  public deleteMark: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MarksActions.deleteMark),
+      switchMap(action => {
+        return this.marksService.deleteMarks(action.needToDelete.id).pipe(
+          map(marks => {
+            return MarksActions.deleteMarksSuccess();
+          }),
+          catchError(error => MarksActions.changeMarkError({error}))
+        )
+      })
+    )
+  );
+
+  /*deleteMarks
   public addNewMark$: Observable<Action> = createEffect(() => {
     this.actions$.pipe(
       ofType(MarksActions.addNewMark),

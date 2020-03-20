@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import {catchError, map, skip, startWith} from "rxjs/internal/operators";
 import {SubjectsService} from "../../common/services/subjects.service";
+import {ISubject} from "../../common/models/ISubject";
 
 @Injectable()
 export class SubjectsEffects {
@@ -77,6 +78,21 @@ export class SubjectsEffects {
         }),
         catchError(error => SubjectsActions.changeTeacherError({error}))
       ))
+    )
+  );
+  public deleteUnique$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SubjectsActions.deleteDate),
+      switchMap(action => {
+        const patched: ISubject = JSON.parse(JSON.stringify(action.subject));
+        patched.uniqueDates = patched.uniqueDates.filter(ts => ts !== action.timestamp);
+        return this.subjectsService.patchSubject(patched).pipe(
+          map(subject => {
+            return SubjectsActions.deleteDateSuccess({subject});
+          }),
+          catchError(error => SubjectsActions.deleteDateError({error}))
+        );
+      })
     )
   );
 

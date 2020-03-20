@@ -121,7 +121,23 @@ const reducer: ActionReducer = createReducer(
     return {
       ...newState,
     };
-  })
+  }),
+  on(SubjectsActions.deleteDate, ((state, {timestamp, subject}) => {
+    console.log("DELETE_DATE action being handled");
+    const newData: ISubject[] = JSON.parse(JSON.stringify(state.data));
+    const newSub: ISubject = newData.filter(sub => sub.id === subject.id)[0];
+    newSub.uniqueDates = newSub.uniqueDates.filter(ts => ts !== timestamp);
+    return {
+      ...state,
+      data: newData
+    };
+  })),
+  on(SubjectsActions.deleteDateSuccess, ((state, {timestamp, subject}) => {
+    console.log("DELETE_DATE_SUCCESS action being handled");
+    return {
+      ...state,
+    };
+  }))
 );
 
 

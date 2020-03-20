@@ -21,7 +21,6 @@ import {StudentsState} from "../../../@ngrx/students/students.state";
 // import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
 import {MarksState} from "../../../@ngrx/marks/marks.state";
 import {pluck} from "../../../common/helpers/lib";
-
 @Component({
   selector: "app-subjects-table",
   templateUrl: "./subjects-table.component.html",
@@ -108,14 +107,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     return (target.tagName.toLowerCase() === "td" && this.getCellIndex(target) >= this.subjectHeadersConstantNames.length);
   }
   public isDeleteDateButton(target: EventTarget): boolean {
-    return (target.tagName.toLowerCase() === "button");
+    return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === "Delete column");
   }
-  public isAllLoaded(state: {
-    subjects: SubjectsState,
-    students: StudentsState,
-    marks: MarksState
-  }): boolean {
-    return Object.keys(state).every(key => state[key].loaded === true);
+  public isAllLoaded( st: any): boolean {
+    return Object.keys(st).every(key => st[key].loaded === true);
   }
 
   // add new date and mark
@@ -130,10 +125,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       );
     } else if (this.shouldAddNumberInput(target)) {
       let student: IStudent;
-      const clickRow = [...target.parentNode.parentNode.children];
+      const clickRow: HTMLElement[] = [...target.parentNode.parentNode.children];
       this.componentState$.subscribe(
-        state => student = state.students.data
-          .filter(student => student.name === clickRow[0].textContent && student.surname === clickRow[1].textContent)[0]
+        st => student = st.students.data
+          .filter(stud => stud.name === clickRow[0].textContent && stud.surname === clickRow[1].textContent)[0]
       ).unsubscribe();
       const newMark: Mark = {
         student: student.id,
@@ -147,12 +142,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         );
       } else {
         let patchMark: Mark;
-        this.componentState$.subscribe(state => patchMark = state.marks.data.filter(mark =>
+        this.componentState$.subscribe(st => patchMark = st.marks.data.filter(mark =>
           mark.student === newMark.student &&
           mark.subject === newMark.subject &&
           mark.time === newMark.time
         )[0]).unsubscribe();
-        // console.log("Should update already exist mark", patchMark);
         this.numberGenerator.generateNumberPicker(
           target,
           this.submitMark(_dispatcher(this.store, MarksActions.changeMark, "mark"), patchMark)
@@ -160,11 +154,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       }
 
     } else if (this.isDeleteDateButton(target)) {
-      const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode) - 3;
-      // delete uniqueDate: ts
-
-      // delete marks with this date: subject, ts...
-
+      confirm("Do you want to delete this date?")
+      const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode);
+      const timestamp: number = this.subjectTableConfig.headers[uniqueIndex];
+      let needToDelete: string[] = [];
+      const subject: string = this.subject;
+      this.store.dispatch(SubjectsActions.deleteDate({subject, timestamp}));
+      this.componentState$.subscribe(st => {
+        needToDelete = [...st.marks.data.filter(m => m.time === timestamp && m.subject === subject.id)];
+      }).unsubscribe();
+      needToDelete.map(id => this.store.dispatch(MarksActions.deleteMark({needToDelete: id})));
     }
   }
   public addNewColumn(): void {
