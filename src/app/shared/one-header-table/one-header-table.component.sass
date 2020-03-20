@@ -4,6 +4,8 @@
   flex-direction: column
   box-sizing: border-box
   color: $color
+  max-width: 60rem
+  margin: 0 auto
 .table__caption
   display: flex
   text-transform: uppercase
@@ -16,5 +18,12 @@
 .table__body, .table__head, .table__foot
   display: flex
   flex-direction: column
-  padding: 1rem
 
+.scroll
+  overflow-x: scroll
+  &::-webkit-scrollbar
+    background: transparent
+    height: 1rem
+  &::-webkit-scrollbar-thumb
+    background-color: $active-color
+    max-width: 0.3rem

@@ -1,20 +1,22 @@
-<tr class="table-row" appHighlight>
+<div class="table-row" appHighlight>
     <ng-container *ngFor="let cell of row; let i = index">
-      <app-table-cell
-        (sortEmitter)="emitTopLevel(i)"
-        [attr.index]="i"
-        [isSorted]="sortedCell === i"
-        [cell]="cell"
-        [cellType]="cellType"
-        class="table-row__cell"></app-table-cell>
-      <ng-container *ngIf="(i === row.length - 1) && cellType !== 'th' && displayDelete">
-        <app-button
-          [attr.data]="[row]"
-          class="table-row__btn--delete"
-          [screenReader]="'Delete'"
-          [textContent]="'X'"
-        ></app-button>
-      </ng-container>
+          <app-table-cell
+            (sortEmitter)="emitTopLevel(i)"
+            [attr.index]="i"
+            [isSorted]="sortedCell === i"
+            [cell]="cell"
+            [cellType]="cellType"
+            [class.non-sticky]="i >= 3  && row.length > 5"
+            class="table-row__cell"></app-table-cell>
     </ng-container>
+  <ng-container *ngIf="displayDelete">
+    <app-button
+      [attr.data]="[row]"
+      class="table-row__btn--delete"
+      [screenReader]="'Delete'"
+      [textContent]="'X'"
+    ></app-button>
+  </ng-container>
+</div>
+<!--[ngStyle]="{'left':  getLeft(i)}"-->
 
-</tr>

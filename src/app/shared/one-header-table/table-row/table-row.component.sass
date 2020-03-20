@@ -3,11 +3,12 @@
   display: flex
   flex-grow: 1
   padding-top: 1rem
+  flex-direction: row
 .table-row__cell
   flex-grow: 1
   align-items: center
   justify-content: center
-  width: 3rem
+  min-width: 15rem
   align-self: center
 .table-row__btn--delete
   font: inherit
@@ -17,6 +18,7 @@
   box-shadow:  15px 15px 29px #272727, -15px -15px 29px #353535
   display: flex
   align-self: center
+  margin-right: 2rem
   &:hover, &:focus
     color: $active-color
     cursor: pointer

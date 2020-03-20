@@ -25,4 +25,10 @@ export class TableRowComponent implements OnInit {
     }
     this.sortedCell = index;
   }
+
+  public getLeft(i: number): string {
+    if (i < 3) {
+      return `${(i * 10)}%`;
+    }
+  }
 }
