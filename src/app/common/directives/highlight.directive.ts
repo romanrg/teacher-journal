@@ -10,6 +10,7 @@ export class HighlightDirective {
 
   private highlight(color: string): void {
     this.el.nativeElement.style.cursor = "pointer";
+
     if (color) {
       this.el.nativeElement.style.borderBottom = `solid 0.05rem ${color}`;
     } else {

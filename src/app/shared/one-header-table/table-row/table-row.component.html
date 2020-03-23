@@ -1,14 +1,17 @@
 <div class="table-row" appHighlight>
-    <ng-container *ngFor="let cell of row; let i = index">
-          <app-table-cell
-            (sortEmitter)="emitTopLevel(i)"
-            [attr.index]="i"
-            [isSorted]="sortedCell === i"
-            [cell]="cell"
-            [cellType]="cellType"
-            [class.sticky]="i < 3  && row.length > 5"
-            [ngStyle]="{'z-index': i === 1 ? 2 : 1}"
-            class="table-row__cell"></app-table-cell>
+<ng-container *ngFor="let cell of row; let i = index">
+        <app-table-cell
+          (sortEmitter)="emitTopLevel(i)"
+          [attr.index]="i"
+          [isSorted]="sortedCell === i"
+          [cell]="cell"
+          [cellType]="cellType"
+          [class.sticky]="i < 2  && row.length > 5"
+          [ngStyle]="{'z-index': i < 2 ? 2 : 1}"
+          [class.sticky-1]="i === 0"
+          [class.sticky-2]="i === 1"
+          class="table-row__cell"></app-table-cell>
+
       <ng-container *ngIf="displayDelete && i === row.length - 1">
         <app-button
           [attr.data]="[row]"
@@ -19,4 +22,3 @@
       </ng-container>
     </ng-container>
 </div>
-<!--[ngStyle]="{'left': getLeft(i)}"-->
