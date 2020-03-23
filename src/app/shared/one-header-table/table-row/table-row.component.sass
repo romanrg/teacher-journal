@@ -4,11 +4,11 @@
   flex-grow: 1
   padding-top: 1rem
   flex-direction: row
+  position: relative
 .table-row__cell
-  flex-grow: 1
   align-items: center
   justify-content: center
-  min-width: 15rem
+  min-width: 10rem
   align-self: center
 .table-row__btn--delete
   font: inherit
@@ -22,3 +22,6 @@
   &:hover, &:focus
     color: $active-color
     cursor: pointer
+.sticky
+  position: sticky
+  left: 0

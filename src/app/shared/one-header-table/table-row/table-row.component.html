@@ -6,17 +6,17 @@
             [isSorted]="sortedCell === i"
             [cell]="cell"
             [cellType]="cellType"
-            [class.non-sticky]="i >= 3  && row.length > 5"
+            [class.sticky]="i < 3  && row.length > 5"
+            [ngStyle]="{'z-index': i === 1 ? 2 : 1}"
             class="table-row__cell"></app-table-cell>
+      <ng-container *ngIf="displayDelete && i === row.length - 1">
+        <app-button
+          [attr.data]="[row]"
+          class="table-row__btn--delete"
+          [screenReader]="'Delete'"
+          [textContent]="'X'"
+        ></app-button>
+      </ng-container>
     </ng-container>
-  <ng-container *ngIf="displayDelete">
-    <app-button
-      [attr.data]="[row]"
-      class="table-row__btn--delete"
-      [screenReader]="'Delete'"
-      [textContent]="'X'"
-    ></app-button>
-  </ng-container>
 </div>
-<!--[ngStyle]="{'left':  getLeft(i)}"-->
-
+<!--[ngStyle]="{'left': getLeft(i)}"-->

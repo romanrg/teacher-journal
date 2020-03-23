@@ -77,7 +77,7 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.changeMarkError, (state, {error}) => {
-    console.log("CHANGE_MARK_ERROR action being handled", mark);
+    console.log("CHANGE_MARK_ERROR action being handled", error);
     return {
       ...state,
       error

@@ -23,7 +23,17 @@
   overflow-x: scroll
   &::-webkit-scrollbar
     background: transparent
-    height: 1rem
+    max-height: 0.5rem
+    max-width: 0.5rem
   &::-webkit-scrollbar-thumb
     background-color: $active-color
     max-width: 0.3rem
+  &::-webkit-scrollbar-corner
+    display: none
+.table__body
+  max-height: 21rem
+.table__head
+  position: sticky
+  top: 0
+  z-index: 3
+  background-color: #2e2e2e
