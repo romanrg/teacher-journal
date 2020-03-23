@@ -47,14 +47,16 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     return newBody;
   }
   public deleteStudent($event: Event): void {
+    if ($event.target.parentNode.getAttribute("data")) {
+      const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
+      let student: string;
+      this.studentsState$.subscribe(students => {
+        student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
+      }).unsubscribe();
+      confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
+      this.store.dispatch(StudentsActions.deleteStudent(student));
+    }
 
-    const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
-    let student: string;
-    this.studentsState$.subscribe(students => {
-      student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
-    }).unsubscribe();
-    confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
-    this.store.dispatch(StudentsActions.deleteStudent(student));
   }
   public ngOnInit(): void {
     this.studentsState$ = this.store.pipe(select("students"));

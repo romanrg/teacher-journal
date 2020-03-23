@@ -39,6 +39,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     marks: MarksState
   }>;
   public subject: ISubject;
+  public renderMap: [];
 
   // renderer related
   public generator: Generator;
@@ -228,30 +229,58 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...datesPartOfHeaders];
 
         /// initialize students for table
-        this.subjectTableConfig.body = state.students.data.map(student => {
-          const studentRowForTable: (string|number)[] = (
-            new TableRow(this.subjectTableConfig.headers, student)
-          ).createRowFromObject();
-          let sum: number = 0;
-          let average: number;
-          subjectsMarks
-            .filter(mark => mark.student === student.id)
-            .forEach((mark, i) => {
-                sum = mark.value + sum;
-                average = sum / (i + 1);
-                studentRowForTable[this.subjectTableConfig.headers.indexOf(mark.time)] = mark.value;
-              }
-            );
-          if (average) {
-            studentRowForTable[2] = average;
-          }
-          return studentRowForTable;
-        });
+        if (this.renderMap) {
+          const renderedWithMap: [] = new Array(this.renderMap.length);
+          state.students.data.map(student => {
+            const studentRowForTable: (string|number)[] = (
+              new TableRow(this.subjectTableConfig.headers, student)
+            ).createRowFromObject();
+            let sum: number = 0;
+            let average: number;
+            subjectsMarks
+              .filter(mark => mark.student === student.id)
+              .forEach((mark, i) => {
+                  sum = mark.value + sum;
+                  average = sum / (i + 1);
+                  studentRowForTable[this.subjectTableConfig.headers.indexOf(mark.time)] = mark.value;
+                }
+              );
+            if (average) {
+              studentRowForTable[2] = average;
+            }
+            this.renderMap.map((val, index) => val[0] === studentRowForTable[0] ? renderedWithMap[index] = studentRowForTable : '');
+          });
+          this.subjectTableConfig.body = renderedWithMap;
+        } else {
+          this.subjectTableConfig.body = state.students.data.map(student => {
+            const studentRowForTable: (string|number)[] = (
+              new TableRow(this.subjectTableConfig.headers, student)
+            ).createRowFromObject();
+            let sum: number = 0;
+            let average: number;
+            subjectsMarks
+              .filter(mark => mark.student === student.id)
+              .forEach((mark, i) => {
+                  sum = mark.value + sum;
+                  average = sum / (i + 1);
+                  studentRowForTable[this.subjectTableConfig.headers.indexOf(mark.time)] = mark.value;
+                }
+              );
+            if (average) {
+              studentRowForTable[2] = average;
+            }
+            return studentRowForTable;
+          });
+        }
       }
     });
 
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
+  }
+
+  public showEvent($event: Event): void {
+    this.renderMap = $event;
   }
 }

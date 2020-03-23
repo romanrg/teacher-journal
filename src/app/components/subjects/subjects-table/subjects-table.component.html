@@ -2,7 +2,7 @@
   <div class="container">
   <app-one-header-table
     [config]="subjectTableConfig"
-
+    (emitMap)="showEvent($event)"
     (click)="generateInput($event.target)"
   ></app-one-header-table>
   <app-button
