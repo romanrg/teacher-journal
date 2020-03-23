@@ -17,7 +17,7 @@ export class TableCellComponent implements OnInit {
   @Output() public sortEmitter: EventEmitter = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
-  public sortCount: number = 1;
+  public sortCount: number = 0;
   constructor(
     private numberPipe: DecimalPipe,
     private datePipe: DatePipe
@@ -42,9 +42,15 @@ export class TableCellComponent implements OnInit {
   }
 
   public sortColumn($event): void {
-    if ($event.target.textContent.includes("V")) {
+    if (!$event.target.textContent.includes(" Select date ")) {
       this.sortEmitter.emit();
       this.sortCount++;
+      this.isSorted = true;
+      if (this.sortCount === 3) {
+        this.isSorted = false;
+        this.sortCount = 0;
+      }
+
     }
   }
 

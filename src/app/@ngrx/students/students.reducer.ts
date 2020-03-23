@@ -36,7 +36,7 @@ const reducer: ActionReducer = createReducer(
     return {...state, loading: true};
   }),
   on(StudentsActions.createStudentSuccess, (state, {student}) => {
-    console.log("CREATE_STUDENT_SUCCESS action being handled", student);
+    console.log("CREATE_STUDENT_SUCCESS action being handled");
     const newState: StudentsState = {...state};
     newState.data = [...state.data];
     newState.data.push(student);

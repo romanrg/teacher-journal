@@ -1,7 +1,8 @@
 <ng-container *ngIf="isAllLoaded((componentState$ | async)); else loading">
-  <div class="container" >
+  <div class="container">
   <app-one-header-table
     [config]="subjectTableConfig"
+
     (click)="generateInput($event.target)"
   ></app-one-header-table>
   <app-button
