@@ -35,6 +35,8 @@ const reducer: ActionReducer = createReducer(
     return {
       ...state,
       data: newData,
+      loading: true,
+      loaded: false
     };
   }),
   on(MarksActions.addNewMarkSuccess, (state, {mark}) => {
@@ -42,10 +44,13 @@ const reducer: ActionReducer = createReducer(
     newData.push(mark);
     return {
       ...state,
-      data: newData
+      data: newData,
+      loading: false,
+      loaded: true
     };
   }),
   on(MarksActions.addNewMarkError, (state, {error}) => {
+  console.log("ADD_NEW_MARK_ERROR action being handled");
   return {
     ...state,
     error
