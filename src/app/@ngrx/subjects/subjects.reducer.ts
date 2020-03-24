@@ -151,7 +151,6 @@ const reducer: ActionReducer = createReducer(
     };
   })),
   on(SubjectsActions.changePaginationConstant, (state, {paginationConstant}) => {
-    console.log("CHANGE_PAGINATION", paginationConstant);
     return {
       ...state,
       paginationConstant,
@@ -159,7 +158,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.changeCurrentPage, (state, {currentPage}) => {
-    console.log("CHANGE_PAGINATION");
     return {
       ...state,
       currentPage

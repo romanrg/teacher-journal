@@ -56,6 +56,8 @@ const reducer: ActionReducer = createReducer(
       searchedStudents: null,
       loading: false,
       loaded: true,
+      paginationConstant: state.paginationConstant,
+      currentPage: state.currentPage
     };
     if (state.searchedStudents !== null) {
       newState.searchedStudents = [...state.searchedStudents].filter(student => student.id !== id);
@@ -88,7 +90,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(StudentsActions.changePaginationConstant, (state, {paginationConstant}) => {
-    console.log("CHANGE_PAGINATION", paginationConstant);
     return {
       ...state,
       paginationConstant,
@@ -96,7 +97,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(StudentsActions.changeCurrentPage, (state, {currentPage}) => {
-    console.log("CHANGE_PAGINATION");
     return {
       ...state,
       currentPage

@@ -189,7 +189,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     };
   }
   public showEvent($event: Event): void {
-    console.log($event);
     this.renderMap = $event;
   }
   public dispatchPaginationState($event: Event): void {
