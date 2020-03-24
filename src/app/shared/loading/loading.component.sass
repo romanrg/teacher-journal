@@ -1,0 +1,50 @@
+@import "src/styles/variables.sass"
+.loading__text
+  font: inherit
+  text-transform: uppercase
+  letter-spacing: 0.15rem
+  position: relative
+  top: 7.7rem
+  border-right: 0.15rem solid $active-color
+  overflow: hidden
+  max-width: 6.5rem
+  white-space: nowrap
+  margin: 0 auto
+  animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite
+.loading
+  font: inherit
+  display: flex
+  align-self: center
+  justify-content: center
+  align-items: center
+  padding: 5rem
+  color: $color
+  flex-direction: column
+  &::after
+    content: ""
+    background: $active-color
+    display: flex
+    height: 15rem
+    width: 15rem
+    animation: rotate 1s ease-in-out infinite
+    mask-image: url("src/assets/icon-loading.svg")
+
+@keyframes rotate
+  from
+    transform: rotate(0)
+  to
+    transform: rotate(360deg)
+
+@keyframes typing
+  from
+    width: 0
+  to
+    width: 100%
+
+@keyframes blink-caret
+  from, to
+    border-color: transparent
+  50%
+    border-color: orange
+
+

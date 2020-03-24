@@ -39,6 +39,7 @@ import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
+import {LoadingComponent} from "../shared/loading/loading.component";
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import {ErrorMessageDisplayComponent} from "../shared/error-message-display/erro
     MarksHighlightDirective,
     SearchBarComponent,
     EmptyDataComponent,
-    ErrorMessageDisplayComponent
+    ErrorMessageDisplayComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,

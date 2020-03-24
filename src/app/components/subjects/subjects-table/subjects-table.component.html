@@ -1,5 +1,4 @@
 <ng-template #table>
-  <ng-container *ngIf="isAllLoaded((componentState$ | async)); else loading">
     <div class="container">
       <app-one-header-table
         [config]="subjectTableConfig"
@@ -14,10 +13,6 @@
       ></app-button>
     </div>
     <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
-  </ng-container>
-  <ng-template #loading>
-    <p>Loading...</p>
-  </ng-template>
 </ng-template>
 <ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else table">
   <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">

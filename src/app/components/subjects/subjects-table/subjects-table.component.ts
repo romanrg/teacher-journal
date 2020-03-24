@@ -112,9 +112,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public isDeleteDateButton(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === "Delete column");
   }
-  public isAllLoaded( st: AppState): boolean {
-    return Object.keys(st).every(key => st[key].loaded === true);
-  }
   public isAnyErrorsOccur(st: AppState): boolean {
     return Object.keys(st).some(key => st[key].error);
   }
@@ -217,9 +214,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.componentState$ = this.store.pipe(
       select(mapFnForSelecting, ["subjects", "students", "marks"])
     );
-    this.componentState$.subscribe(state => {
-      if (this.isAllLoaded(state)) {
-
+    this.manager.addSubscription(this.componentState$.subscribe(state => {
         // initialize subject
         this.subject = state.subjects.data.filter(subj => subj.name === subjectName)[0];
 
@@ -281,8 +276,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
             return studentRowForTable;
           });
         }
-      }
-    });
+    }));
 
   }
   public ngOnDestroy(): void {
