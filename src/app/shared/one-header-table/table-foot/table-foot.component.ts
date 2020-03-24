@@ -40,7 +40,7 @@ export class TableFootComponent implements OnInit, OnChanges {
 
   }
   public generateMetaCell(): string {
-    return `${(this.currentPagination - 1)  * this.paginationConstant}
+    return `${(this.currentPagination - 1)  * this.paginationConstant + 1}
         ...
         ${this.currentPagination * this.paginationConstant <= this.itemsAmount ? this.currentPagination * this.paginationConstant : this.itemsAmount}
         from
