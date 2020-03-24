@@ -1,4 +1,3 @@
-///<reference path="../common/interceptors/modify-headers.interceptor.ts"/>
 import { BrowserModule } from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 
@@ -40,6 +39,7 @@ import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   declarations: [
@@ -80,7 +80,8 @@ import {LoadingComponent} from "../shared/loading/loading.component";
     FormsModule,
     HttpClientModule,
     RootStoreModule,
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([]),
+    TranslateModule.forRoot()
   ],
   providers: [
     ExitFormGuard,

@@ -31,9 +31,6 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
     this.manager.addSubscription(this.subjectsState$.subscribe(state => {
       this.subjects = state.data;
     }));
-    if (!this.subjects.length) {
-      this.store.dispatch(SubjectsActions.getSubjects());
-    }
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

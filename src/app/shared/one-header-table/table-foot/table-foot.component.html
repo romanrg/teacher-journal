@@ -23,11 +23,7 @@
     </td>
     <td class="table-foot__cell table-foot__cell--meta">
       <span class="table-foot__descriptor">
-        {{(currentPagination - 1)  * paginationConstant}}
-        ...
-        {{currentPagination * paginationConstant <= itemsAmount ? currentPagination * paginationConstant : itemsAmount}}
-        from
-        {{itemsAmount}}
+        {{generateMetaCell()}}
       </span>
     </td>
     <td class="table-foot__cell table-foot__cell--selector">

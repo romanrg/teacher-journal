@@ -4,7 +4,10 @@
       <a href="/" class="logo__link">Teacher Journal</a>
     </h1>
     <app-navigation></app-navigation>
-
+    <select class="language__select" (change)="dispatchLanguage($event)">
+      <option class="language__option">en</option>
+      <option class="language__option">ru</option>
+    </select>
   </div>
   <app-breadcrumbs class="breadcrumbs"></app-breadcrumbs>
   <ng-container *ngIf="!isLoading((componentState$ | async)); else app">

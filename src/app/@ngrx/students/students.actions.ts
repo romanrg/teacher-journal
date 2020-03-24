@@ -62,4 +62,8 @@ export const changeCurrentPage: ActionCreator = createAction(
   props<{currentPage: number}>()
 );
 
+export const changeLanguage: ActionCreator = createAction(
+  "[App Page] CHANGE_CURRENT_LANGUAGE",
+  props<{language: string}>()
+)
 

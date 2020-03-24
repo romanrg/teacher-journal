@@ -4,31 +4,35 @@
   ></app-error-message-display>
 </ng-container>
 <ng-template #list>
-  <ng-container *ngIf="(subjectsState$|async).loaded">
     <nav class="subjects__nav">
-      <ul class="subjects__list">
-        <li *ngFor="let subject of subjects"
-            class="subjects__item"
+      <ng-container *ngIf="subjects.length; else empty">
+        <ul class="subjects__list">
+          <li *ngFor="let subject of subjects"
+              class="subjects__item"
 
-        >
-          <app-button
-            (click)="deleteSubject($event)"
-            class="subjects__btn subjects__btn--delete"
-            textContent="{{'X'}}"
-            screenReader="delete subject"
-            [attr.subject]="subject.name"
-          ></app-button>
-          <a class="subjects__link"
-             routerLink="{{subject.name}}"
           >
             <app-button
-              class="subjects__btn"
-              textContent="{{subject.name}}"
-              screenReader="Go to {{subject.name}}"
+              (click)="deleteSubject($event)"
+              class="subjects__btn subjects__btn--delete"
+              textContent="{{'X'}}"
+              screenReader="delete subject"
+              [attr.subject]="subject.name"
             ></app-button>
-          </a>
-        </li>
-      </ul>
+            <a class="subjects__link"
+               routerLink="{{subject.name}}"
+            >
+              <app-button
+                class="subjects__btn"
+                textContent="{{subject.name}}"
+                screenReader="Go to {{subject.name}}"
+              ></app-button>
+            </a>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #empty>
+        <app-empty-data class="subjects__nav-empty"></app-empty-data>
+      </ng-template>
     </nav>
     <a  class="subjects__link subjects__link--form"
         routerLink="new-subject"
@@ -44,6 +48,5 @@
       </app-button>
 
     </a>
-  </ng-container>
 </ng-template>
 

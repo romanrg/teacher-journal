@@ -50,4 +50,8 @@ export class AppComponent implements OnInit {
       select(mapFnForSelecting, ["subjects", "students", "marks"])
     );
   }
+
+  public dispatchLanguage($event: Event): void {
+    this.store.dispatch(StudentsActions.changeLanguage({language: $event.target.value}));
+  }
 }
