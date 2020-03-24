@@ -15,7 +15,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   public dataForBody: string[][];
   public paginationConstant: number = 5;
   public currentPagination: number = 1;
-  public currentlySorted: {col: number, times: number} = {col: null, times: null};
+  public currentlySorted: {col: (null|number), times: (null|number)} = {col: null, times: null};
   public init: Map = new Map();
   constructor(
     private sortPipe: SortByPipe
@@ -35,7 +35,10 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    changes.config.currentValue.body.map((row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i));
+    changes.config.currentValue.body
+      .map(
+        (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
+      );
   }
 
   public changeCurrent($event: number): void {
