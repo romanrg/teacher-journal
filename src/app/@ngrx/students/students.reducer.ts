@@ -57,7 +57,8 @@ const reducer: ActionReducer = createReducer(
       loading: false,
       loaded: true,
       paginationConstant: state.paginationConstant,
-      currentPage: state.currentPage
+      currentPage: state.currentPage,
+      searchBar: state.searchBar
     };
     if (state.searchedStudents !== null) {
       newState.searchedStudents = [...state.searchedStudents].filter(student => student.id !== id);
@@ -74,7 +75,8 @@ const reducer: ActionReducer = createReducer(
   }),
   on(StudentsActions.searchStudentsBar, ((state, {searchString}) => {
     return {
-      ...state
+      ...state,
+      searchBar: searchString
     };
   })),
   on(StudentsActions.searchStudentsBarSuccess, ((state, {students}) => {

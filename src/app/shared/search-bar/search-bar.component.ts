@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {debounceTime, switchMap, first, startWith, share} from "rxjs/internal/operators";
 import {StudentsServiceService} from "../../common/services/students-service.service";
@@ -10,7 +10,7 @@ import {IStudent} from "../../common/models/IStudent";
   styleUrls: ["./search-bar.component.sass"]
 })
 export class SearchBarComponent implements OnInit {
-
+  @Input() public barValue: string;
   public searchBar: FormGroup;
   @Output public searchRes: EventEmitter<IStudent[]> = new EventEmitter();
 
@@ -20,9 +20,11 @@ export class SearchBarComponent implements OnInit {
     this.searchBar = new FormGroup({
       search: new FormControl("")
     });
+
   }
 
   public ngOnInit(): void {
+    this.searchBar.get("search").setValue(this.barValue);
   }
 
   public showSearchResult(): void {

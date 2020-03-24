@@ -22,6 +22,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public studentsState$: Observable<StudentsState>;
   public page: number;
   public itemsPerPage: number;
+  public searchPlaceholder: string;
   constructor(
     private store: Store<AppState>,
   ) {}
@@ -74,6 +75,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.studentsState$.subscribe(students => {
         this.page = students.currentPage;
         this.itemsPerPage = students.paginationConstant;
+        if (students.searchBar) {
+          this.searchPlaceholder = students.searchBar;
+          console.log(this.searchPlaceholder)
+        }
         if (students.searchedStudents) {
           this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
         } else {

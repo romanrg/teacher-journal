@@ -6,7 +6,11 @@
 
 <ng-template #table>
 <div class="container" *ngIf="(studentsState$ | async).loaded">
-  <app-search-bar class="students__search" (searchRes)="renderSearch($event)"></app-search-bar>
+  <app-search-bar
+    class="students__search"
+    (searchRes)="renderSearch($event)"
+    [barValue]="searchPlaceholder"
+  ></app-search-bar>
   <app-one-header-table
     [displayDelete]="true"
     [config]="tableConfig"
