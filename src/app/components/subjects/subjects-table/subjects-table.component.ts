@@ -40,6 +40,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }>;
   public subject: ISubject;
   public renderMap: [];
+  public page: number;
+  public itemsPerPage: number;
 
   // renderer related
   public generator: Generator;
@@ -187,7 +189,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     };
   }
   public showEvent($event: Event): void {
+    console.log($event);
     this.renderMap = $event;
+  }
+  public dispatchPaginationState($event: Event): void {
+    if ($event.paginationConstant) {
+      this.store.dispatch(SubjectsActions.changePaginationConstant($event));
+    } else {
+      this.store.dispatch(SubjectsActions.changeCurrentPage($event));
+    }
+
   }
 
   // life cycles
@@ -217,6 +228,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.manager.addSubscription(this.componentState$.subscribe(state => {
         // initialize subject
         this.subject = state.subjects.data.filter(subj => subj.name === subjectName)[0];
+
+        // get pagination and current page
+        this.page = state.subjects.currentPage;
+        this.itemsPerPage = state.subjects.paginationConstant;
 
         // initialized new teacher form
         this.newTeacherConfig = this.getTeacherFormConfig(this.subject);

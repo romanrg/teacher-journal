@@ -4,6 +4,9 @@
         [config]="subjectTableConfig"
         (emitMap)="showEvent($event)"
         (click)="generateInput($event.target)"
+        [paginationConstant]="itemsPerPage"
+        [currentPagination]="page"
+        (emitPagination)="dispatchPaginationState($event)"
       ></app-one-header-table>
       <app-button
         class="subject-table__btn"

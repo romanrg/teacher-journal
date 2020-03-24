@@ -51,3 +51,15 @@ export const searchStudentsBarError: ActionCreator = createAction(
   "[Search Student Effect] SEARCH_STUDENTS_BAR_ERROR",
   props<{error: Error | string}>()
 );
+
+export const changePaginationConstant: ActionCreator = createAction(
+  "[Students table page] CHANGE_PAGINATION",
+  props<{paginationConstant: number}>()
+);
+
+export const changeCurrentPage: ActionCreator = createAction(
+  "[Students table page] CHANGE_CURRENT_PAGE",
+  props<{currentPage: number}>()
+);
+
+

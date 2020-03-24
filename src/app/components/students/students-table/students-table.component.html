@@ -11,6 +11,9 @@
     [displayDelete]="true"
     [config]="tableConfig"
     (click)="deleteStudent($event)"
+    [paginationConstant]="itemsPerPage"
+    [currentPagination]="page"
+    (emitPagination)="dispatchPaginationState($event)"
     class="student-table__table"
   ></app-one-header-table>
   <a routerLink="/students/new-student" class="table__link">

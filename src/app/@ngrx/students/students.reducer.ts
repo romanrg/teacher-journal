@@ -87,7 +87,22 @@ const reducer: ActionReducer = createReducer(
       error
     };
   }),
-)
+  on(StudentsActions.changePaginationConstant, (state, {paginationConstant}) => {
+    console.log("CHANGE_PAGINATION", paginationConstant);
+    return {
+      ...state,
+      paginationConstant,
+      currentPage: 1
+    };
+  }),
+  on(StudentsActions.changeCurrentPage, (state, {currentPage}) => {
+    console.log("CHANGE_PAGINATION");
+    return {
+      ...state,
+      currentPage
+    };
+  })
+);
 export function studentsReducer(state: StudentsState | undefined, action: Action): any {
   return reducer(state, action);
 }

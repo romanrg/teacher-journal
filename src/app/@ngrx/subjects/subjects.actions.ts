@@ -99,3 +99,12 @@ export const deleteDateError: ActionCreator = createAction(
   "[Delete Subject Effect] DELETE_DATE_ERROR",
   props<{error: Error | string}>()
 );
+export const changePaginationConstant: ActionCreator = createAction(
+  "[Subjects table page] CHANGE_PAGINATION",
+  props<{paginationConstant: number}>()
+);
+
+export const changeCurrentPage: ActionCreator = createAction(
+  "[Subjects table page] CHANGE_CURRENT_PAGE",
+  props<{currentPage: number}>()
+);

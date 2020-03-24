@@ -20,6 +20,8 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public tableConfig: ITableConfig;
   public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
   public studentsState$: Observable<StudentsState>;
+  public page: number;
+  public itemsPerPage: number;
   constructor(
     private store: Store<AppState>,
   ) {}
@@ -58,10 +60,20 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     }
 
   }
+  public dispatchPaginationState($event: Event): void {
+    if ($event.paginationConstant) {
+      this.store.dispatch(StudentsActions.changePaginationConstant($event));
+    } else {
+      this.store.dispatch(StudentsActions.changeCurrentPage($event));
+    }
+
+  }
   public ngOnInit(): void {
     this.studentsState$ = this.store.pipe(select("students"));
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
+        this.page = students.currentPage;
+        this.itemsPerPage = students.paginationConstant;
         if (students.searchedStudents) {
           this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
         } else {
@@ -73,6 +85,4 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
-
-
 }

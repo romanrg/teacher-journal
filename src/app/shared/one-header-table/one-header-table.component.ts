@@ -11,10 +11,11 @@ import {init} from "protractor/built/launcher";
 export class OneHeaderTableComponent implements OnInit, OnChanges {
   @Input() public displayDelete: boolean;
   @Input() public config: ITableConfig;
+  @Input() public paginationConstant: number;
+  @Input() public currentPagination: number;
   @Output() public emitMap: EventEmitter = new EventEmitter();
+  @Output() public emitPagination: EventEmitter = new EventEmitter();
   public dataForBody: string[][];
-  public paginationConstant: number = 5;
-  public currentPagination: number = 1;
   public currentlySorted: {col: (null|number), times: (null|number)} = {col: null, times: null};
   public init: Map = new Map();
   constructor(
@@ -35,13 +36,15 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    changes.config.currentValue.body
+    changes.config?.currentValue.body
       .map(
         (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
       );
   }
 
   public changeCurrent($event: number): void {
+    console.log("Change current:", $event);
+    this.emitPagination.emit({currentPage: $event});
     this.currentPagination = $event;
     this.dataForBody = this.cutBodyDataForPagination(
       this.config.body, this.paginationConstant, this.currentPagination
@@ -55,6 +58,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   }
 
   public changeConstant($event: number): void {
+    this.emitPagination.emit({paginationConstant: $event});
     this.paginationConstant = $event;
     this.currentPagination = 1;
     this.dataForBody = this.cutBodyDataForPagination(

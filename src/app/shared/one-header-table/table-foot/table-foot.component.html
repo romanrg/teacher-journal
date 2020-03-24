@@ -25,6 +25,7 @@
       <span class="table-foot__descriptor">Items per page:</span>
       <select class="table-foot__select" (change)="changePaginationConstant.emit(+$event.srcElement.value)">
         <option
+          [selected]="option === paginationConstant"
           class="table-foot__option"
           *ngFor="let option of paginationConstantList"
           [value]="option"
