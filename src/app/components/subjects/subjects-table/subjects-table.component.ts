@@ -65,6 +65,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public getCellIndex(target: EventTarget): number {
     return +target.parentNode.getAttribute("index");
   }
+  public getAllStateErrors(st: AppState): ErrorEvent[] {
+    return Object.keys(st).map(key => st[key].error).filter(err => err);
+  }
 
   // teacher methods
   public changeTeacher($event: Event): void {
@@ -111,6 +114,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
   public isAllLoaded( st: AppState): boolean {
     return Object.keys(st).every(key => st[key].loaded === true);
+  }
+  public isAnyErrorsOccur(st: AppState): boolean {
+    return Object.keys(st).some(key => st[key].error);
   }
 
   // add new date and mark
@@ -182,6 +188,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       newMark.value = +value;
       dispatch(newMark);
     };
+  }
+  public showEvent($event: Event): void {
+    this.renderMap = $event;
   }
 
   // life cycles
@@ -278,9 +287,5 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
-  }
-
-  public showEvent($event: Event): void {
-    this.renderMap = $event;
   }
 }

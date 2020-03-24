@@ -1,5 +1,11 @@
-<ng-container *ngIf="(studentsState$ | async).loaded">
-<div class="container">
+<ng-container *ngIf="(studentsState$ | async).error; else table">
+  <app-error-message-display class="students__error"
+                             [error]="(studentsState$ | async).error"
+  ></app-error-message-display>
+</ng-container>
+
+<ng-template #table>
+<div class="container" *ngIf="(studentsState$ | async).loaded">
   <app-search-bar class="students__search" (searchRes)="renderSearch($event)"></app-search-bar>
   <app-one-header-table
     [displayDelete]="true"
@@ -15,4 +21,5 @@
     ></app-button>
   </a>
 </div>
-</ng-container>
+</ng-template>
+

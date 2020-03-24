@@ -29,7 +29,6 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public submit($event: ISubject): void {
     this.isSaved = true;
-    console.log($event);
     $event.uniqueDates = [];
     this.store.dispatch(SubjectsActions.createSubject({subject: $event}));
     this.router.navigate(["/subjects"]);

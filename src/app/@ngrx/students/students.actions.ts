@@ -44,10 +44,10 @@ export const searchStudentsBar: ActionCreator = createAction(
   props<{searchString: string}>()
 );
 export const searchStudentsBarSuccess: ActionCreator = createAction(
-  "[Students Table Page] SEARCH_STUDENTS_BAR_SUCCESS",
+  "[Search Student Effect] SEARCH_STUDENTS_BAR_SUCCESS",
   props<{students: IStudent[]}>()
 );
-
-export const getStudentsForSubjects: ActionCreator = createAction(
-  "[Subject Table Page] GET_STUDENTS"
+export const searchStudentsBarError: ActionCreator = createAction(
+  "[Search Student Effect] SEARCH_STUDENTS_BAR_ERROR",
+  props<{error: Error | string}>()
 );

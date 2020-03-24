@@ -43,6 +43,7 @@ export const deleteSubjectError: ActionCreator = createAction(
   props<{error: Error | string}>()
 );
 
+
 export const addCurrent: ActionCreator = createAction(
   "[Subject Table Page] ADD_CURRENT",
   props<{current: string}>()
@@ -80,7 +81,10 @@ export const addNewUniqueDateSuccess: ActionCreator = createAction(
   "[Add new UniqueDate Effect] ADD_NEW_UniqueDate_Success",
   props<{timestamp: number, subject: ISubject}>()
 );
-
+export const addNewUniqueDateError: ActionCreator = createAction(
+  "[Add new UniqueDate Effect] ADD_NEW_UniqueDate_ERROR",
+  props<{error: Error | string}>()
+);
 
 
 export const deleteDate: ActionCreator = createAction(

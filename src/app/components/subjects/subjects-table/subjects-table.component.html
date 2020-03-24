@@ -1,19 +1,28 @@
-<ng-container *ngIf="isAllLoaded((componentState$ | async)); else loading">
-  <div class="container">
-  <app-one-header-table
-    [config]="subjectTableConfig"
-    (emitMap)="showEvent($event)"
-    (click)="generateInput($event.target)"
-  ></app-one-header-table>
-  <app-button
-    class="subject-table__btn"
-    [textContent]="'+'"
-    [screenReader]="'Add new date'"
-    (click)="addNewColumn()"
-  ></app-button>
-</div>
-  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
-</ng-container>
-<ng-template #loading>
-  <p>Loading...</p>
+<ng-template #table>
+  <ng-container *ngIf="isAllLoaded((componentState$ | async)); else loading">
+    <div class="container">
+      <app-one-header-table
+        [config]="subjectTableConfig"
+        (emitMap)="showEvent($event)"
+        (click)="generateInput($event.target)"
+      ></app-one-header-table>
+      <app-button
+        class="subject-table__btn"
+        [textContent]="'+'"
+        [screenReader]="'Add new date'"
+        (click)="addNewColumn()"
+      ></app-button>
+    </div>
+    <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
+  </ng-container>
+  <ng-template #loading>
+    <p>Loading...</p>
+  </ng-template>
 </ng-template>
+<ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else table">
+  <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">
+    <app-error-message-display
+      [error]="error"
+    ></app-error-message-display>
+  </ng-container>
+</ng-container>

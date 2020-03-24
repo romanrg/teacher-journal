@@ -38,6 +38,7 @@ import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
+import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import {EffectsModule} from "@ngrx/effects";
     HighlightDirective,
     MarksHighlightDirective,
     SearchBarComponent,
-    EmptyDataComponent
+    EmptyDataComponent,
+    ErrorMessageDisplayComponent
   ],
   imports: [
     BrowserModule,

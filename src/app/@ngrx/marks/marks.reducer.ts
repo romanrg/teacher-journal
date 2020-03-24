@@ -6,7 +6,6 @@ import {IStudent, StudentModel} from "../../common/models/IStudent";
 const reducer: ActionReducer = createReducer(
   initialMarksState,
   on(MarksActions.getMarks, state => {
-    console.log("GET_MARKS action being handled");
     return {
       ...state,
       loading: true,
@@ -14,7 +13,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.getMarksSuccess, (state, { marks }) => {
-    console.log("GET_STUDENTS_SUCCESS action being handled");
     const data: Mark[] = [...marks];
     return {
       ...state,
@@ -24,7 +22,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.getMarksError, (state, { error }) => {
-    console.log("GET_STUDENTS_ERROR action being handled");
     return {
       ...state,
       loading: false,
@@ -33,7 +30,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.addNewMark, (state, {mark}) => {
-    console.log("ADD_NEW_MARK action being handled");
     const newData: Mark[] = [...state.data];
     newData.push(mark);
     return {
@@ -42,7 +38,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.addNewMarkSuccess, (state, {mark}) => {
-    console.log("ADD_NEW_MARK_SUCCESS action being handled");
     const newData = [...state.data].filter(m => m.id);
     newData.push(mark);
     return {
@@ -51,24 +46,20 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.addNewMarkError, (state, {error}) => {
-  console.log("ADD_NEW_MARK_ERROR action being handled", error);
   return {
-    ...state
+    ...state,
+    error
   };
 }),
   on(MarksActions.changeMark, (state, {mark}) => {
-    console.log("CHANGE_MARK action being handled");
     const newData: Mark[] = JSON.parse(JSON.stringify(state.data));
-    console.log(newData.filter(m => m.id === mark.id)[0]);
     newData.filter(m => m.id === mark.id)[0].value = mark.value;
-    console.log(newData.filter(m => m.id === mark.id)[0]);
     return {
       ...state,
       data: newData
     };
   }),
   on(MarksActions.changeMarkSuccess, (state, {mark}) => {
-    console.log("CHANGE_MARK_SUCCESS action being handled");
     const newData: Mark[] = JSON.parse(JSON.stringify(state.data));
     newData.filter(data => data.id === mark.id)[0].value = mark.value;
     return {
@@ -77,24 +68,27 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(MarksActions.changeMarkError, (state, {error}) => {
-    console.log("CHANGE_MARK_ERROR action being handled", error);
     return {
       ...state,
       error
     };
   }),
   on(MarksActions.deleteMark, (state, {needToDelete}) => {
-    console.log("DELETE MARKS action being handled");
     return {
       ...state,
       data: [...state.data.filter(m => m.id !== needToDelete.id)]
     }
   }),
   on(MarksActions.deleteMarksSuccess, (state) => {
-    console.log("DELETE MARKS SUCCESS action being handled");
     return {
       ...state
     }
+  }),
+  on(MarksActions.deleteMarksError, (state, {error}) => {
+    return {
+      ...state,
+      error
+    };
   }),
 );
 export function marksReducer(state: MarksState | undefined, action: Action): any {

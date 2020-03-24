@@ -6,7 +6,6 @@ import { ISubject, SubjectModel } from "../../common/models/ISubject";
 const reducer: ActionReducer = createReducer(
   initialSubjectsState,
   on(SubjectsActions.getSubjects, state => {
-    console.log("GET_SUBJECT action being handled");
     return {
       ...state,
       loading: true,
@@ -14,7 +13,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.getSubjectsSuccess, (state, {subjects}) => {
-    console.log("GET_SUBJECTS_SUCCESS action being handled");
     const data: ISubject[] = [...subjects];
     return {
       ...state,
@@ -24,7 +22,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.getSubjectsError, (state, {error}) => {
-  console.log("GET_SUBJECTS_ERROR action being handled");
   return {
     ...state,
     error,
@@ -33,7 +30,6 @@ const reducer: ActionReducer = createReducer(
   };
 }),
   on(SubjectsActions.createSubject, state => {
-    console.log("CREATE_SUBJECT action being handled");
     return {
       ...state,
       loading: true,
@@ -41,11 +37,9 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.createSubjectSuccess, (state, { subject }) => {
-    console.log("CREATE_SUBJECT_SUCCESS action being handled");
     const newState: SubjectsState = {...state};
     newState.data = [...state.data];
     newState.data.push(subject);
-    console.log(newState);
     return {
       ...newState,
       loading: false,
@@ -53,7 +47,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.createSubjectError, (state, { error }) => {
-  console.log("CREATE_SUBJECT_ERROR action being handled", error);
   return {
     ...state,
     loading: false,
@@ -62,7 +55,6 @@ const reducer: ActionReducer = createReducer(
   };
 }),
   on(SubjectsActions.deleteSubject, ((state, {subject}) => {
-    console.log("DELETE_SUBJECT action being handled");
     return {
       ...state,
       loading: true,
@@ -70,7 +62,6 @@ const reducer: ActionReducer = createReducer(
     };
   })),
   on(SubjectsActions.deleteSubjectSuccess, ((state, {subject}) => {
-    console.log("DELETE_SUBJECT_SUCCESS action being handled");
     const newState: SubjectsState = {...state};
     newState.data = [...state.data].filter(subj => subj.id !== subject);
     newState.loading = false;
@@ -80,7 +71,6 @@ const reducer: ActionReducer = createReducer(
     }
   })),
   on(SubjectsActions.deleteSubjectError, ((state, {error}) => {
-    console.log("DELETE_SUBJECT_ERROR action being handled");
     return {
       ...state,
       error,
@@ -89,7 +79,6 @@ const reducer: ActionReducer = createReducer(
     }
   })),
   on(SubjectsActions.changeTeacher, (state, {patchedSubject}) => {
-    console.log("CHANGE_TEACHER action being handled", patchedSubject);
     return {
       ...state,
       loading: true,
@@ -97,7 +86,6 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(SubjectsActions.changeTeacherSuccess, (state, {patchedSubject}) => {
-    console.log("CHANGE_TEACHER_SUCCESS action being handled");
     const newState: SubjectsState = JSON.parse(JSON.stringify(state));
     newState.data.filter(subj => subj.id === patchedSubject.id)[0].teacher = patchedSubject.teacher;
     return {
@@ -106,8 +94,15 @@ const reducer: ActionReducer = createReducer(
       loaded: true,
     };
   }),
+  on(SubjectsActions.changeTeacherError, ((state, {error}) => {
+    return {
+      ...state,
+      error,
+      loaded: false,
+      loading: false
+    }
+  })),
   on(SubjectsActions.addNewUniqueDate, (state, { subject }) => {
-    console.log("ADD_NEW_UniqueDate action being handled");
     const newState: SubjectsState = JSON.parse(JSON.stringify(state));
     newState.data.filter(subj => subj.id === subject.id)[0].uniqueDates = subject.uniqueDates;
     return {
@@ -115,15 +110,21 @@ const reducer: ActionReducer = createReducer(
     }
   }),
   on(SubjectsActions.addNewUniqueDateSuccess, (state, { subject }) => {
-    console.log("ADD_NEW_UniqueDate_SUCCESS action being handled");
     const newState: SubjectsState = JSON.parse(JSON.stringify(state));
     newState.data.filter(subj => subj.id === subject.id)[0].uniqueDates = subject.uniqueDates;
     return {
       ...newState,
     };
   }),
+  on(SubjectsActions.addNewUniqueDateError, ((state, {error}) => {
+    return {
+      ...state,
+      error,
+      loaded: false,
+      loading: false
+    };
+  })),
   on(SubjectsActions.deleteDate, ((state, {timestamp, subject}) => {
-    console.log("DELETE_DATE action being handled");
     const newData: ISubject[] = JSON.parse(JSON.stringify(state.data));
     const newSub: ISubject = newData.filter(sub => sub.id === subject.id)[0];
     newSub.uniqueDates = newSub.uniqueDates.filter(ts => ts !== timestamp);
@@ -133,11 +134,18 @@ const reducer: ActionReducer = createReducer(
     };
   })),
   on(SubjectsActions.deleteDateSuccess, ((state, {timestamp, subject}) => {
-    console.log("DELETE_DATE_SUCCESS action being handled");
     return {
       ...state,
     };
-  }))
+  })),
+  on(SubjectsActions.deleteDateError, ((state, {error}) => {
+    return {
+      ...state,
+      error,
+      loaded: false,
+      loading: false
+    };
+  })),
 );
 
 

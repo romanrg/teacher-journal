@@ -10,6 +10,8 @@ export class HighlightDirective {
 
   private highlight(color: string): void {
     this.el.nativeElement.style.cursor = "pointer";
+    [...this.el.nativeElement.children]
+      .map(cell => cell.style.borderBottom = `solid 0.05rem transparent`);
     if (color) {
       [...this.el.nativeElement.children]
         .map(cell => cell.style.borderBottom = `solid 0.05rem ${color}`);
