@@ -130,12 +130,16 @@ const reducer: ActionReducer = createReducer(
     newSub.uniqueDates = newSub.uniqueDates.filter(ts => ts !== timestamp);
     return {
       ...state,
-      data: newData
+      data: newData,
+      loading: true,
+      loaded: false,
     };
   })),
   on(SubjectsActions.deleteDateSuccess, ((state, {timestamp, subject}) => {
     return {
       ...state,
+      loading: false,
+      loaded: true
     };
   })),
   on(SubjectsActions.deleteDateError, ((state, {error}) => {
