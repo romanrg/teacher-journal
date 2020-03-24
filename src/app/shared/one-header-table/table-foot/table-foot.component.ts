@@ -5,9 +5,9 @@ const makePaginationArray: Function = (n: number): number[] => {
 };
 
 @Component({
-  selector: 'app-table-foot',
-  templateUrl: './table-foot.component.html',
-  styleUrls: ['./table-foot.component.sass']
+  selector: "app-table-foot",
+  templateUrl: "./table-foot.component.html",
+  styleUrls: ["./table-foot.component.sass"]
 })
 export class TableFootComponent implements OnInit, OnChanges {
   @Input() public itemsAmount: number;
@@ -42,9 +42,13 @@ export class TableFootComponent implements OnInit, OnChanges {
   public generateMetaCell(): string {
     return `${(this.currentPagination - 1)  * this.paginationConstant + 1}
         ...
-        ${this.currentPagination * this.paginationConstant <= this.itemsAmount ? this.currentPagination * this.paginationConstant : this.itemsAmount}
+        ${
+      this.currentPagination * this.paginationConstant <= this.itemsAmount ?
+      this.currentPagination * this.paginationConstant :
+      this.itemsAmount
+      }
         from
-        ${this.itemsAmount}`
+        ${this.itemsAmount}`;
   }
 
   public ngOnInit(): void {
