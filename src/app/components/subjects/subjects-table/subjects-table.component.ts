@@ -86,7 +86,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
 
   // add new date and mark
-  public generateInput(target: EventTarget): void {
+  public handleClickEvents(target: EventTarget): void {
     if (
       this.dateGenerator.shouldAddDateInput(target, this.subjectHeadersConstantNames)
     ) {
@@ -147,7 +147,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       dispatch(copy);
     };
   }
-  public submitMark(dispatch: Function, mark: IMark): void {
+  public submitMark(dispatch: Function, mark: Mark): void {
     return function (value: number): void {
       const copy: Mark = JSON.parse(JSON.stringify(mark));
       copy.value = +value;

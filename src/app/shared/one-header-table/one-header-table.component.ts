@@ -21,42 +21,18 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   constructor(
     private sortPipe: SortByPipe
   ) { }
-
-  public ngOnInit(): void {
-    if (this.config) {
-      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
-      this.config.body.map((row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i));
-    }
-  }
-
-  public ngDoCheck(): void {
-    if (this.config) {
-      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
-    }
-  }
-
-  public ngOnChanges(changes: SimpleChanges): void {
-    changes.config?.currentValue.body
-      .map(
-        (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
-      );
-  }
-
   public changeCurrent($event: number): void {
-    console.log("Change current:", $event);
     this.emitPagination.emit({currentPage: $event});
     this.currentPagination = $event;
     this.dataForBody = this.cutBodyDataForPagination(
       this.config.body, this.paginationConstant, this.currentPagination
     );
   }
-
   public cutBodyDataForPagination(body: tableRow[], constant: number, current: number): string[][] {
     return body.slice(
       ((current - 1) * constant), current * constant
     );
   }
-
   public changeConstant($event: number): void {
     this.emitPagination.emit({paginationConstant: $event});
     this.paginationConstant = $event;
@@ -65,7 +41,6 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
       this.config.body, this.paginationConstant, this.currentPagination
     );
   }
-
   public executeSorting($event: Event): void {
     const initializeSort: Function = (col, times) => {
       this.currentlySorted.col = col;
@@ -107,5 +82,22 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
       this.emitMap.emit(this.config.body);
     }
 
+  }
+  public ngOnInit(): void {
+    if (this.config) {
+      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+      this.config.body.map((row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i));
+    }
+  }
+  public ngDoCheck(): void {
+    if (this.config) {
+      this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
+    }
+  }
+  public ngOnChanges(changes: SimpleChanges): void {
+    changes.config?.currentValue.body
+      .map(
+        (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
+      );
   }
 }

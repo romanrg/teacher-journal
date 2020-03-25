@@ -3,7 +3,7 @@
       <app-one-header-table
         [config]="subjectTableConfig"
         (emitMap)="this.renderMap = $event"
-        (click)="generateInput($event.target)"
+        (click)="handleClickEvents($event.target)"
         [paginationConstant]="itemsPerPage"
         [currentPagination]="page"
         (emitPagination)="dispatchPaginationState($event)"
