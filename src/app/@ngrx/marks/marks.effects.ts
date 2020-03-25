@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import {Action, createAction} from "@ngrx/store";
+import {Action} from "@ngrx/store";
 import * as MarksActions from "./marks.actions";
 import {Observable, of} from "rxjs";
 import { switchMap } from "rxjs/operators";
-import {catchError, map, retry, skip, startWith} from "rxjs/internal/operators";
+import {catchError, map, retry} from "rxjs/internal/operators";
 import {MarksServiceService} from "../../common/services/marks-service.service";
-import {pluck} from "../../common/helpers/lib";
 
 @Injectable()
 export class MarksEffects {

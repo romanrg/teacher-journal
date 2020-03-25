@@ -165,7 +165,6 @@ const reducer: ActionReducer = createReducer(
   })
 );
 
-
 export function subjectsReducer(state: SubjectsState | undefined, action: Action): any {
   return reducer(state, action);
 }

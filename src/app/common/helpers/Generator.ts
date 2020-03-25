@@ -61,6 +61,16 @@ export class DatePicker extends Generator {
     this.ONE_DAY_CONSTANT = 1000 * 24 * 60 * 60;
   }
 
+  public shouldAddDateInput(target: EventTarget, headers: string[]): boolean {
+    return (
+      target.tagName.toLowerCase() === "th" &&
+      !headers.includes(target.textContent) &&
+      target.textContent.includes("Select date")
+    );
+  }
+  public isDeleteDateButton(target: EventTarget): boolean {
+    return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === "Delete column")
+  }
   public generateDatePicker(
     element: any,
     uniqueDates: ISubject["uniqueDates"],
@@ -129,7 +139,9 @@ export class NumberPicker extends Generator {
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);
     });
   }
+
+  public shouldAddNumberInput(target: EventTarget, headers: string[], cellIndex: number): boolean {
+    return (target.tagName.toLowerCase() === "td" && cellIndex >= headers.length);
+  }
 }
-
-
 

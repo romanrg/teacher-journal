@@ -17,7 +17,7 @@ export class TableFootComponent implements OnInit, OnChanges {
   @Output() public changePaginationConstant: EventEmitter<number> = new EventEmitter();
   public paginationConstantList: number[] = [5, 10, 20, 50];
   public pageList: number[];
-  constructor() { }
+  constructor() {}
   public isLastOrFirst(isLast: boolean): void {
     isLast ? this.currentPagination = this.pageList.length : this.currentPagination = 1;
     this.changeCurrentPage.emit(this.currentPagination);

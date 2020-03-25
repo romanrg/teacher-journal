@@ -105,10 +105,9 @@ const reducer: ActionReducer = createReducer(
     };
   }),
   on(StudentsActions.changeLanguage, (state, {language}) => {
-    console.log("CHANGE_LAGUAGE_ACTION being handled", language);
     return {
       ...state
-    }
+    };
   })
 );
 export function studentsReducer(state: StudentsState | undefined, action: Action): any {

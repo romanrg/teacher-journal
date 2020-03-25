@@ -4,7 +4,6 @@ import { IStudent } from "../../common/models/IStudent";
 export const getStudents: ActionCreator = createAction(
   "[Main Page (App)] GET_STUDENTS"
 );
-
 export const getStudentsSuccess: ActionCreator = createAction(
   "[Get Students Effect] GET_STUDENTS_SUCCESS",
   props<{students: IStudent[]}>()
@@ -39,6 +38,7 @@ export const deleteStudentError: ActionCreator = createAction(
   "[Delete Student Effect] DELETE_STUDENT_ERROR",
   props<{error: Error | string}>()
 );
+
 export const searchStudentsBar: ActionCreator = createAction(
   "[Students Table Page] SEARCH_STUDENTS_BAR",
   props<{searchString: string}>()
@@ -61,9 +61,8 @@ export const changeCurrentPage: ActionCreator = createAction(
   "[Students table page] CHANGE_CURRENT_PAGE",
   props<{currentPage: number}>()
 );
-
 export const changeLanguage: ActionCreator = createAction(
   "[App Page] CHANGE_CURRENT_LANGUAGE",
   props<{language: string}>()
-)
+);
 

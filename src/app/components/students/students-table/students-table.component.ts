@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {ITableConfig} from "../../../common/models/ITableConfig";
+import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
@@ -23,9 +23,12 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
+  public tableBody: TableBody;
   constructor(
     private store: Store<AppState>,
-  ) {}
+  ) {
+    this.tableBody = new TableBody(TableRow);
+  }
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
     const headers: ReadonlyArray<string> = this.tableHeaders;
     const caption: string = "Students list:";
@@ -36,18 +39,11 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public renderSearch($event: Event): void {
     this.store.dispatch(StudentsActions.searchStudentsBar({searchString: $event}));
   }
-  public createBody(students: IStudent[], config: ReadonlyArray<string>): string[][] {
-    const newBody: string[][] = [];
-    <IStudent[]>students.forEach((student, index) => {
-      const creator: RowCreator = new RowCreator();
-      const row: string[] = creator.generateRowFromObject(
-        student,
-        config
-      );
-      row[0] = index + 1;
-      newBody.push(row);
-    });
-    return newBody;
+  public createBody(students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> {
+    this.tableBody.clear();
+    this.tableBody.generateBodyFromDataAndConfig(config, students);
+    this.tableBody.changeAllValuesAtIndexWithArrayValues(0, this.tableBody.generateIdArray(students.length));
+    return this.tableBody.body;
   }
   public deleteStudent($event: Event): void {
     if ($event.target.parentNode.getAttribute("data")) {
@@ -77,7 +73,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
         this.itemsPerPage = students.paginationConstant;
         if (students.searchBar) {
           this.searchPlaceholder = students.searchBar;
-          console.log(this.searchPlaceholder)
         }
         if (students.searchedStudents) {
           this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);

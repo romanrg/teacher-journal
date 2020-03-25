@@ -1,7 +1,6 @@
 import {Action, ActionReducer, createReducer, on} from "@ngrx/store";
 import {initialMarksState, MarksState} from "./marks.state";
 import * as MarksActions from "./marks.actions";
-import {IStudent, StudentModel} from "../../common/models/IStudent";
 
 const reducer: ActionReducer = createReducer(
   initialMarksState,

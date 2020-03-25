@@ -2,7 +2,7 @@
     <div class="container">
       <app-one-header-table
         [config]="subjectTableConfig"
-        (emitMap)="showEvent($event)"
+        (emitMap)="this.renderMap = $event"
         (click)="generateInput($event.target)"
         [paginationConstant]="itemsPerPage"
         [currentPagination]="page"
@@ -12,10 +12,10 @@
         class="subject-table__btn"
         [textContent]="'+'"
         [screenReader]="'Add new date'"
-        (click)="addNewColumn()"
+        (click)="subjectTableConfig.headers.push('Select date')"
       ></app-button>
     </div>
-    <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
+    <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
 </ng-template>
 <ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else table">
   <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">

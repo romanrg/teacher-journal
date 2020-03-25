@@ -4,9 +4,9 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HTTP_INTERCEPTORS, HttpResponse
+  HTTP_INTERCEPTORS
 } from "@angular/common/http";
-import {Observable, Subject} from "rxjs";
+import {Observable} from "rxjs";
 
 @Injectable()
 export class ModifyHeadersInterceptor implements HttpInterceptor {
@@ -15,7 +15,7 @@ export class ModifyHeadersInterceptor implements HttpInterceptor {
 
   public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-    const req = request.clone({
+    const req: HttpRequest<unknown> = request.clone({
       headers: request.headers.set("Modified", "Modified with interceptor")
     });
     return next.handle(req);

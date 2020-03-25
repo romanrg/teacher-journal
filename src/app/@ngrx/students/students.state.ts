@@ -8,6 +8,7 @@ export interface StudentsState {
   searchedStudents?: ReadonlyArray<IStudent>;
   readonly paginationConstant: number;
   readonly currentPage: number;
+  readonly searchBar: string;
 }
 
 export const initialStudentsState: StudentsState = {
@@ -17,5 +18,6 @@ export const initialStudentsState: StudentsState = {
   error: null,
   searchedStudents: null,
   paginationConstant: 5,
-  currentPage: 1
+  currentPage: 1,
+  searchBar: null,
 };
