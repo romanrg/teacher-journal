@@ -1,6 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import {StudentsComponent} from "../components/students/students.component";
@@ -40,6 +39,8 @@ import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
 import {TranslateModule} from "@ngx-translate/core";
+import {NgxsModule} from "@ngxs/store";
+import {environment} from "../../environments/environment";
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import {TranslateModule} from "@ngx-translate/core";
     HttpClientModule,
     RootStoreModule,
     EffectsModule.forRoot([]),
-    TranslateModule.forRoot()
+    TranslateModule.forRoot(),
+    NgxsModule.forRoot([], { developmentMode: !environment.production })
   ],
   providers: [
     ExitFormGuard,
