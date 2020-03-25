@@ -142,7 +142,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
     return function(value: string): void {
-      JSON.parse(JSON.stringify(subject)).uniqueDates.push((new Date(value)).getTime());
+      const copy: ISubject = JSON.parse(JSON.stringify(subject));
+      copy.uniqueDates.push((new Date(value)).getTime());
       dispatch(copy);
     };
   }

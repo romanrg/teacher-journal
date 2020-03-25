@@ -20,8 +20,7 @@ export class SortByPipe implements PipeTransform {
     arr.map(row => row[index] ? result.valued.push(row) : result.empty.push(row));
     return result;
   };
-  public getAuxMapFromSortedArray: Function = (
-    arr: valuedArray
+  public getAuxMapFromSortedArray: Function = (arr: valuedArray
   ): auxMap[] => arr.map((row: sortingRow, position: number) => ({position, row}))
   public isAnyStringValuesForComparision: Function = (
     arr: splicedArray.valued, index: comparativeIndex
