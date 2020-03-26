@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Validators} from "@angular/forms";
-import {StudentsServiceService} from "../../../common/services/students-service.service";
 import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
@@ -8,9 +7,10 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {Observable} from "rxjs";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
-import {Store} from "@ngrx/store";
-import {AppState} from "../../../@ngrx/app.state";
-import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
+
+// ngxs
+import * as Ngxs from "@ngxs/store";
+import {Students} from "../../../@ngxs/students/students.actions";
 
 @Component({
   selector: "app-student-form",
@@ -24,7 +24,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
 
   constructor(
     private router: Router,
-    private store: Store<AppState>
+    private store: Ngxs.Store<StudentsStateModel>
   ) { }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
@@ -35,7 +35,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public submit($event: IStudent): void {
     this.isSaved = true;
-    this.store.dispatch(StudentsActions.createStudent({student: $event}));
+    this.store.dispatch(new Students.Create($event));
     this.router.navigate(["/students"]);
   }
   public ngOnInit(): void {

@@ -4,9 +4,9 @@ import {FormControlType, IFormConfig} from "./IFormConfig";
 import {ISubject} from "./ISubject";
 
 export class Teacher implements IPerson {
-  private _config: IFormConfig;
+  #config: IFormConfig;
   constructor(subject: ISubject) {
-    this._config = {
+    this.#config = {
       legend: `Change ${subject.name} Teacher`,
       formGroupName: {
         name: "form",
@@ -24,9 +24,9 @@ export class Teacher implements IPerson {
     };
   }
   get config(): IFormConfig {
-    return this._config;
+    return this.#config;
   }
   get configName(): string {
-    return  this._config.formGroupName.formControls[0].name;
+    return  this.#config.formGroupName.formControls[0].name;
   }
 }
