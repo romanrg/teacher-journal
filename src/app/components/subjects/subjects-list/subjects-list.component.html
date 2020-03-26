@@ -1,13 +1,13 @@
-<ng-container *ngIf="(subjectsState$|async).error; else list">
+<ng-container *ngIf="(subjects$|async).error; else list">
   <app-error-message-display
-    [error]="(subjectsState$|async).error"
+    [error]="(subjects$|async).error"
   ></app-error-message-display>
 </ng-container>
 <ng-template #list>
     <nav class="subjects__nav">
-      <ng-container *ngIf="subjects.length; else empty">
+      <ng-container *ngIf="(subjects$ | async).data.length; else empty">
         <ul class="subjects__list">
-          <li *ngFor="let subject of subjects"
+          <li *ngFor="let subject of (subjects$ | async).data"
               class="subjects__item"
 
           >

@@ -38,7 +38,7 @@ export class NgxsStudentsState {
   ) {}
 
   @Selector()
-  public static Students(state: StudentsStateModel): IStudent[] {
+  public static Students(state: StudentsStateModel): StudentsStateModel {
     return state;
   }
   @Action(Students.Get)
@@ -75,7 +75,13 @@ export class NgxsStudentsState {
   @Action(Students.Delete)
   public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
     return this.studentsService.removeStudent(payload.id).pipe(
-      tap(deleteResponse => setState({...getState(), data: getState().data.filter(student => student.id !== payload.id)})),
+      tap(deleteResponse => {
+          setState({
+            ...getState(),
+            data: getState().data.filter(student => student.id !== payload.id)
+          })
+        }
+      ),
       retry(3),
       catchError(error => of(dispatch(new Students.DeleteError(error))))
     );
@@ -87,7 +93,6 @@ export class NgxsStudentsState {
 
   @Action(Students.Search)
   public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
-    console.log(payload)
     return this.studentsService.searchStudent(payload).pipe(
       tap(apiResponse =>  setState({...getState(), searchedStudents: [...apiResponse], searchBarInputValue: payload, currentPage: 1})),
       retry(3),

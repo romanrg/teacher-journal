@@ -13,8 +13,10 @@ import {Observable} from "rxjs";
 // ngxs
 import * as Ngxs from "@ngxs/store"
 import {Select} from "@ngxs/store";
-import {NgxsStudentsState} from "../@ngxs/students/students.state";
+import {NgxsStudentsState, StudentsStateModel} from "../@ngxs/students/students.state";
 import {Students} from "../@ngxs/students/students.actions";
+import {NgxsSubjectsState, SubjectsStateModel} from "../@ngxs/subjects/subjects.state";
+import {Subjects} from "../@ngxs/subjects/subjects.actions";
 
 @Component({
   selector: "app-root",
@@ -23,7 +25,8 @@ import {Students} from "../@ngxs/students/students.actions";
 })
 export class AppComponent implements OnInit {
 
-  @Select(NgxsStudentsState.Students) public students$: Observable<IStudent[]>;
+  @Select(NgxsStudentsState.Students) public students$: Observable<StudentsStateModel>;
+  @Select(NgxsSubjectsState.Subjects) public subjects$: Observable<SubjectsStateModel>;
 
   public componentState$: Observable<AppState>;
   constructor(
@@ -60,6 +63,7 @@ export class AppComponent implements OnInit {
       select(mapFnForSelecting, ["subjects", "students", "marks"])
     );
     this.ngxsStore.dispatch(new Students.Get());
+    this.ngxsStore.dispatch(new Subjects.Get());
   }
 
 

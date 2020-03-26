@@ -42,6 +42,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {NgxsModule} from "@ngxs/store";
 import {environment} from "../../environments/environment";
 import {NgxsStudentsState} from "../@ngxs/students/students.state";
+import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 
 @NgModule({
   declarations: [
@@ -85,7 +86,7 @@ import {NgxsStudentsState} from "../@ngxs/students/students.state";
     EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
-      [NgxsStudentsState],
+      [NgxsStudentsState, NgxsSubjectsState],
       { developmentMode: !environment.production }
       )
   ],
