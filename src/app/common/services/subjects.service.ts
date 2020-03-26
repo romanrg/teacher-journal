@@ -26,7 +26,7 @@ export class SubjectsService {
     return <Observable<ISubject[]>>this.http.get(this.URL);
   }
 
-  set subjects(arr: ISubject[]): ISubject[] {
+  set subjects(arr: ISubject[]) {
     this._subjects = arr;
   }
 
@@ -35,11 +35,11 @@ export class SubjectsService {
   }
 
   public addSubject(subject: ISubject): Observable<ISubject[]> {
-    return this.http.post(this.URL, subject);
+    return <Observable<ISubject[]>>this.http.post(this.URL, subject);
   }
 
-  public patchSubject(subject: ISubject): void {
-    return this.http.patch(`${this.URL}/${subject.id}`, subject);
+  public patchSubject(subject: ISubject): Observable<ISubject> {
+    return Observable<ISubject>this.http.patch(`${this.URL}/${subject.id}`, subject);
   }
 
   public addUniqueDate(id: (string|number), date: number): void {

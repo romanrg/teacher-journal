@@ -1,4 +1,4 @@
-import {ITeacher} from "./ITeacher";
+import {Teacher} from "./ITeacher";
 import {ValidatorFn} from "@angular/forms";
 
 export interface IFormConfig {
@@ -13,7 +13,7 @@ export interface IFormControlConfig {
   type: FormControlType;
   validators: ValidatorFn[];
   errorMessages: string[];
-  placeholder?: string | ITeacher;
+  placeholder?: string | Teacher;
 }
 
 export interface IFormGroupName {

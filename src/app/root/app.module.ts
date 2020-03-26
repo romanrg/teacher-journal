@@ -41,6 +41,7 @@ import {LoadingComponent} from "../shared/loading/loading.component";
 import {TranslateModule} from "@ngx-translate/core";
 import {NgxsModule} from "@ngxs/store";
 import {environment} from "../../environments/environment";
+import {NgxsStudentsState} from "../@ngxs/students/students.state";
 
 @NgModule({
   declarations: [
@@ -83,7 +84,10 @@ import {environment} from "../../environments/environment";
     RootStoreModule,
     EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
-    NgxsModule.forRoot([], { developmentMode: !environment.production })
+    NgxsModule.forRoot(
+      [NgxsStudentsState],
+      { developmentMode: !environment.production }
+      )
   ],
   providers: [
     ExitFormGuard,

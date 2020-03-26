@@ -3,7 +3,6 @@
                              [error]="(studentsState$ | async).error"
   ></app-error-message-display>
 </ng-container>
-
 <ng-template #table>
 <div class="container" *ngIf="(studentsState$ | async).loaded">
   <app-search-bar
@@ -29,4 +28,3 @@
   </a>
 </div>
 </ng-template>
-

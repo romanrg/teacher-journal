@@ -4,11 +4,14 @@ import {RowCreator} from "../../../common/helpers/RowCreator";
 import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
-import {select, Store} from "@ngrx/store";
-import {AppState} from "../../../@ngrx/app.state";
 import {Observable} from "rxjs";
-import {StudentsState} from "../../../@ngrx/students/students.state";
-import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
+
+// ngxs
+import * as Ngxs from "@ngxs/store"
+import {Select} from "@ngxs/store";
+import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/students.state";
+import {Students} from "../../../@ngxs/students/students.actions";
+
 
 @Component({
   selector: "app-students-table",
@@ -19,16 +22,12 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   private manager: SubscriptionManager = new SubscriptionManager();
   public tableConfig: ITableConfig;
   public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
-  public studentsState$: Observable<StudentsState>;
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
-  public tableBody: TableBody;
-  constructor(
-    private store: Store<AppState>,
-  ) {
-    this.tableBody = new TableBody(TableRow);
-  }
+  public tableBody: TableBody = new TableBody(TableRow);
+  @Select(NgxsStudentsState.Students) public studentsState$: Observable<StudentsStateModel>;
+  constructor(private store: Ngxs.Store) {}
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
     const headers: ReadonlyArray<string> = this.tableHeaders;
     const caption: string = "Students list:";
@@ -37,7 +36,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     };
   }
   public renderSearch($event: Event): void {
-    this.store.dispatch(StudentsActions.searchStudentsBar({searchString: $event}));
+    this.store.dispatch(new Students.Search($event));
   }
   public createBody(students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> {
     this.tableBody.clear();
@@ -53,26 +52,25 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
         student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
       }).unsubscribe();
       confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
-      this.store.dispatch(StudentsActions.deleteStudent(student));
+      this.store.dispatch(new Students.Delete(student));
     }
 
   }
   public dispatchPaginationState($event: Event): void {
     if ($event.paginationConstant) {
-      this.store.dispatch(StudentsActions.changePaginationConstant($event));
+      this.store.dispatch(new Students.ChangePagination($event.paginationConstant));
     } else {
-      this.store.dispatch(StudentsActions.changeCurrentPage($event));
+      this.store.dispatch(new Students.ChangeCurrentPage($event.currentPage));
     }
 
   }
   public ngOnInit(): void {
-    this.studentsState$ = this.store.pipe(select("students"));
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
         this.page = students.currentPage;
         this.itemsPerPage = students.paginationConstant;
-        if (students.searchBar) {
-          this.searchPlaceholder = students.searchBar;
+        if (students.searchBarInputValue) {
+          this.searchPlaceholder = students.searchBarInputValue;
         }
         if (students.searchedStudents) {
           this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);

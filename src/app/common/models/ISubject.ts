@@ -7,10 +7,10 @@ export interface ISubject {
   uniqueDates?: number[];
 }
 
-export class SubjectModel extends ISubject {
+export class SubjectModel implements ISubject {
   constructor(
     public name: string = "",
-    public teacher: ITeacher | string = "",
+    public teacher: Teacher | string = "",
     public address: string = "",
     public description: string = "",
     public uniqueDates: number[] = [],

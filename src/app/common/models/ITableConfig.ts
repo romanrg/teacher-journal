@@ -1,3 +1,6 @@
+import {Mark} from "./IMark";
+import {IStudent} from "./IStudent";
+
 export interface ITableConfig {
   caption: string;
   headers: string[];
