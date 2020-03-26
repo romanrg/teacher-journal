@@ -43,6 +43,7 @@ import {NgxsModule} from "@ngxs/store";
 import {environment} from "../../environments/environment";
 import {NgxsStudentsState} from "../@ngxs/students/students.state";
 import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
+import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
     NgxsModule.forRoot(
       [NgxsStudentsState, NgxsSubjectsState],
       { developmentMode: !environment.production }
-      )
+    ),
+    NgxsReduxDevtoolsPluginModule.forRoot()
   ],
   providers: [
     ExitFormGuard,

@@ -49,10 +49,6 @@ export class NgxsSubjectsState {
   public subjectsGetError({getState, setState}: StateContext<SubjectsStateModel>, {payload}: (string|Error)): void {
       console.log(payload, "ERROR GET");
   }
-  @Action(Subjects.GetByName)
-  public getSubjectByName({getState}: StateContext<SubjectsStateModel>, {payload}: string): ISubject {
-    return getState().data.filter(subj => subj.name === payload)[0];
-  }
 
   @Action(Subjects.Create)
   public createSubject({getState, patchState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {

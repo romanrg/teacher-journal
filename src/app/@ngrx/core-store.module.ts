@@ -16,7 +16,9 @@ import {MarksStoreModule} from "./marks/marks-store.module";
     StudentsStoreModule,
     SubjectsStoreModule,
     MarksStoreModule,
+    /*
     !environment.production ? StoreDevtoolsModule.instrument() : []
+    */
   ],
 })
 

@@ -7,12 +7,8 @@ export namespace Subjects {
     public static readonly type = "[Subjects API] Fetch Error";
     constructor(public payload: Error | string){}
   }
-  export class GetByName {
-    public static readonly type = "[Subject list] Get By Name";
-    constructor(public payload: string){}
-  }
   export class Delete {
-    public static readonly type = "[Subjects Table] Delete";
+    public static readonly type = "[Subjects List] Delete";
     constructor(public payload: string) {}
   }
   export class DeleteError {
@@ -20,7 +16,7 @@ export namespace Subjects {
     constructor(public payload: Error | string){}
   }
   export class Create {
-    public static readonly type = "[Subjects Table] Create";
+    public static readonly type = "[Subjects Form] Create";
     constructor(public payload: ISubject) {}
   }
   export class CreateError {
