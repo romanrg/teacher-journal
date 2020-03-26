@@ -95,8 +95,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
     }
   }
   public ngOnChanges(changes: SimpleChanges): void {
-    changes.config?.currentValue.body
-      .map(
+    changes.config?.currentValue.body?.map(
         (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
       );
   }

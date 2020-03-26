@@ -7,11 +7,10 @@ import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
 import {Observable} from "rxjs";
 
 // ngxs
-import * as Ngxs from "@ngxs/store"
+import * as Ngxs from "@ngxs/store";
 import {Select} from "@ngxs/store";
 import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/students.state";
 import {Students} from "../../../@ngxs/students/students.actions";
-
 
 @Component({
   selector: "app-students-table",
