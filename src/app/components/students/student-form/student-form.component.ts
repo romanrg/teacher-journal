@@ -11,6 +11,7 @@ import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 // ngxs
 import * as Ngxs from "@ngxs/store";
 import {Students} from "../../../@ngxs/students/students.actions";
+import {StudentsStateModel} from "../../../@ngxs/students/students.state";
 
 @Component({
   selector: "app-student-form",

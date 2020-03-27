@@ -42,7 +42,10 @@ export class TableCellComponent implements OnInit {
   }
 
   public sortColumn($event): void {
-    if (!$event.target.textContent.includes(" Select date ")) {
+    if (
+      !$event.target.textContent.includes(" Select date ") &&
+      $event.target.tagName.toLowerCase() === "th"
+    ) {
       this.sortEmitter.emit();
       this.sortCount++;
       this.isSorted = true;

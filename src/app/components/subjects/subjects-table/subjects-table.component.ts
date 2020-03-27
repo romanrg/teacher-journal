@@ -1,32 +1,31 @@
 import {Component, OnDestroy, OnInit, Renderer2} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {ISubject} from "../../../common/models/ISubject";
-import {IFormConfig} from "../../../common/models/IFormConfig";
-import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
+import {AutoUnsubscribe, SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
 import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
 import {SUBJECT_HEADERS} from "../../../common/constants/SUBJECT_HEADERS";
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
-import {Observable} from "rxjs";
 
-import {AppState} from "../../../@ngrx/app.state";
-import {SubjectsState} from "../../../@ngrx/subjects/subjects.state";
-import {select, Store} from "@ngrx/store";
-import * as SubjectsActions from "src/app/@ngrx/subjects/subjects.actions";
-import * as MarksActions from "src/app/@ngrx/marks/marks.actions";
-import {StudentsState} from "../../../@ngrx/students/students.state";
-import {MarksState} from "../../../@ngrx/marks/marks.state";
-import {_dispatcher, pluck} from "../../../common/helpers/lib";
+import {_dispatcherNgxs, pluck} from "../../../common/helpers/lib";
 import {Teacher} from "../../../common/models/ITeacher";
+
+
+
+// ngxs
+import * as Ngxs from "@ngxs/store";
+import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
+import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
+import {Marks} from "../../../@ngxs/marks/marks.actions";
+
 @Component({
   selector: "app-subjects-table",
   templateUrl: "./subjects-table.component.html",
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy {
-
   // config related
   public subjectTableConfig: ITableConfig;
   public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
@@ -34,16 +33,24 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public teacherConfig: Teacher;
 
   // state related
-  public componentState$: Observable<{
-    subjects: SubjectsState,
-    students: StudentsState,
-    marks: MarksState
-  }>;
   public subject: ISubject;
   public renderMap: [];
   public page: number;
   public itemsPerPage: number;
-
+  public state$: SubjectTableState = this.ngxsStore.select(state => {
+    const current: ISubject = state.subjects.data
+      .filter(subj => subj.name === this.route.snapshot.params.name)[0];
+    const marks: Mark[] = state.marks.data
+      .filter(mark => mark.subject === current.id);
+    const errors: (string|Error)[] = [...Object.keys(state).map(key => state[key].error).filter(error => error)];
+    return ({
+      ...state.subjects,
+      current,
+      students: state.students.data,
+      marks,
+      errors
+    });
+  });
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -53,7 +60,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public manager: SubscriptionManager;
 
   constructor(
-    private store: Store<AppState>,
+    private ngxsStore: Ngxs.Store,
     private renderer: Renderer2,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
@@ -74,15 +81,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public changeTeacher($event: Event): void {
     const patchedSubject: ISubject = {...this.subject};
     patchedSubject.teacher = $event[this.teacherConfig.configName];
-    this.store.dispatch(SubjectsActions.changeTeacher({patchedSubject: patchedSubject}));
-  }
-
-  // errors handling
-  public isAnyErrorsOccur(st: AppState): boolean {
-    return Object.keys(st).some(key => st[key].error);
-  }
-  public getAllStateErrors(st: AppState): ErrorEvent[] {
-    return Object.keys(st).map(key => st[key].error).filter(err => err);
+    this.ngxsStore.dispatch(new Subjects.ChangeTeacher(patchedSubject));
   }
 
   // add new date and mark
@@ -94,15 +93,15 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         target,
         this.subjectTableConfig.headers.filter(head => typeof head === "number"),
         this.datePipe,
-        this.submitDate(_dispatcher(this.store, SubjectsActions.addNewUniqueDate, "subject"), this.subject)
+        this.submitDate(_dispatcherNgxs(this.ngxsStore, Subjects.AddDate), this.subject)
       );
     } else if (
       this.numberGenerator.shouldAddNumberInput(target, this.subjectHeadersConstantNames, this.getCellIndex(target))
     ) {
       let student: IStudent;
       const clickRow: HTMLElement[] = [...target.parentNode.parentNode.children];
-      this.componentState$.subscribe(
-        st => student = st.students.data
+      this.state$.subscribe(
+        st => student = st.students
           .filter(stud => stud.name === clickRow[0].textContent && stud.surname === clickRow[1].textContent)[0]
       ).unsubscribe();
       const newMark: Mark = new Mark(
@@ -111,18 +110,18 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       if (!target.textContent) {
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(_dispatcher(this.store, MarksActions.addNewMark, "mark"), newMark)
+          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Create), newMark)
         );
       } else {
         let patchMark: Mark;
-        this.componentState$.subscribe(st => patchMark = st.marks.data.filter(mark =>
+        this.state$.subscribe(st => patchMark = st.marks.filter(mark =>
           mark.student === newMark.student &&
           mark.subject === newMark.subject &&
           mark.time === newMark.time
         )[0]).unsubscribe();
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(_dispatcher(this.store, MarksActions.changeMark, "mark"), patchMark)
+          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Change), patchMark)
         );
       }
 
@@ -132,12 +131,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode);
       const timestamp: number = this.subjectTableConfig.headers[uniqueIndex];
       let needToDelete: string[] = [];
-      const subject: string = this.subject;
-      this.store.dispatch(SubjectsActions.deleteDate({subject, timestamp}));
-      this.componentState$.subscribe(st => {
-        needToDelete = [...st.marks.data.filter(m => m.time === timestamp && m.subject === subject.id)];
+      const patchedSubject: ISubject = {...this.subject};
+      patchedSubject.uniqueDates = [...patchedSubject.uniqueDates.filter(date => date !== timestamp)];
+      this.state$.subscribe(st => {
+        needToDelete = [...st.marks.filter(m => m.time === timestamp && m.subject === patchedSubject.id)];
       }).unsubscribe();
-      needToDelete.map(id => this.store.dispatch(MarksActions.deleteMark({needToDelete: id})));
+      this.ngxsStore.dispatch(new Subjects.DeleteDate(patchedSubject, needToDelete));
+
     }
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
@@ -158,80 +158,72 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   // handle pagination
   public dispatchPaginationState($event: Event): void {
     if ($event.paginationConstant) {
-      this.store.dispatch(SubjectsActions.changePaginationConstant($event));
+      this.ngxsStore.dispatch(new Subjects.ChangePagination($event.paginationConstant));
     } else {
-      this.store.dispatch(SubjectsActions.changeCurrentPage($event));
+      this.ngxsStore.dispatch(new Subjects.ChangeCurrentPage($event.currentPage));
     }
 
   }
 
   // life cycles
   public ngOnInit(): void {
-    const subjectName: string = this.route.snapshot.params.name;
-    this.subjectTableConfig = {
-      caption: `${subjectName} class journal:`,
-      headers: this.subjectHeadersConstantNames,
-      body: this.tableBody.body
-    };
-
-    const mapFnForSelecting: Function = (state, props): {
-      subjects: SubjectsState,
-      students: StudentsState,
-      marks: MarksState
-    } => {
-      const componentsState: {
-        subjects: SubjectsState,
-        students: StudentsState,
-        marks: MarksState
-      } = {};
-      props.forEach(prop => componentsState[prop] = state[prop]);
-      return componentsState;
-    };
-    this.componentState$ = this.store.pipe(
-      select(mapFnForSelecting, ["subjects", "students", "marks"])
-    );
-
-    this.manager.addSubscription(this.componentState$.subscribe(state => {
+    this.manager.addSubscription(this.state$.subscribe(state => {
+      if (state.loaded) {
         // initialize subject
-        this.subject = state.subjects.data.filter(subj => subj.name === subjectName)[0];
+        this.subject = state.current;
+        this.subjectTableConfig = {
+          caption: `${this.subject.name} class journal:`,
+          headers: this.subjectHeadersConstantNames,
+          body: this.tableBody.body
+        };
 
         // get pagination and current page
-        this.page = state.subjects.currentPage;
-        this.itemsPerPage = state.subjects.paginationConstant;
+        this.page = state.currentPage;
+        this.itemsPerPage = state.paginationConstant;
 
         // initialized new teacher form
         this.teacherConfig = new Teacher(this.subject);
 
         // get all marks for particular subject
-        const subjectsMarks: Mark[] = state.marks.data.filter(mark => mark.subject === this.subject.id);
+        // const subjectsMarks: Mark[] = state.marks;
 
         // initialize table headers with unique sorted dates
         const datesPartOfHeaders: number[] = [
           ...new Set(
-            [...this.subject.uniqueDates].concat(pluck(subjectsMarks, "time"))
+            [...this.subject.uniqueDates].concat(pluck(state.marks, "time"))
           )
         ].sort();
         this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...datesPartOfHeaders];
 
         /// handle data from sources for table
-        if (this.renderMap) {
-          this.tableBody.body = this.renderMap;
-          state.students.data.map((student) => {
-            const studentIndex: number = this.tableBody.body
-              .findIndex(row => row[0] === student.name && row[1] === student.surname);
-            this.tableBody.addStudentMark(subjectsMarks, student, studentIndex, this.subjectTableConfig.headers);
-          });
-        } else {
-          this.tableBody.clear();
-          state.students.data.map((student, index) => {
-            this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
-            this.tableBody.addStudentMark(subjectsMarks, student, index, this.subjectTableConfig.headers);
-          });
-        }
+        this.handleTableRenderWithMap(state);
+      }
+
     }));
 
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
+
+  public handleTableRenderWithMap(state): void {
+    if (this.renderMap) {
+      this.tableBody.body = this.renderMap;
+      state.students.map((student) => {
+        const studentIndex: number = this.tableBody.body
+          .findIndex(row => row[0] === student.name && row[1] === student.surname);
+        this.tableBody.addStudentMark(state.marks, student, studentIndex, this.subjectTableConfig.headers);
+      });
+    } else {
+      this.renderTable(state);
+    }
+  }
+  public renderTable(state): void {
+    this.tableBody.clear();
+    state.students.map((student, index) => {
+      this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
+      this.tableBody.addStudentMark(state.marks, student, index, this.subjectTableConfig.headers);
+    });
+  }
+
 }

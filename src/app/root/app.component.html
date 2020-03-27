@@ -10,13 +10,13 @@
     </select>
   </div>
   <app-breadcrumbs class="breadcrumbs"></app-breadcrumbs>
+  <!--
   <ng-container *ngIf="!isLoading((componentState$ | async)); else app">
     <app-loading></app-loading>
   </ng-container>
-  <ng-template #app>
-    <ng-template #content>
+  -->
       <router-outlet></router-outlet>
-    </ng-template>
+    <!--
     <ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else content">
       <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">
         <app-error-message-display
@@ -24,6 +24,6 @@
         ></app-error-message-display>
       </ng-container>
     </ng-container>
-  </ng-template>
+    -->
 </div>
 

@@ -39,28 +39,9 @@ export class SubjectsService {
   }
 
   public patchSubject(subject: ISubject): Observable<ISubject> {
-    return Observable<ISubject>this.http.patch(`${this.URL}/${subject.id}`, subject);
-  }
-
-  public addUniqueDate(id: (string|number), date: number): void {
-    this._subjects.filter(sub => sub.id === id)[0].uniqueDates.push(date);
-    const subject: ISubject = this._subjects.filter(sub => sub.id === id)[0];
-    this.patchSubject(subject);
-  }
-
-  public getUniqueDatesById(id: string ): number[] {
-    return this._subjects.filter(sub => sub.id === id)[0].uniqueDates.filter((a, b) => a - b);
+    return this.http.patch(`${this.URL}/${subject.id}`, subject);
   }
   public deleteSubject(id: string): Observable<ISubject[]> {
     return this.http.delete(`${this.URL}/${id}`);
   }
-
-  public getSubjectByName(current: string): Observable<ISubject[]> {
-    const params: HttpParams = new HttpParams()
-      .set("name", current);
-    return this.http.get(this.URL, {
-      params
-    });
-  }
-
 }

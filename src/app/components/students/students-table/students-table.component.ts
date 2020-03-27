@@ -17,6 +17,7 @@ import {Students} from "../../../@ngxs/students/students.actions";
   templateUrl: "./students-table.component.html",
   styleUrls: ["./students-table.component.sass"]
 })
+
 export class StudentsTableComponent implements OnInit, OnDestroy {
   private manager: SubscriptionManager = new SubscriptionManager();
   public tableConfig: ITableConfig;
@@ -64,20 +65,18 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
 
   }
   public ngOnInit(): void {
-    this.manager.addSubscription(
-      this.studentsState$.subscribe(students => {
-        this.page = students.currentPage;
-        this.itemsPerPage = students.paginationConstant;
-        if (students.searchBarInputValue) {
-          this.searchPlaceholder = students.searchBarInputValue;
-        }
-        if (students.searchedStudents) {
-          this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
-        } else {
-          this.tableConfig = this.createStudentsTableConfig(students.data);
-        }
-      })
-    );
+    this.manager.addSubscription(this.studentsState$.subscribe(students => {
+      this.page = students.currentPage;
+      this.itemsPerPage = students.paginationConstant;
+      if (students.searchBarInputValue) {
+        this.searchPlaceholder = students.searchBarInputValue;
+      }
+      if (students.searchedStudents) {
+        this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
+      } else {
+        this.tableConfig = this.createStudentsTableConfig(students.data);
+      }
+    }));
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

@@ -44,6 +44,7 @@ import {environment} from "../../environments/environment";
 import {NgxsStudentsState} from "../@ngxs/students/students.state";
 import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
+import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 
 @NgModule({
   declarations: [
@@ -87,7 +88,7 @@ import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
     EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
-      [NgxsStudentsState, NgxsSubjectsState],
+      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState],
       { developmentMode: !environment.production }
     ),
     NgxsReduxDevtoolsPluginModule.forRoot()

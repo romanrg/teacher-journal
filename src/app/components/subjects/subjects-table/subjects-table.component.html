@@ -1,5 +1,5 @@
 <ng-template #table>
-    <div class="container">
+    <div class="container" *ngIf="subjectTableConfig">
       <app-one-header-table
         [config]="subjectTableConfig"
         (emitMap)="this.renderMap = $event"
@@ -15,10 +15,12 @@
         (click)="subjectTableConfig.headers.push('Select date')"
       ></app-button>
     </div>
-    <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
+    <ng-container *ngIf="(state$ | async).loaded">
+      <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
+    </ng-container>
 </ng-template>
-<ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else table">
-  <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">
+<ng-container *ngIf="(state$ | async).errors.length; else table">
+  <ng-container *ngFor="let error of (state$ | async).errors">
     <app-error-message-display
       [error]="error"
     ></app-error-message-display>

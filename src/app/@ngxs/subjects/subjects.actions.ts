@@ -1,4 +1,5 @@
 import {ISubject} from "../../common/models/ISubject";
+import {Mark} from "../../common/models/IMark";
 export namespace Subjects {
   export class Get {
     public static readonly type = "[Subjects (App)] Fetch";
@@ -31,5 +32,24 @@ export namespace Subjects {
     public static readonly type = "[Subjects Table] Change Current Page";
     constructor(public payload: number){}
   }
+  export class AddDate {
+    public static readonly type = "[Subjects Table] Add New Date";
+    constructor(public  payload: ISubject){}
+  }
+  export class DeleteDate {
+    public static readonly type = "[Subject Table] Delete Date";
+    constructor(public subject: ISubject, public marks: Mark[]) {}
+  }
+  export class ChangeTeacher {
+    public static readonly type = "[Subject Table] Change Teacher";
+    constructor(public  payload: ISubject){}
+  }
+  export class Patch {
+    public static readonly type = "[Subjects State] Patch Subject";
+    constructor(public  payload: ISubject){}
+  }
+  export class PatchError {
+    public static readonly type = "[Subjects State] Patch Subject Error";
+    constructor(public  payload: (string | Error)){}
+  }
 }
-
