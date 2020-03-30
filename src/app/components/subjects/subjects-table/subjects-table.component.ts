@@ -19,6 +19,8 @@ import * as Ngxs from "@ngxs/store";
 import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
+import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
+import {Observable} from "rxjs";
 
 @Component({
   selector: "app-subjects-table",
@@ -31,26 +33,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
   public tableBody: TableBody;
   public teacherConfig: Teacher;
+  public initialPositioning: [];
+  public sortingState: {col: number, times: number};
 
   // state related
   public subject: ISubject;
   public renderMap: [];
   public page: number;
   public itemsPerPage: number;
-  public state$: SubjectTableState = this.ngxsStore.select(state => {
-    const current: ISubject = state.subjects.data
-      .filter(subj => subj.name === this.route.snapshot.params.name)[0];
-    const marks: Mark[] = state.marks.data
-      .filter(mark => mark.subject === current.id);
-    const errors: (string|Error)[] = [...Object.keys(state).map(key => state[key].error).filter(error => error)];
-    return ({
-      ...state.subjects,
-      current,
-      students: state.students.data,
-      marks,
-      errors
-    });
-  });
+  public state$: Observable<SubjectTableState>
+  public isLoad$: Observable<boolean>;
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -64,12 +56,35 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
+    private sortPipe: SortByPipe
   ) {
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer);
     this.dateGenerator = new DatePicker(this.renderer);
     this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
     this.tableBody = new TableBody(TableRow);
+    this.state$ = this.ngxsStore.select(state => {
+      const current: ISubject = state.subjects.data
+        .filter(subj => subj.name === this.route.snapshot.params.name)[0];
+      const marks: Mark[] = state.marks.data
+        .filter(mark => mark.subject === current.id);
+      const errors: (string|Error)[] = [...Object.keys(state).map(key => state[key].error).filter(error => error)];
+      return ({
+        ...state.subjects,
+        current,
+        students: state.students.data,
+        marks,
+        errors
+      });
+    });
+    this.isLoad$ = ngxsStore
+      .select(state => Object.keys(state)
+        .map(key => state[key].loading)
+        .some(load => load)
+      );
+
+    this.ngxsStore.dispatch(new Subjects.ChangeCurrentPage(1));
+    this.ngxsStore.dispatch(new Subjects.SetSortedColumn(null));
   }
 
   // helpers
@@ -137,7 +152,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         needToDelete = [...st.marks.filter(m => m.time === timestamp && m.subject === patchedSubject.id)];
       }).unsubscribe();
       this.ngxsStore.dispatch(new Subjects.DeleteDate(patchedSubject, needToDelete));
-
     }
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
@@ -165,7 +179,21 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   }
 
-  // life cycles
+  // handle sorting
+  public setSortedColumnName($event: number): void {
+    this.ngxsStore.dispatch(new Subjects.SetSortedColumn($event));
+  }
+
+  // merge all data for table;
+  public preRenderTable(state: SubjectTableState): void {
+    this.tableBody.clear();
+    state.students.map((student, index) => {
+      this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
+      this.tableBody.addStudentMark(state.marks, student, index, this.subjectTableConfig.headers);
+    });
+  }
+
+  // life cycle
   public ngOnInit(): void {
     this.manager.addSubscription(this.state$.subscribe(state => {
       if (state.loaded) {
@@ -178,14 +206,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         };
 
         // get pagination and current page
+
         this.page = state.currentPage;
         this.itemsPerPage = state.paginationConstant;
+        this.initialPositioning = state.renderMap;
+        this.sortingState = state.sortedColumn;
 
         // initialized new teacher form
         this.teacherConfig = new Teacher(this.subject);
 
         // get all marks for particular subject
-        // const subjectsMarks: Mark[] = state.marks;
 
         // initialize table headers with unique sorted dates
         const datesPartOfHeaders: number[] = [
@@ -196,34 +226,20 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...datesPartOfHeaders];
 
         /// handle data from sources for table
-        this.handleTableRenderWithMap(state);
+        this.preRenderTable(state);
+        if (this.sortingState === null || this.sortingState.times % 3 === 0) {
+          return;
+        } else if (this.sortingState.times % 2 === 0) {
+          this.tableBody.body = this.sortPipe.transform(this.tableBody.body, this.sortingState.col, false);
+        } else {
+          this.tableBody.body = this.sortPipe.transform(this.tableBody.body, this.sortingState.col, true);
+        }
+        this.subjectTableConfig.body = this.tableBody.body;
       }
-
     }));
-
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
-  }
-
-  public handleTableRenderWithMap(state): void {
-    if (this.renderMap) {
-      this.tableBody.body = this.renderMap;
-      state.students.map((student) => {
-        const studentIndex: number = this.tableBody.body
-          .findIndex(row => row[0] === student.name && row[1] === student.surname);
-        this.tableBody.addStudentMark(state.marks, student, studentIndex, this.subjectTableConfig.headers);
-      });
-    } else {
-      this.renderTable(state);
-    }
-  }
-  public renderTable(state): void {
-    this.tableBody.clear();
-    state.students.map((student, index) => {
-      this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
-      this.tableBody.addStudentMark(state.marks, student, index, this.subjectTableConfig.headers);
-    });
   }
 
 }

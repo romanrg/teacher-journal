@@ -18,7 +18,7 @@ export class MarksStateModel {
   name: "marks",
   defaults: {
     data: [],
-    loading: false,
+    loading: true,
     loaded: false,
     error: null
   }
@@ -38,23 +38,35 @@ export class NgxsMarksState {
 
   @Action(Marks.Get)
   public getMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     return this.marksService.getMarks().pipe(
-      tap(apiResponse => setState({...getState(), data: [...apiResponse]})),
+      tap(apiResponse => setState({...getState(), data: [...apiResponse], loading: false, loaded: true})),
       retry(3),
       catchError(error => of(dispatch(new Marks.GetError(error))))
     );
   }
   @Action(Marks.GetError)
-  public getMarksError({getState, setState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR GET MARKS");
+  public getMarksError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Create)
-  public createMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public createMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     return this.marksService.submitMark(payload).pipe(
       tap(apiResponse => {
         return setState(
           patch({
-            data: append([apiResponse])
+            data: append([apiResponse]),
+            loading: false,
+            loaded: true
           })
         );
       }),
@@ -63,12 +75,21 @@ export class NgxsMarksState {
     );
   }
   @Action(Marks.CreateError)
-  public createMarkError({getState, setState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR");
+  public createMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Patch)
-  public patchMark({getState, setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
-    const patchTapCb: Function = patched => setState(patch({data: updateItem(mark => mark.id === patched.id, patched)}))
+  public patchMark({setState, getState, patchState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
+    const patchTapCb: Function = patched => setState(patch({
+      data: updateItem(mark => mark.id === patched.id, patched),
+      loading: false,
+      loaded: true
+    }));
     return this.marksService.patchMark(payload).pipe(
       tap(patchTapCb),
       retry(3),
@@ -76,21 +97,28 @@ export class NgxsMarksState {
     );
   }
   @Action(Marks.PatchError)
-  public patchMarkError({getState, setState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR");
+  public patchMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Change)
-  public changeMark({getState, setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public changeMark({dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     return dispatch(new Marks.Patch(payload));
   }
 
   @Action(Marks.Delete)
-  public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: string): void {
+  public deleteMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: string): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     return this.marksService.deleteMarks(payload).pipe(
       tap(apiResponse => {
         return setState(
           patch({
-            data: removeItem(mark => mark.id === payload)
+            data: removeItem(mark => mark.id === payload),
+            loading: false,
+            loaded: true
           })
         );
       }),
@@ -100,8 +128,8 @@ export class NgxsMarksState {
   }
 
   @Action(Marks.DeleteError)
-  public deleteMarkError({getState, setState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR");
+  public deleteMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
 }
 

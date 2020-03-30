@@ -5,6 +5,8 @@ import {StudentsServiceService} from "../../common/services/students-service.ser
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {of} from "rxjs";
+import {pluck} from "../../common/helpers/lib";
+import {Subjects} from "../subjects/subjects.actions";
 
 export class StudentsStateModel {
   public data: IStudent[];
@@ -14,6 +16,7 @@ export class StudentsStateModel {
   public loaded: boolean;
   public paginationConstant: number;
   public currentPage: number;
+  public error: string| Error;
 }
 
 @State<StudentsStateModel>({
@@ -22,10 +25,11 @@ export class StudentsStateModel {
     data: [],
     searchBarInputValue: null,
     searchedStudents: null,
-    loading: false,
+    loading: true,
     loaded: false,
     paginationConstant: 5,
-    currentPage: 1
+    currentPage: 1,
+    error: null,
   }
 })
 @Injectable({
@@ -43,24 +47,36 @@ export class NgxsStudentsState {
   }
   @Action(Students.Get)
   public getStudents({getState, setState, dispatch}: StateContext<StudentsStateModel>): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     return this.studentsService.fetchStudents().pipe(
-      tap(studentsResponse => setState({...getState(),   data: [...studentsResponse], loaded: true})),
+      tap(studentsResponse => setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})),
       retry(3),
       catchError(error => of(dispatch(new Students.GetError(error))))
     );
   }
   @Action(Students.GetError)
-  public studentsGetError({getState, setState}: StateContext<StudentsStateModel>, {payload}: (string|Error)): void {
-      console.log(payload, "ERROR GET");
+  public studentsGetError({patchState}: StateContext<StudentsStateModel>, {payload}: (string|Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Create)
-  public createStudent({getState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: IStudent): void {
+  public createStudent({getState, setState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: IStudent): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     const state: StudentsStateModel = getState();
     return this.studentsService.addStudent(payload).pipe(
       tap(apiResponse => {
         patchState({
-          data: [...state.data].concat(apiResponse)
+          data: [...state.data].concat(apiResponse),
+          loading: false,
+          loaded: true
         });
       }),
       retry(3),
@@ -68,17 +84,24 @@ export class NgxsStudentsState {
     );
   }
   @Action(Students.CreatetError)
-  public createStudentError({getState, setState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR CREATE");
+  public createStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Delete)
   public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
+    setState({
+      ...getState(),
+      loading: true,
+      loaded: false,
+    });
     return this.studentsService.removeStudent(payload.id).pipe(
       tap(deleteResponse => {
           setState({
             ...getState(),
-            data: getState().data.filter(student => student.id !== payload.id)
+            data: getState().data.filter(student => student.id !== payload.id),
+            loading: false,
+            loaded: true
           })
         }
       ),
@@ -87,22 +110,27 @@ export class NgxsStudentsState {
     );
   }
   @Action(Students.DeleteError)
-  public deleteError({getState, setState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR DELETE");
+  public deleteError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Search)
   public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
     return this.studentsService.searchStudent(payload).pipe(
-      tap(apiResponse =>  setState({...getState(), searchedStudents: [...apiResponse], searchBarInputValue: payload, currentPage: 1})),
+      tap(apiResponse =>  setState({
+        ...getState(),
+        searchedStudents: [...apiResponse],
+        searchBarInputValue: payload,
+        currentPage: 1,
+      })),
       retry(3),
       catchError(error => of(dispatch(new Students.SearchError(error))))
     );
   }
 
   @Action(Students.SearchError)
-  public searchStudentError({getState, setState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
-    console.log(payload, "ERROR WHILE SEARCH STUDENT");
+  public searchStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+    patchState({error: payload});
   }
 
   @Action(Students.ChangeCurrentPage)
@@ -114,5 +142,10 @@ export class NgxsStudentsState {
       setState(state => ({...state, paginationConstant: payload}));
   }
 
+  @Action(Students.Sort)
+  public sortStudents({getState, dispatch}: StateContext<StudentsStateModel>): void {
+    const map = Object.values(pluck(getState().data, "id")).map((id, i) => ({[id]: i}));
+    dispatch(new Subjects.GetSortingMap(map));
+  }
 }
 

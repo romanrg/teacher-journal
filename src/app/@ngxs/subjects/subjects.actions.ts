@@ -52,4 +52,12 @@ export namespace Subjects {
     public static readonly type = "[Subjects State] Patch Subject Error";
     constructor(public  payload: (string | Error)){}
   }
+  export class SetSortedColumn {
+    public static readonly type = "[Subjects Table] Set Sorted Column Number";
+    constructor(public payload: number) {}
+  }
+  export class GetSortingMap {
+    public static readonly type = "[Students State] Get Sorting Map";
+    constructor(public payload: {[string]: number}[]) {}
+  }
 }

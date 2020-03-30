@@ -1,8 +1,12 @@
-<ng-template #table>
-    <div class="container" *ngIf="subjectTableConfig">
+
+<ng-container *ngIf="(isLoad$ | async)">
+  <app-loading></app-loading>
+</ng-container>
+
+<div class="container" *ngIf="subjectTableConfig">
       <app-one-header-table
         [config]="subjectTableConfig"
-        (emitMap)="this.renderMap = $event"
+        (emitMap)="setSortedColumnName($event)"
         (click)="handleClickEvents($event.target)"
         [paginationConstant]="itemsPerPage"
         [currentPagination]="page"
@@ -15,14 +19,9 @@
         (click)="subjectTableConfig.headers.push('Select date')"
       ></app-button>
     </div>
-    <ng-container *ngIf="(state$ | async).loaded">
-      <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
-    </ng-container>
-</ng-template>
-<ng-container *ngIf="(state$ | async).errors.length; else table">
-  <ng-container *ngFor="let error of (state$ | async).errors">
-    <app-error-message-display
-      [error]="error"
-    ></app-error-message-display>
-  </ng-container>
+
+
+<ng-container *ngIf="teacherConfig">
+  <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
 </ng-container>
+

@@ -21,7 +21,6 @@ export class TableRow {
     [...this.#config.values()].map(prop => result.push(this.#initial[prop]));
     return result;
   }
-
   public changeValueAt(bodyRow: row, index: number, value: cell): row {
     bodyRow[index] = value;
   }
@@ -82,5 +81,7 @@ export class TableBody {
         }
       });
   }
-
+  public deleteColumn(columnPosition: number): void {
+    this.body.forEach(bodyRow => bodyRow.splice(columnPosition, 1));
+  }
 }

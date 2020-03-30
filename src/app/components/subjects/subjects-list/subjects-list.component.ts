@@ -15,9 +15,15 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 })
 export class SubjectsListComponent implements OnInit, OnDestroy {
   @Select(NgxsSubjectsState.Subjects) public subjects$: Observable<SubjectsStateModel>;
+  public isLoad$: Observable<boolean> = store
+    .select(state => Object.keys(state)
+      .map(key => state[key].loading)
+      .some(load => load)
+    );
   constructor(
     private store: Ngxs.Store,
   ) {
+
   }
   public deleteSubject($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");

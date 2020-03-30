@@ -1,10 +1,7 @@
-<ng-container *ngIf="(studentsState$ | async).error; else table">
-  <app-error-message-display class="students__error"
-                             [error]="(studentsState$ | async).error"
-  ></app-error-message-display>
+<ng-container *ngIf="(studentsState$ | async).loading">
+  <app-loading></app-loading>
 </ng-container>
-<ng-template #table>
-<div class="container" *ngIf="(studentsState$ | async).loaded">
+<div class="container">
   <app-search-bar
     class="students__search"
     (searchRes)="renderSearch($event)"
@@ -27,4 +24,4 @@
     ></app-button>
   </a>
 </div>
-</ng-template>
+

@@ -55,7 +55,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
     if (this.currentlySorted.col === null) {
       initializeSort($event, 0);
       this.dataForBody = createBody(this.config, true);
-      this.emitMap.emit(this.config.body);
+      this.emitMap.emit(/*this.config.body*/$event);
     } else if (this.currentlySorted.col === $event) {
       this.currentlySorted.times++;
       if (this.currentlySorted.times === 2) {
@@ -71,15 +71,15 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
         this.dataForBody = this.cutBodyDataForPagination(
           this.config.body, this.paginationConstant, this.currentPagination
         );
-        this.emitMap.emit(this.config.body);
+        this.emitMap.emit(/*this.config.body*/$event);
       } else {
         this.dataForBody = createBody(this.config, false);
-        this.emitMap.emit(this.config.body);
+        this.emitMap.emit(/*this.config.body*/$event);
       }
     } else {
       initializeSort($event, 0);
       this.dataForBody = createBody(this.config, true);
-      this.emitMap.emit(this.config.body);
+      this.emitMap.emit(/*this.config.body*/$event);
     }
 
   }
