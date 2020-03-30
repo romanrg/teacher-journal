@@ -44,4 +44,7 @@ export class SubjectsService {
   public deleteSubject(id: string): Observable<ISubject[]> {
     return this.http.delete(`${this.URL}/${id}`);
   }
+
+  public postSnapshot(snapShot) {
+  }
 }

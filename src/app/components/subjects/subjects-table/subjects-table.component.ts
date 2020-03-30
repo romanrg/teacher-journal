@@ -242,4 +242,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.manager.removeAllSubscription();
   }
 
+  public applyChanges(): void {
+    const stateSnapshot = this.ngxsStore.selectSnapshot(state => Object.keys(state).map(key => ({[key]: state[key].data})));
+    console.log(stateSnapshot);
+    this.ngxsStore.dispatch(new Subjects.PostSnapshot(stateSnapshot));
+  }
 }

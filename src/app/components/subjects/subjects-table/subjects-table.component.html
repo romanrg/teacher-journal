@@ -2,7 +2,12 @@
 <ng-container *ngIf="(isLoad$ | async)">
   <app-loading></app-loading>
 </ng-container>
-
+<app-button
+  (click)="applyChanges()"
+  class="table__btn--save"
+  [screenReader]="'Save changes'"
+  [textContent]="'Save changes'"
+></app-button>
 <div class="container" *ngIf="subjectTableConfig">
       <app-one-header-table
         [config]="subjectTableConfig"

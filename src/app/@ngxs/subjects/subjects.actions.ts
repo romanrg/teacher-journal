@@ -60,4 +60,8 @@ export namespace Subjects {
     public static readonly type = "[Students State] Get Sorting Map";
     constructor(public payload: {[string]: number}[]) {}
   }
+  export class PostSnapshot {
+    public static readonly type = "[Subjects Table] Post SnapShot";
+    constructor(public payload: any) {}
+  }
 }

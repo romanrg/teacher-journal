@@ -196,4 +196,13 @@ export class NgxsSubjectsState {
       renderMap: payload
     }));
   }
+
+  @Action(Subjects.PostSnapshot)
+  public postSnapshot({getState, setState, dispatch}: StateContext<StateModel>, {payload}: any): void {
+    return this.subjectsService.postSnapshot(payload).pipe(
+      tap(apiResponse => console.log(apiResponse)),
+      // retry(3),
+      // catchError(error => of(dispatch(new NameSpace.ActionNameError(error))))
+    );
+  }
 }
