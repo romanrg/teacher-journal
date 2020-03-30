@@ -15,12 +15,15 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   @Input() public currentPagination: number;
   @Output() public emitMap: EventEmitter = new EventEmitter();
   @Output() public emitPagination: EventEmitter = new EventEmitter();
+  public tableRowLength: number
   public dataForBody: string[][];
   public currentlySorted: {col: (null|number), times: (null|number)} = {col: null, times: null};
   public init: Map = new Map();
   constructor(
     private sortPipe: SortByPipe
-  ) { }
+  ) {
+
+  }
   public changeCurrent($event: number): void {
     this.emitPagination.emit({currentPage: $event});
     this.currentPagination = $event;
@@ -90,6 +93,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
     }
   }
   public ngDoCheck(): void {
+    this.tableRowLength = this.config?.headers.length * 10;
     if (this.config) {
       this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
     }
