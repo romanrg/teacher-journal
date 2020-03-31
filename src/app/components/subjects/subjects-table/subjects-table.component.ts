@@ -38,11 +38,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
   // state related
   public subject: ISubject;
-  public renderMap: [];
   public page: number;
   public itemsPerPage: number;
   public state$: Observable<SubjectTableState>
   public isLoad$: Observable<boolean>;
+  public marks: Mark[];
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -136,7 +136,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         )[0]).unsubscribe();
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Change), patchMark)
+          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Change), newMark)
         );
       }
 
@@ -204,7 +204,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           headers: this.subjectHeadersConstantNames,
           body: this.tableBody.body
         };
-
+        this.marks = state.marks;
         // get pagination and current page
 
         this.page = state.currentPage;
@@ -237,14 +237,14 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
+    this.marks.map(mark => this.ngxsStore.dispatch(new Marks.AddToTheHashTable(mark)));
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
 
   public applyChanges(): void {
-    const stateSnapshot = this.ngxsStore.selectSnapshot(state => Object.keys(state).map(key => ({[key]: state[key].data})));
-    console.log(stateSnapshot);
-    this.ngxsStore.dispatch(new Subjects.PostSnapshot(stateSnapshot));
+    console.log("Save all changes occur")
+    this.ngxsStore.dispatch(new Subjects.Submit())
   }
 }

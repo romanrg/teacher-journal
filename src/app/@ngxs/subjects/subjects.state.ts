@@ -11,6 +11,7 @@ import {Mark} from "../../common/models/IMark";
 import {append, iif, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Marks} from "../marks/marks.actions";
 import {Students} from "../students/students.actions";
+import {MarksServiceService} from "../../common/services/marks-service.service";
 
 export class SubjectsStateModel {
   public data: ISubject[];
@@ -48,7 +49,8 @@ export class SubjectTableState implements SubjectsStateModel{
 export class NgxsSubjectsState {
 
   constructor(
-    private subjectsService: SubjectsService
+    private subjectsService: SubjectsService,
+    private marksService: MarksServiceService,
   ) {}
 
   @Selector()
@@ -134,33 +136,36 @@ export class NgxsSubjectsState {
 
   @Action(Subjects.AddDate)
   public addNewDate({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+    /*
     setState({
       ...getState(),
       loading: true,
       loaded: false,
     });
-    return dispatch(new Subjects.Patch(payload));
+    */
+    dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.ChangeTeacher)
   public changeTeacher({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+    dispatch(new Subjects.Update(payload));
+  }
+  @Action(Subjects.DeleteDate)
+  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject, marks}: ISubject): void {
+    dispatch(new Subjects.Update(subject));
+    marks.forEach(mark => {
+      dispatch(new Marks.Delete(mark));
+    });
+  }
+  @Action(Subjects.Patch)
+  public patchSubject({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
     setState({
       ...getState(),
       loading: true,
       loaded: false,
     });
-    return dispatch(new Subjects.Patch(payload));
-  }
-  @Action(Subjects.DeleteDate)
-  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject, marks}: ISubject): void {
-    marks.forEach(mark => dispatch(new Marks.Delete(mark.id)));
-    return dispatch(new Subjects.Patch(subject));
-  }
-  @Action(Subjects.Patch)
-  public patchSubject({setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
     const patchTapCb: Function = patchedSubject => setState(
       patch(
         {
-          data: updateItem(subj => subj.id === patchedSubject.id, patchedSubject),
           loading: false, loaded: true
         }
       )
@@ -170,6 +175,7 @@ export class NgxsSubjectsState {
       retry(3),
       catchError(error => of(dispatch(new Subjects.PatchError(error))))
     );
+
   }
   @Action(Subjects.PatchError)
   public patchSubjectError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
@@ -177,7 +183,7 @@ export class NgxsSubjectsState {
   }
 
   @Action(Subjects.SetSortedColumn)
-  public setSortedColumn({getState, setState, dispatch}: StateContext<StateModel>, {payload}: number): void {
+  public setSortedColumn({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: number): void {
     const state: SubjectTableState = getState();
     if (state.sortedColumn === null) {
       setState(patch({sortedColumn: {col: payload, times: 1}}));
@@ -191,18 +197,35 @@ export class NgxsSubjectsState {
   }
 
   @Action (Subjects.GetSortingMap)
-  public getInitialMap({getState, setState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+  public getInitialMap({getState, setState}: StateContext<SubjectsStateModel>, {payload}: (string | Error)): void {
     setState(patch({
       renderMap: payload
     }));
   }
 
   @Action(Subjects.PostSnapshot)
-  public postSnapshot({getState, setState, dispatch}: StateContext<StateModel>, {payload}: any): void {
-    return this.subjectsService.postSnapshot(payload).pipe(
-      tap(apiResponse => console.log(apiResponse)),
-      // retry(3),
-      // catchError(error => of(dispatch(new NameSpace.ActionNameError(error))))
-    );
+  public handleChanges({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): void {
   }
+
+  @Action(Subjects.Update)
+  public keepSubjectUpdated({setState}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+    this.subjectsService.updateSubjectState(payload);
+    setState(patch({
+      data: updateItem(subj => subj.id === payload.id, payload)
+    }));
+  }
+
+  @Action(Subjects.Submit)
+  public submitChanges({getState, setState, dispatch}: StateContext<SubjectsStateModel>): void {
+    // patch this.subject
+    if (this.subjectsService.subjectToUpdate) {
+      dispatch(new Subjects.Patch(this.subjectsService.subjectToUpdate));
+      this.subjectsService.updateSubjectState(undefined);
+    }
+
+    // post new marks update;
+    dispatch(new Marks.Submit());
+
+  }
+
 }

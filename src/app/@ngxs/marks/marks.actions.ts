@@ -6,7 +6,6 @@ export namespace Marks {
     public static readonly type = "[Marks API] Fetch Error";
     constructor(public payload: Error | string){}
   }
-
   export class Create {
     public static readonly type = "[Subject Table > Mark Input] Create";
     constructor(public payload: Mark) {}
@@ -29,10 +28,25 @@ export namespace Marks {
   }
   export class Delete {
     public static readonly type = "[Marks State] Delete";
-    constructor( public payload: string) {}
+    constructor( public payload: Mark) {}
   }
   export class DeleteError {
     public static readonly type = "[Marks State] Delete Error";
-    constructor( public payload: string|Error)
+    constructor( public payload: string|Error) {}
+  }
+  export class AddToTheHashTable {
+    public static readonly type = "[Subject Table (App)] Add To the Hash";
+    constructor( public payload: Mark) {}
+  }
+  export class RemoveFromTheHashTable {
+    public static readonly type = "[Subject Table] Remove From Hash";
+    constructor( public payload: Mark) {}
+  }
+  export class ReplaceInTheHashTable {
+    public static readonly type = "[Subject Table (App)] Replace In the Hashtable";
+    constructor( public payload: Mark) {}
+  }
+  export class Submit {
+    public static readonly type = "[Subject Table (App)] Submit Marks";
   }
 }

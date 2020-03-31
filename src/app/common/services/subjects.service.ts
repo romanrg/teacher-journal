@@ -7,6 +7,7 @@ import {IStudent} from "../models/IStudent";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {API, SUBJECTS_ROUTE} from "../constants/API";
 import {ITeacher} from "../models/ITeacher";
+import {HashFunctions, HashTable} from "../helpers/HashTable";
 
 
 
@@ -15,23 +16,18 @@ import {ITeacher} from "../models/ITeacher";
 })
 export class SubjectsService {
   private URL: string = `${API}${SUBJECTS_ROUTE}`;
-  private _subjects: ISubject[];
+  private subjectUpToDateState: ISubject;
   constructor(
     private http: HttpClient
   ) {
-    this._subjects = [];
+  }
+
+  get subjectToUpdate(): ISubject {
+    return this.subjectUpToDateState;
   }
 
   public fetchSubjects(): Observable<ISubject[]> {
     return <Observable<ISubject[]>>this.http.get(this.URL);
-  }
-
-  set subjects(arr: ISubject[]) {
-    this._subjects = arr;
-  }
-
-  get subjects(): ISubject[] {
-    return this._subjects;
   }
 
   public addSubject(subject: ISubject): Observable<ISubject[]> {
@@ -44,5 +40,7 @@ export class SubjectsService {
   public deleteSubject(id: string): Observable<ISubject[]> {
     return this.http.delete(`${this.URL}/${id}`);
   }
-
+  public updateSubjectState(state: ISubject): void {
+    this.subjectUpToDateState = state;
+  }
 }

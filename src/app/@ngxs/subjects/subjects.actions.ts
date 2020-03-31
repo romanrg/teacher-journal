@@ -64,4 +64,12 @@ export namespace Subjects {
     public static readonly type = "[Subjects Table] Post SnapShot";
     constructor(public payload: any) {}
   }
+  export class Update {
+    public static readonly type = "[Subject Table (App)] Update Subject State";
+    constructor(public  payload: ISubject) {}
+  }
+  export class Submit {
+    public static readonly type = "[Subject Table] Submit Subject Changes";
+  }
+
 }
