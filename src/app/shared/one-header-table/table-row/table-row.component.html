@@ -10,7 +10,7 @@
           [cell]="cell"
           [cellType]="cellType"
           [ngStyle]="{'z-index': i < 2 ? 2 : 1}"
-          [class.sticky-1]=""
+          [class.sticky-1]="i === 0"
           [class.sticky-2]="i === 1"
           class="table-row__cell"></app-table-cell>
 

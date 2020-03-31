@@ -45,6 +45,4 @@ export class SubjectsService {
     return this.http.delete(`${this.URL}/${id}`);
   }
 
-  public postSnapshot(snapShot) {
-  }
 }
