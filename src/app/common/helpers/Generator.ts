@@ -103,10 +103,11 @@ export class DatePicker extends Generator {
       this.appendChild(container, form);
       this.appendChild(form, dateInput);
       this.appendChild(form, submitBtn);
-      this.renderer.listen(form, "submit", (e) => {
+    const unlistener = this.renderer.listen(form, "submit", (e) => {
         e.preventDefault();
         onsubmitAction(e.target[FormControlType.date].value, e.target);
       });
+    return {unlistener, target: form, type: "submit"};
   }
 }
 export class NumberPicker extends Generator {
@@ -134,10 +135,11 @@ export class NumberPicker extends Generator {
     this.appendChild(container, form);
     this.appendChild(form, numberInput);
     this.appendChild(form, submitBtn);
-    this.renderer.listen(form, "submit", (e) => {
+    const unlistener = this.renderer.listen(form, "submit", (e) => {
       e.preventDefault();
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);
     });
+    return {unlistener, target: form, type: "submit"};
   }
 
   public shouldAddNumberInput(target: EventTarget, headers: string[], cellIndex: number): boolean {

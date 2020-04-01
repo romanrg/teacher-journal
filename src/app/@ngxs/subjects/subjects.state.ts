@@ -125,20 +125,20 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
   @Action(Subjects.ChangeCurrentPage)
   public changeCurrent({setState}: StateContext<SubjectsStateModel>, {payload}: number): void {
-    setState(state => ({...state, currentPage: payload}));
+    return setState(state => ({...state, currentPage: payload}));
   }
   @Action(Subjects.ChangePagination)
   public changePagination({setState}: StateContext<SubjectsStateModel>, {payload}: number): void {
-      setState(state => ({...state, paginationConstant: payload}));
+      return setState(state => ({...state, paginationConstant: payload}));
   }
 
   @Action(Subjects.AddDate)
   public addNewDate({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
-    dispatch(new Subjects.Update(payload));
+    return dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.ChangeTeacher)
   public changeTeacher({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
-    dispatch(new Subjects.Update(payload));
+    return dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.DeleteDate)
   public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject, marks}: ISubject): void {

@@ -12,7 +12,9 @@
   'table__btn--loading': (isLoad$ | async) && !(!(isLoad$ | async) && (stateChangesForBtnComplete$ | async))
   }"
 ></button>
-<div class="container" *ngIf="subjectTableConfig">
+<div class="container" *ngIf="subjectTableConfig"
+      (submit)="deleteSubmitListener($event)"
+>
       <app-one-header-table
         [config]="subjectTableConfig"
         (emitMap)="setSortedColumnName($event)"

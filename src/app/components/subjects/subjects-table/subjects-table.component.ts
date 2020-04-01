@@ -56,6 +56,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
   // subscription manager
   public manager: SubscriptionManager;
+  public listeners: [];
 
   constructor(
     private store: Ngxs.Store,
@@ -65,6 +66,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private sortPipe: SortByPipe,
     private actions$: Actions,
   ) {
+    this.listeners = [];
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer);
     this.dateGenerator = new DatePicker(this.renderer);
@@ -128,12 +130,12 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     if (
       this.dateGenerator.shouldAddDateInput(target, this.subjectHeadersConstantNames)
     ) {
-      this.dateGenerator.generateDatePicker(
+      this.listeners.push(this.dateGenerator.generateDatePicker(
         target,
         this.subjectTableConfig.headers.filter(head => typeof head === "number"),
         this.datePipe,
         this.submitDate(_dispatcherNgxs(this.store, Subjects.AddDate), this.subject)
-      );
+      ));
     } else if (
       this.numberGenerator.shouldAddNumberInput(target, this.subjectHeadersConstantNames, this.getCellIndex(target))
     ) {
@@ -147,10 +149,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         student.id, this.subject.id, null, this.subjectTableConfig.headers[this.getCellIndex(target)]
       );
       if (!target.textContent) {
-        this.numberGenerator.generateNumberPicker(
+        this.listeners.push(this.numberGenerator.generateNumberPicker(
           target,
           this.submitMark(_dispatcherNgxs(this.store, Marks.Create), newMark)
-        );
+        ));
+
       } else {
         let patchMark: Mark;
         this.state$.subscribe(st => patchMark = st.marks.filter(mark =>
@@ -158,10 +161,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
           mark.subject === newMark.subject &&
           mark.time === newMark.time
         )[0]).unsubscribe();
-        this.numberGenerator.generateNumberPicker(
+        this.listeners.push(this.numberGenerator.generateNumberPicker(
           target,
           this.submitMark(_dispatcherNgxs(this.store, Marks.Change), newMark)
-        );
+        ));
       }
 
     } else if (
@@ -234,7 +237,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
           body: this.tableBody.body
         };
         this.marks = state.marks;
-        this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
         // get pagination and current page
 
         this.page = state.currentPage;
@@ -268,13 +270,14 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     })
 
     );
-
+    if (this.marks) {
+      this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
+    }
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
   public canDeactivate(): boolean | Observable<boolean> {
-    console.log(this.confirm);
     if (this.confirm) {
       return confirm(CONFIRMATION_MESSAGE);
     } else {
@@ -283,4 +286,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
 
 
+  deleteSubmitListener($event: Event) {
+    this.listeners.filter(listener => listener.target === $event.target)[0].unlistener($event.target, "submit");
+
+  }
 }

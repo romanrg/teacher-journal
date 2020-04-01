@@ -61,7 +61,7 @@ export class NgxsMarksState {
   @Action(Marks.Create)
   public createMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     dispatch(new Marks.AddToTheHashTable(payload));
-    setState(patch({
+    return setState(patch({
       data: append([payload]),
     }));
     /*
@@ -142,7 +142,7 @@ export class NgxsMarksState {
   }
   @Action (Marks.AddToTheHashTable)
   public addToTheHash(ctx, {payload}: Mark): void {
-    this.marksService.addHash(payload);
+    return this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)
   public removeFromHash(ctx, {payload}: Mark): void {
