@@ -21,6 +21,8 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
 import {Observable} from "rxjs";
+import {Action, Actions, ofActionDispatched} from "@ngxs/store";
+import {map} from "rxjs/internal/operators";
 
 @Component({
   selector: "app-subjects-table",
@@ -33,16 +35,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
   public tableBody: TableBody;
   public teacherConfig: Teacher;
-  public initialPositioning: [];
   public sortingState: {col: number, times: number};
 
   // state related
   public subject: ISubject;
   public page: number;
   public itemsPerPage: number;
-  public state$: Observable<SubjectTableState>
+  public state$: Observable<SubjectTableState>;
   public isLoad$: Observable<boolean>;
   public marks: Mark[];
+  public stateChangesForBtn$: Observable<Action>;
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -52,18 +54,19 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public manager: SubscriptionManager;
 
   constructor(
-    private ngxsStore: Ngxs.Store,
+    private store: Ngxs.Store,
     private renderer: Renderer2,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
-    private sortPipe: SortByPipe
+    private sortPipe: SortByPipe,
+    private actions$: Actions,
   ) {
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer);
     this.dateGenerator = new DatePicker(this.renderer);
     this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
     this.tableBody = new TableBody(TableRow);
-    this.state$ = this.ngxsStore.select(state => {
+    this.state$ = this.store.select(state => {
       const current: ISubject = state.subjects.data
         .filter(subj => subj.name === this.route.snapshot.params.name)[0];
       const marks: Mark[] = state.marks.data
@@ -77,14 +80,20 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         errors
       });
     });
-    this.isLoad$ = ngxsStore
+    this.isLoad$ = store
       .select(state => Object.keys(state)
         .map(key => state[key].loading)
         .some(load => load)
       );
-
-    this.ngxsStore.dispatch(new Subjects.ChangeCurrentPage(1));
-    this.ngxsStore.dispatch(new Subjects.SetSortedColumn(null));
+    this.store.dispatch(new Subjects.ChangeCurrentPage(1));
+    this.store.dispatch(new Subjects.SetSortedColumn(null));
+    this.stateChangesForBtn$ = this.actions$.pipe(
+      ofActionDispatched(
+        Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit
+      ),
+      map(action => !(action instanceof Subjects.Submit))
+    );
+    this.stateChangesForBtn$.subscribe(data => console.log(data));
   }
 
   // helpers
@@ -96,7 +105,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public changeTeacher($event: Event): void {
     const patchedSubject: ISubject = {...this.subject};
     patchedSubject.teacher = $event[this.teacherConfig.configName];
-    this.ngxsStore.dispatch(new Subjects.ChangeTeacher(patchedSubject));
+    this.store.dispatch(new Subjects.ChangeTeacher(patchedSubject));
   }
 
   // add new date and mark
@@ -108,7 +117,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         target,
         this.subjectTableConfig.headers.filter(head => typeof head === "number"),
         this.datePipe,
-        this.submitDate(_dispatcherNgxs(this.ngxsStore, Subjects.AddDate), this.subject)
+        this.submitDate(_dispatcherNgxs(this.store, Subjects.AddDate), this.subject)
       );
     } else if (
       this.numberGenerator.shouldAddNumberInput(target, this.subjectHeadersConstantNames, this.getCellIndex(target))
@@ -116,7 +125,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       let student: IStudent;
       const clickRow: HTMLElement[] = [...target.parentNode.parentNode.children];
       this.state$.subscribe(
-        st => student = st.students
+        state => student = state.students
           .filter(stud => stud.name === clickRow[0].textContent && stud.surname === clickRow[1].textContent)[0]
       ).unsubscribe();
       const newMark: Mark = new Mark(
@@ -125,7 +134,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       if (!target.textContent) {
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Create), newMark)
+          this.submitMark(_dispatcherNgxs(this.store, Marks.Create), newMark)
         );
       } else {
         let patchMark: Mark;
@@ -136,7 +145,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         )[0]).unsubscribe();
         this.numberGenerator.generateNumberPicker(
           target,
-          this.submitMark(_dispatcherNgxs(this.ngxsStore, Marks.Change), newMark)
+          this.submitMark(_dispatcherNgxs(this.store, Marks.Change), newMark)
         );
       }
 
@@ -151,7 +160,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.state$.subscribe(st => {
         needToDelete = [...st.marks.filter(m => m.time === timestamp && m.subject === patchedSubject.id)];
       }).unsubscribe();
-      this.ngxsStore.dispatch(new Subjects.DeleteDate(patchedSubject, needToDelete));
+      this.store.dispatch(new Subjects.DeleteDate(patchedSubject, needToDelete));
     }
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
@@ -172,16 +181,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   // handle pagination
   public dispatchPaginationState($event: Event): void {
     if ($event.paginationConstant) {
-      this.ngxsStore.dispatch(new Subjects.ChangePagination($event.paginationConstant));
+      this.store.dispatch(new Subjects.ChangePagination($event.paginationConstant));
     } else {
-      this.ngxsStore.dispatch(new Subjects.ChangeCurrentPage($event.currentPage));
+      this.store.dispatch(new Subjects.ChangeCurrentPage($event.currentPage));
     }
 
   }
 
   // handle sorting
   public setSortedColumnName($event: number): void {
-    this.ngxsStore.dispatch(new Subjects.SetSortedColumn($event));
+    this.store.dispatch(new Subjects.SetSortedColumn($event));
   }
 
   // merge all data for table;
@@ -191,6 +200,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
       this.tableBody.addStudentMark(state.marks, student, index, this.subjectTableConfig.headers);
     });
+  }
+
+  // apply data
+  public applyChanges(): void {
+    this.store.dispatch(new Subjects.Submit());
   }
 
   // life cycle
@@ -209,7 +223,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
 
         this.page = state.currentPage;
         this.itemsPerPage = state.paginationConstant;
-        this.initialPositioning = state.renderMap;
         this.sortingState = state.sortedColumn;
 
         // initialized new teacher form
@@ -237,14 +250,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
-    this.marks.map(mark => this.ngxsStore.dispatch(new Marks.AddToTheHashTable(mark)));
+    this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
 
-  public applyChanges(): void {
-    console.log("Save all changes occur")
-    this.ngxsStore.dispatch(new Subjects.Submit())
-  }
+
 }

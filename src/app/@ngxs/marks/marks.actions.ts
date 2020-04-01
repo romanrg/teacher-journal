@@ -49,4 +49,8 @@ export namespace Marks {
   export class Submit {
     public static readonly type = "[Subject Table (App)] Submit Marks";
   }
+  export class SubmitError {
+    public static readonly type = "[Marks Api] Submit Error";
+    constructor( public payload: string|Error) {}
+  }
 }

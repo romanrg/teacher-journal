@@ -5,7 +5,7 @@ import {MarksServiceService} from "../../common/services/marks-service.service";
 import {Marks} from "./marks.actions";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {forkJoin, of} from "rxjs";
-import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
+import {append, compose, insertItem, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {SubjectsService} from "../../common/services/subjects.service";
 import {Subjects} from "../subjects/subjects.actions";
 import {Mark} from "../../common/models/IMark";
@@ -59,7 +59,7 @@ export class NgxsMarksState {
     patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Create)
-  public createMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public createMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     dispatch(new Marks.AddToTheHashTable(payload));
     setState(patch({
       data: append([payload]),
@@ -88,9 +88,8 @@ export class NgxsMarksState {
     */
   }
   @Action(Marks.CreateError)
-
   @Action(Marks.Delete)
-  public deleteMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     /*
     setState({
       ...getState(),
@@ -126,13 +125,7 @@ export class NgxsMarksState {
     setState(patch({
       data: updateItem(getOld, postPatchMark)
     }));
-    console.log("Payload:", payload, "prePatchMark:",prePatchMark, "postPatchMark:",postPatchMark, "getState:",getState());
     dispatch(new Marks.ReplaceInTheHashTable(postPatchMark));
-  }
-
-
-  public createMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
-    patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Marks.PatchError)
@@ -148,16 +141,17 @@ export class NgxsMarksState {
     patchState({error: payload, loading: false, loaded: false});
   }
   @Action (Marks.AddToTheHashTable)
-  public addToTheHash(ctx: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public addToTheHash(ctx, {payload}: Mark): void {
+    console.log(arguments);
     this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)
-  public removeFromHash(ctx: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public removeFromHash(ctx, {payload}: Mark): void {
     this.marksService.removeHash(payload);
   }
 
   @Action(Marks.ReplaceInTheHashTable)
-  public replaceInTheHash({getState, setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public replaceInTheHash(ctx, {payload}: Mark): void {
     this.marksService.replaceHash(payload);
   }
 
@@ -176,14 +170,26 @@ export class NgxsMarksState {
       })).pipe(
       tap(apiResponse => {
         this.marksService.clearMemory();
+        const newData: Mark[] = [
+          ...apiResponse.filter(mark => mark.subject !== null),
+          ...getState().data.filter(mark => mark.id)
+        ];
         return setState(patch({
           loading: false,
-          loaded: true
+          loaded: true,
+          data: newData
         }));
       }),
       retry(3),
-      catchError(error => console.log(error)/*dispatch new Error response*/)
+      catchError(error => dispatch(new Marks.SubmitError(error)))
     );
+  }
+
+  @Action(Marks.SubmitError)
+  public submitMarksError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+    return patchState({
+      error: payload
+    });
   }
 }
 

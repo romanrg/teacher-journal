@@ -56,14 +56,6 @@ export namespace Subjects {
     public static readonly type = "[Subjects Table] Set Sorted Column Number";
     constructor(public payload: number) {}
   }
-  export class GetSortingMap {
-    public static readonly type = "[Students State] Get Sorting Map";
-    constructor(public payload: {[string]: number}[]) {}
-  }
-  export class PostSnapshot {
-    public static readonly type = "[Subjects Table] Post SnapShot";
-    constructor(public payload: any) {}
-  }
   export class Update {
     public static readonly type = "[Subject Table (App)] Update Subject State";
     constructor(public  payload: ISubject) {}

@@ -141,11 +141,12 @@ export class NgxsStudentsState {
   public changePagination({setState}: StateContext<StudentsStateModel>, {payload}: number): void {
       setState(state => ({...state, paginationConstant: payload}));
   }
-
+  /*
   @Action(Students.Sort)
   public sortStudents({getState, dispatch}: StateContext<StudentsStateModel>): void {
     const map = Object.values(pluck(getState().data, "id")).map((id, i) => ({[id]: i}));
     dispatch(new Subjects.GetSortingMap(map));
   }
+  */
 }
 

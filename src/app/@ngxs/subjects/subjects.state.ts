@@ -1,4 +1,4 @@
-import {State, Action, StateContext, Selector} from "@ngxs/store";
+import {State, Action, StateContext, Selector, NgxsOnChanges, NgxsSimpleChange} from "@ngxs/store";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {of} from "rxjs";
@@ -19,14 +19,13 @@ export class SubjectsStateModel {
   public loaded: boolean;
   public paginationConstant: number;
   public currentPage: number;
-  error: string|Error;
+  public error: string|Error;
 }
 
 export class SubjectTableState implements SubjectsStateModel{
   public students: IStudent[];
   public marks: Mark[];
   public sortedColumn: {col: number, times: number}|null;
-  public renderMap: ({string: number}[])|null;
 }
 
 
@@ -46,11 +45,10 @@ export class SubjectTableState implements SubjectsStateModel{
 @Injectable({
   providedIn: "root"
 })
-export class NgxsSubjectsState {
+export class NgxsSubjectsState implements NgxsOnChanges{
 
   constructor(
     private subjectsService: SubjectsService,
-    private marksService: MarksServiceService,
   ) {}
 
   @Selector()
@@ -135,18 +133,11 @@ export class NgxsSubjectsState {
   }
 
   @Action(Subjects.AddDate)
-  public addNewDate({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
-    /*
-    setState({
-      ...getState(),
-      loading: true,
-      loaded: false,
-    });
-    */
+  public addNewDate({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
     dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.ChangeTeacher)
-  public changeTeacher({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public changeTeacher({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
     dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.DeleteDate)
@@ -196,16 +187,6 @@ export class NgxsSubjectsState {
     dispatch(new Students.Sort());
   }
 
-  @Action (Subjects.GetSortingMap)
-  public getInitialMap({getState, setState}: StateContext<SubjectsStateModel>, {payload}: (string | Error)): void {
-    setState(patch({
-      renderMap: payload
-    }));
-  }
-
-  @Action(Subjects.PostSnapshot)
-  public handleChanges({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): void {
-  }
 
   @Action(Subjects.Update)
   public keepSubjectUpdated({setState}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
@@ -216,13 +197,11 @@ export class NgxsSubjectsState {
   }
 
   @Action(Subjects.Submit)
-  public submitChanges({getState, setState, dispatch}: StateContext<SubjectsStateModel>): void {
-    // patch this.subject
+  public submitChanges({dispatch}: StateContext<SubjectsStateModel>): void {
     if (this.subjectsService.subjectToUpdate) {
       dispatch(new Subjects.Patch(this.subjectsService.subjectToUpdate));
       this.subjectsService.updateSubjectState(undefined);
     }
-
     // post new marks update;
     dispatch(new Marks.Submit());
 

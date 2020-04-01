@@ -29,19 +29,22 @@
 .table__btn--save
   padding: 2rem
   position: fixed
-  color: $active-color
-  z-index: 10
+  color: transparent
+  z-index: 9
   right: 2rem
   bottom: 10rem
   border-radius: 1rem
   box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
   mask-image: url("src/assets/icon-save.svg")
-  background-color: $active-color
+  background-color: $color
   mask-size: 30%
   mask-repeat: no-repeat
   mask-position: center
   transition: all  0.3s
   outline: none
+  filter: opacity(0.1)
+.table-btn__any-changes
+  filter: opacity(1)
   &:hover
     mask-size: 50%
     background-color: $active-color

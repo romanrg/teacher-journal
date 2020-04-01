@@ -1,4 +1,3 @@
-
 <ng-container *ngIf="(isLoad$ | async)">
   <app-loading></app-loading>
 </ng-container>
@@ -7,7 +6,9 @@
   class="table__btn--save"
   [screenReader]="'Save changes'"
   [textContent]="'Save changes'"
+  [class.table-btn__any-changes]="(stateChangesForBtn$ | async)"
 ></app-button>
+<pre>{{(stateChangesForBtn$ | async) }}</pre>
 <div class="container" *ngIf="subjectTableConfig">
       <app-one-header-table
         [config]="subjectTableConfig"
@@ -23,10 +24,9 @@
         [screenReader]="'Add new date'"
         (click)="subjectTableConfig.headers.push('Select date')"
       ></app-button>
-    </div>
-
-
+</div>
 <ng-container *ngIf="teacherConfig">
-  <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
+  <app-form [config]="teacherConfig.config"
+            (onSubmit)="changeTeacher($event)"></app-form>
 </ng-container>
 
