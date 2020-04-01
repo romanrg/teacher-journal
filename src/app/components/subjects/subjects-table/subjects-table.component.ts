@@ -89,11 +89,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
     this.store.dispatch(new Subjects.SetSortedColumn(null));
     this.stateChangesForBtn$ = this.actions$.pipe(
       ofActionDispatched(
-        Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit
+        Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit, Marks.Create, Marks.Change
       ),
       map(action => !(action instanceof Subjects.Submit))
     );
-    this.stateChangesForBtn$.subscribe(data => console.log(data));
   }
 
   // helpers
