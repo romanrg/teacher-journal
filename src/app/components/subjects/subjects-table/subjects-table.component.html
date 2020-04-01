@@ -3,17 +3,15 @@
   <app-loading></app-loading>
 </ng-container>
 -->
-<app-button
+<button
   (click)="applyChanges()"
-  [screenReader]="'Save changes'"
-  [textContent]="'Save changes'"
   class="table__btn--save"
 
   [ngClass]="{
   'table__btn--wait' : (stateChangesForBtn$ | async),
   'table__btn--loading': (isLoad$ | async) && !(!(isLoad$ | async) && (stateChangesForBtnComplete$ | async))
   }"
-></app-button>
+></button>
 <div class="container" *ngIf="subjectTableConfig">
       <app-one-header-table
         [config]="subjectTableConfig"

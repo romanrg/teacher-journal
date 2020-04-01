@@ -142,7 +142,6 @@ export class NgxsMarksState {
   }
   @Action (Marks.AddToTheHashTable)
   public addToTheHash(ctx, {payload}: Mark): void {
-    console.log(arguments);
     this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)

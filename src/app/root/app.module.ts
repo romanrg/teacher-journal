@@ -26,7 +26,7 @@ import {TableBodyComponent} from "../shared/one-header-table/table-body/table-bo
 import {TableFootComponent} from "../shared/one-header-table/table-foot/table-foot.component";
 import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.component";
 import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
-import {DatePipe, DecimalPipe} from "@angular/common";
+import {AsyncPipe, DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
@@ -98,7 +98,7 @@ import {NgxsMarksState} from "../@ngxs/marks/marks.state";
     DecimalPipe,
     SortByPipe,
     DatePipe,
-    modifyHeadersProvider,
+    modifyHeadersProvider
   ],
   bootstrap: [AppComponent]
 })

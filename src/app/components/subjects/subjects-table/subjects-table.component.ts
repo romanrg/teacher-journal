@@ -8,7 +8,6 @@ import {SUBJECT_HEADERS} from "../../../common/constants/SUBJECT_HEADERS";
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
-
 import {_dispatcherNgxs, pluck} from "../../../common/helpers/lib";
 import {Teacher} from "../../../common/models/ITeacher";
 
@@ -21,15 +20,17 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
 import {Observable} from "rxjs";
-import {Action, Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
-import {map} from "rxjs/internal/operators";
+import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
+import {map, tap} from "rxjs/internal/operators";
+import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
+import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 
 @Component({
   selector: "app-subjects-table",
   templateUrl: "./subjects-table.component.html",
   styleUrls: ["./subjects-table.component.sass"]
 })
-export class SubjectsTableComponent implements OnInit, OnDestroy {
+export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
   // config related
   public subjectTableConfig: ITableConfig;
   public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
@@ -47,6 +48,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public stateChangesForBtn$: Observable<Action>;
   public stateChangesForBtnComplete$: Observable<Action>;
   public stateChangesLoad$: Observable<Action>;
+  public confirm: boolean = false;
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -93,13 +95,19 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
       ofActionDispatched(
         Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit, Marks.Create, Marks.Change
       ),
-      map(action => !(action instanceof Subjects.Submit))
+      map(action => {
+        this.confirm = !(action instanceof Subjects.Submit);
+        return !(action instanceof Subjects.Submit);
+      })
     );
     this.stateChangesLoad$ = this.actions$.pipe(
-      ofActionDispatched(Subjects.Submit)
+      ofActionDispatched(Subjects.Submit),
+      map(data => {
+        return data;
+      })
     );
     this.stateChangesForBtnComplete$ = this.actions$.pipe(
-      ofActionCompleted(Subjects.Submit)
+      ofActionCompleted(Subjects.Submit),
     );
   }
 
@@ -226,6 +234,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
           body: this.tableBody.body
         };
         this.marks = state.marks;
+        this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
         // get pagination and current page
 
         this.page = state.currentPage;
@@ -256,11 +265,21 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         }
         this.subjectTableConfig.body = this.tableBody.body;
       }
-    }));
-    this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
+    })
+
+    );
+
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
+  }
+  public canDeactivate(): boolean | Observable<boolean> {
+    console.log(this.confirm);
+    if (this.confirm) {
+      return confirm(CONFIRMATION_MESSAGE);
+    } else {
+      return true;
+    }
   }
 
 
