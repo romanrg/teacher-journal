@@ -21,7 +21,7 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
 import {Observable} from "rxjs";
-import {Action, Actions, ofActionDispatched} from "@ngxs/store";
+import {Action, Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
 import {map} from "rxjs/internal/operators";
 
 @Component({
@@ -45,6 +45,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
   public isLoad$: Observable<boolean>;
   public marks: Mark[];
   public stateChangesForBtn$: Observable<Action>;
+  public stateChangesForBtnComplete$: Observable<Action>;
+  public stateChangesLoad$: Observable<Action>;
   // renderer related
   public generator: Generator;
   public dateGenerator: DatePicker;
@@ -92,6 +94,12 @@ export class SubjectsTableComponent implements OnInit, OnDestroy {
         Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit, Marks.Create, Marks.Change
       ),
       map(action => !(action instanceof Subjects.Submit))
+    );
+    this.stateChangesLoad$ = this.actions$.pipe(
+      ofActionDispatched(Subjects.Submit)
+    );
+    this.stateChangesForBtnComplete$ = this.actions$.pipe(
+      ofActionCompleted(Subjects.Submit)
     );
   }
 

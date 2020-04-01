@@ -34,17 +34,37 @@
   right: 2rem
   bottom: 10rem
   border-radius: 1rem
-  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
   mask-image: url("src/assets/icon-save.svg")
   background-color: $color
   mask-size: 30%
   mask-repeat: no-repeat
   mask-position: center
-  transition: all  0.3s
   outline: none
-  display: none
-.table-btn__any-changes
-  display: flex
+  opacity: 0.1
+  width: 5rem
+  height: 5rem
+.table__btn--wait
+  background: $color
+  opacity: 1
+  transition: all  0.3s
   &:hover
     mask-size: 50%
     background-color: $active-color
+.table__btn--loading
+  width: 3rem
+  height: 3rem
+  mask-image: none
+  border: 0.25rem solid crimson
+  opacity: 1
+  background: transparent
+  border-radius: 50%
+  border-bottom-color: transparent
+  animation: rotate 1s infinite
+  user-focus: none
+
+
+@keyframes rotate
+  from
+    transform: rotate(0)
+  to
+    transform: rotate(360deg)
