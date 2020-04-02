@@ -118,6 +118,11 @@
       "SELECTOR_ADD": "Выберите дату",
       "SELECTOR_DELETE": "Delete column"
     },
+    "CHANGE_TEACHER": {
+      "LEGEND": "изменить учителя",
+      "ERRORS": "Обязательное поле",
+      "DESCRIPTION": "учитель"
+    },
     "ERRORS": {
       "REQUIRED": "Обязательное поле"
     }

@@ -2,26 +2,33 @@ import {IPerson} from "./IPerson";
 import {Validators} from "@angular/forms";
 import {FormControlType, IFormConfig} from "./IFormConfig";
 import {ISubject} from "./ISubject";
+import {TranslateService} from "@ngx-translate/core";
 
 export class Teacher implements IPerson {
   #config: IFormConfig;
-  constructor(subject: ISubject) {
-    this.#config = {
-      legend: `Change ${subject.name} Teacher`,
-      formGroupName: {
-        name: "form",
-        formControls: [
-          {
-            name: "",
-            initialValue: "",
-            type: FormControlType.text,
-            validators: [Validators.required],
-            errorMessages: ["This field is required"],
-            placeholder: subject.teacher,
-          }
-        ]
-      },
-    };
+  constructor(subject: ISubject, translate: TranslateService) {
+    this.translate = translate;
+    this.translate.stream("FORMS").subscribe(data => {
+      this.#config = {
+        legend: data.CHANGE_TEACHER.LEGEND,
+        formGroupName: {
+          name: "form",
+          formControls: [
+            {
+              name: "",
+              initialValue: "",
+              type: FormControlType.text,
+              validators: [Validators.required],
+              errorMessages: [data.CHANGE_TEACHER.ERRORS],
+              placeholder: subject.teacher,
+              description: data.CHANGE_TEACHER.DESCRIPTION
+            }
+          ]
+        },
+      };
+
+    });
+
   }
   get config(): IFormConfig {
     return this.#config;

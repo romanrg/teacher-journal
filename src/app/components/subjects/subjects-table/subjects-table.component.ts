@@ -261,7 +261,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.sortingState = state.sortedColumn;
 
         // initialized new teacher form
-        this.teacherConfig = new Teacher(this.subject);
+        this.teacherConfig = new Teacher(this.subject, this.translate);
 
         // get all marks for particular subject
 

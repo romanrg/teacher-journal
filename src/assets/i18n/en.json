@@ -119,6 +119,11 @@
       "SELECTOR_ADD": "Select date",
       "SELECTOR_DELETE": "Delete column"
     },
+    "CHANGE_TEACHER": {
+      "LEGEND": "change teacher",
+      "ERRORS": "This field is required",
+      "DESCRIPTION": "teacher"
+    },
     "ERRORS": {
       "REQUIRED": "This field is required"
     }
