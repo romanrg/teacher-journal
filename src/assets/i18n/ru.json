@@ -78,6 +78,23 @@
         }
       }
     },
+    "NEW_SUBJECT": {
+      "LEGEND": "ДОБАВИТЬ ПРЕДМЕТ",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "название"
+        },
+        "TEACHER": {
+          "TITLE": "учитель"
+        },
+        "ADDRESS": {
+          "TITLE": "адрес"
+        },
+        "DESCRIPTION": {
+          "TITLE": "описание"
+        }
+      }
+    },
     "ERRORS": {
       "REQUIRED": "Обязательное поле"
     }

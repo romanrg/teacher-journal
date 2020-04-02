@@ -58,6 +58,10 @@
         "START": "Do you want to delete",
         "END": "from journal?"
       }
+    },
+    "SUBJECTS": {
+      "LIST": {},
+      "TABLE": {}
     }
   },
   "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",
@@ -70,6 +74,23 @@
         },
         "SURNAME": {
           "TITLE": "surname"
+        },
+        "ADDRESS": {
+          "TITLE": "address"
+        },
+        "DESCRIPTION": {
+          "TITLE": "description"
+        }
+      }
+    },
+    "NEW_SUBJECT": {
+      "LEGEND": "ADD SUBJECT",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "name"
+        },
+        "TEACHER": {
+          "TITLE": "teacher"
         },
         "ADDRESS": {
           "TITLE": "address"
