@@ -60,7 +60,11 @@
       }
     },
     "SUBJECTS": {
-      "LIST": {},
+      "LIST": {
+        "DELETE_BTN": "Delete {{subject}}",
+        "LINK": "Visit {{subject}} journal page",
+        "LINK_NEW_SUBJECT_FORM": "Create new subject"
+      },
       "TABLE": {}
     }
   },

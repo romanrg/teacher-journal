@@ -13,7 +13,7 @@
               (click)="deleteSubject($event)"
               class="subjects__btn subjects__btn--delete"
               textContent="{{'X'}}"
-              screenReader="delete subject"
+              [screenReader]="'COMPONENTS.SUBJECTS.LIST.DELETE_BTN' | translate:{subject: subject.name}"
               [attr.subject]="subject.name"
             ></app-button>
             <a class="subjects__link"
@@ -22,7 +22,7 @@
               <app-button
                 class="subjects__btn"
                 textContent="{{subject.name}}"
-                screenReader="Go to {{subject.name}}"
+                [screenReader]="'COMPONENTS.SUBJECTS.LIST.LINK' | translate:{subject: subject.name}"
               ></app-button>
             </a>
           </li>
@@ -37,7 +37,7 @@
     >
       <app-button
         class="subjects__btn"
-        screenReader="Create new subject"
+        screenReader="{{'COMPONENTS.SUBJECTS.LIST.LINK_NEW_SUBJECT_FORM' | translate}}"
         textContent="+"
         [action]="addNewSubject"
         (emitter)="addNewSubject()"

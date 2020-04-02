@@ -57,6 +57,14 @@
         "START": "Удалить",
         "END": "из журнала?"
       }
+    },
+    "SUBJECTS": {
+      "LIST": {
+        "DELETE_BTN": "Удалить {{subject}}",
+        "LINK": "Перейти на страницу журнала {{subject}}",
+        "LINK_NEW_SUBJECT_FORM": "Создать новый предмет"
+      },
+      "TABLE": {}
     }
   },
   "CONFIRMATION_MESSAGE": "Хотите покинуть страницу не сохранив изменения?",
