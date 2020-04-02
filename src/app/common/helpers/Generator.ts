@@ -2,9 +2,16 @@ import {Renderer2} from "@angular/core";
 import {FormControlType} from "../models/IFormConfig";
 import {ISubject} from "../models/ISubject";
 import {DatePipe} from "@angular/common";
+import {TranslateService} from "@ngx-translate/core";
 export class Generator {
-  constructor(private render: Renderer2) {
+  public btnText: string;
+  constructor(
+    private render: Renderer2,
+    private translate: TranslateService
+  ) {
     this.render = render;
+    this.translate = translate;
+
   }
 
   public generateElement(tagName: string): any {
@@ -49,27 +56,39 @@ export class Generator {
   public generateSubmitBtn(): any {
     const submitBtn: any = this.generateElement("button");
     this.generateAttributes(submitBtn, {type: "submit"});
-    this.appendChild(submitBtn, this.renderer.createText("Submit"));
+    console.log(this.btnText);
+    this.appendChild(submitBtn, this.renderer.createText(this.btnText));
     this.renderer.addClass(submitBtn, "generated-submit");
     return submitBtn;
   }
 
 }
 export class DatePicker extends Generator {
-  constructor(private renderer: Renderer2) {
+  public selector: {};
+  public btnText: string;
+  constructor(
+    private renderer: Renderer2,
+    private translate: TranslateService
+  ) {
     super(renderer);
     this.ONE_DAY_CONSTANT = 1000 * 24 * 60 * 60;
+    this.translate.stream("FORMS").subscribe(data => {
+      this.selector = {add: data.DATE_GENERATOR.SELECTOR_ADD, remove: data.DATE_GENERATOR.SELECTOR_DELETE};
+    });
+    this.translate?.stream("BUTTON_TYPE").subscribe(data => {
+      this.btnText = data.SUBMIT;
+    });
   }
 
   public shouldAddDateInput(target: EventTarget, headers: string[]): boolean {
     return (
       target.tagName.toLowerCase() === "th" &&
       !headers.includes(target.textContent) &&
-      target.textContent.includes("Select date")
+      target.textContent.includes(this.selector.add)
     );
   }
   public isDeleteDateButton(target: EventTarget): boolean {
-    return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === "Delete column")
+    return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === this.selector.remove);
   }
   public generateDatePicker(
     element: any,
@@ -77,6 +96,7 @@ export class DatePicker extends Generator {
     pipe: DatePipe,
     onsubmitAction: Function
   ): number[] {
+
       const container: ParentNode = element.parentNode;
       const initialValue: string = element.textContent;
       this.removeChild(container, element);
@@ -85,7 +105,6 @@ export class DatePicker extends Generator {
       if (!uniqueDates.length) {
         this.generateAttributes(dateInput, {
           type: FormControlType.date,
-          value: initialValue,
           name: FormControlType.date
         });
       } else {
@@ -94,6 +113,7 @@ export class DatePicker extends Generator {
           type: FormControlType.date,
           value: initialValue,
           name: FormControlType.date,
+          pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}",
           min: pipe.transform((minDate + this.ONE_DAY_CONSTANT), "yyyy-MM-dd")
         });
       }
@@ -110,12 +130,19 @@ export class DatePicker extends Generator {
     return {unlistener, target: form, type: "submit"};
   }
 }
+
+
+
 export class NumberPicker extends Generator {
-  constructor(private renderer: Renderer2, min: number, max: number) {
-    super(renderer);
+  public btnText: string;
+  constructor(private renderer: Renderer2, min: number, max: number, translate: TranslateService) {
+    super(renderer, translate);
     this.min = min;
     this.max = max;
     this.validation = "^(?:[1-9]|0[1-9]|10)$";
+    this.translate?.stream("BUTTON_TYPE").subscribe(data => {
+      this.btnText = data.SUBMIT;
+    });
   }
 
   public generateNumberPicker(element: any, onsubmitAction: Function): void {
@@ -146,4 +173,5 @@ export class NumberPicker extends Generator {
     return (target.tagName.toLowerCase() === "td" && cellIndex >= headers.length);
   }
 }
+
 

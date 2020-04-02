@@ -64,7 +64,18 @@
         "LINK": "Перейти на страницу журнала {{subject}}",
         "LINK_NEW_SUBJECT_FORM": "Создать новый предмет"
       },
-      "TABLE": {}
+      "TABLE": {
+        "CAPTION": "журнал",
+        "HEADERS": ["имя", "фамилия", "средний балл"],
+        "FORMS": {
+          "DATE": {
+            "NEW_DATE_BTN_SCREEN": "Добавить новую дату",
+            "SELECT": "Выберите дату"
+          },
+          "NUMBER": {},
+          "TEACHER": {}
+        }
+      }
     }
   },
   "CONFIRMATION_MESSAGE": "Хотите покинуть страницу не сохранив изменения?",
@@ -102,6 +113,10 @@
           "TITLE": "описание"
         }
       }
+    },
+    "DATE_GENERATOR": {
+      "SELECTOR_ADD": "Выберите дату",
+      "SELECTOR_DELETE": "Delete column"
     },
     "ERRORS": {
       "REQUIRED": "Обязательное поле"

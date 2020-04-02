@@ -1,8 +1,3 @@
-<!--
-<ng-container *ngIf="(isLoad$ | async)">
-  <app-loading></app-loading>
-</ng-container>
--->
 <button
   (click)="applyChanges()"
   class="table__btn--save"
@@ -25,8 +20,8 @@
       <app-button
         class="subject-table__btn"
         [textContent]="'+'"
-        [screenReader]="'Add new date'"
-        (click)="subjectTableConfig.headers.push('Select date')"
+        [screenReader]="'COMPONENTS.SUBJECTS.TABLE.FORMS.DATE.NEW_DATE_BTN_SCREEN' | translate"
+        (click)="pushHeaders()"
       ></app-button>
 </div>
 <ng-container *ngIf="teacherConfig">

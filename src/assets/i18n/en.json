@@ -65,7 +65,18 @@
         "LINK": "Visit {{subject}} journal page",
         "LINK_NEW_SUBJECT_FORM": "Create new subject"
       },
-      "TABLE": {}
+      "TABLE": {
+        "CAPTION": "journal",
+        "HEADERS": ["name", "surname", "average mark"],
+        "FORMS": {
+          "DATE": {
+            "NEW_DATE_BTN_SCREEN": "Add new date",
+            "SELECT": "Select date"
+          },
+          "NUMBER": {},
+          "TEACHER": {}
+        }
+      }
     }
   },
   "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",
@@ -103,6 +114,10 @@
           "TITLE": "description"
         }
       }
+    },
+    "DATE_GENERATOR": {
+      "SELECTOR_ADD": "Select date",
+      "SELECTOR_DELETE": "Delete column"
     },
     "ERRORS": {
       "REQUIRED": "This field is required"

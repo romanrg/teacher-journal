@@ -4,7 +4,6 @@ import {ISubject} from "../../../common/models/ISubject";
 import {AutoUnsubscribe, SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
 import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
-import {SUBJECT_HEADERS} from "../../../common/constants/SUBJECT_HEADERS";
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
@@ -19,11 +18,12 @@ import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
-import {Observable} from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
 import {map, tap} from "rxjs/internal/operators";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: "app-subjects-table",
@@ -31,12 +31,14 @@ import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSA
   styleUrls: ["./subjects-table.component.sass"]
 })
 export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
+
   // config related
   public subjectTableConfig: ITableConfig;
-  public subjectHeadersConstantNames: string[] = SUBJECT_HEADERS;
+  public subjectHeadersConstantNames: string[] = ["name", "surname", "average mark"];
   public tableBody: TableBody;
   public teacherConfig: Teacher;
   public sortingState: {col: number, times: number};
+  public tableBodyConfigData: string[] = ["name", "surname", "average mark"];
 
   // state related
   public subject: ISubject;
@@ -64,19 +66,25 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private route: ActivatedRoute,
     private sortPipe: SortByPipe,
     private actions$: Actions,
+    private translate: TranslateService
   ) {
     this.listeners = new WeakSet();
     this.manager = new SubscriptionManager();
-    this.generator = new Generator(this.renderer);
-    this.dateGenerator = new DatePicker(this.renderer);
-    this.numberGenerator = new NumberPicker(this.renderer, 1, 10);
+    this.generator = new Generator(this.renderer, this.translate);
+    this.dateGenerator = new DatePicker(this.renderer, this.translate);
+    this.numberGenerator = new NumberPicker(this.renderer, 1, 10, this.translate);
     this.tableBody = new TableBody(TableRow);
     this.state$ = this.store.select(state => {
       const current: ISubject = state.subjects.data
         .filter(subj => subj.name === this.route.snapshot.params.name)[0];
       const marks: Mark[] = state.marks.data
         .filter(mark => mark.subject === current.id);
-      const errors: (string|Error)[] = [...Object.keys(state).map(key => state[key].error).filter(error => error)];
+      const errors: (string|Error)[] = [
+        ...Object
+          .keys(state)
+          .map(key => state[key].error)
+          .filter(error => error)
+      ];
       return ({
         ...state.subjects,
         current,
@@ -90,26 +98,22 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         .map(key => state[key].loading)
         .some(load => load)
       );
-    this.store.dispatch(new Subjects.ChangeCurrentPage(1));
-    this.store.dispatch(new Subjects.SetSortedColumn(null));
+    this.store.dispatch([new Subjects.ChangeCurrentPage(1), new Subjects.SetSortedColumn(null)]);
     this.stateChangesForBtn$ = this.actions$.pipe(
       ofActionDispatched(
-        Subjects.AddDate, Subjects.DeleteDate, Subjects.ChangeTeacher, Subjects.Submit, Marks.Create, Marks.Change
+        Subjects.AddDate,
+        Subjects.DeleteDate,
+        Subjects.ChangeTeacher,
+        Subjects.Submit, Marks.Create,
+        Marks.Change
       ),
       map(action => {
         this.confirm = !(action instanceof Subjects.Submit);
         return !(action instanceof Subjects.Submit);
       })
     );
-    this.stateChangesLoad$ = this.actions$.pipe(
-      ofActionDispatched(Subjects.Submit),
-      map(data => {
-        return data;
-      })
-    );
-    this.stateChangesForBtnComplete$ = this.actions$.pipe(
-      ofActionCompleted(Subjects.Submit),
-    );
+    this.stateChangesLoad$ = this.actions$.pipe(ofActionDispatched(Subjects.Submit));
+    this.stateChangesForBtnComplete$ = this.actions$.pipe(ofActionCompleted(Subjects.Submit));
   }
 
   // helpers
@@ -205,29 +209,48 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
   // handle sorting
   public setSortedColumnName($event: number): void {
-    this.store.dispatch(new Subjects.SetSortedColumn($event));
+    // this.store.dispatch(new Subjects.SetSortedColumn($event));
+    console.log($event);
   }
   // merge all data for table;
   public preRenderTable(state: SubjectTableState): void {
     this.tableBody.clear();
+    const config: string|number[] = [...this.tableBodyConfigData, ...this.subject.uniqueDates];
     state.students.map((student, index) => {
-      this.tableBody.generateRowByRow(student, this.subjectTableConfig.headers);
-      this.tableBody.addStudentMark(state.marks, student, index, this.subjectTableConfig.headers);
+      this.tableBody.generateRowByRow(student, config);
+      this.tableBody.addStudentMark(state.marks, student, index, config);
     });
   }
   // apply data
   public applyChanges(): void {
     this.store.dispatch(new Subjects.Submit());
   }
+  public pushHeaders(): void {
+    this.translate.stream("COMPONENTS").subscribe(data => {
+      this.subjectTableConfig.headers.push(data.SUBJECTS.TABLE.FORMS.DATE.SELECT);
+    }).unsubscribe();
+  }
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.confirm) {
+      return confirm(CONFIRMATION_MESSAGE);
+    } else {
+      return true;
+    }
+  }
   // life cycle
   public ngOnInit(): void {
-    this.manager.addSubscription(this.state$.subscribe(state => {
+    this.manager.addSubscription(combineLatest(
+      this.translate.stream("COMPONENTS"),
+      this.state$
+    ).subscribe(([componentTranslations, state]) => {
+      const translations: any = componentTranslations.SUBJECTS.TABLE;
       if (state.loaded) {
         // initialize subject
         this.subject = state.current;
+        // this.subjectHeadersConstantNames = ;
         this.subjectTableConfig = {
-          caption: `${this.subject.name} class journal:`,
-          headers: this.subjectHeadersConstantNames,
+          caption: `${this.subject.name} ${translations.CAPTION}:`,
+          headers: translations.HEADERS,
           body: this.tableBody.body
         };
         this.marks = state.marks;
@@ -248,7 +271,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
             [...this.subject.uniqueDates].concat(pluck(state.marks, "time"))
           )
         ].sort();
-        this.subjectTableConfig.headers = [...this.subjectHeadersConstantNames, ...datesPartOfHeaders];
+        this.subjectTableConfig.headers = [...translations.HEADERS, ...datesPartOfHeaders];
 
         /// handle data from sources for table
         this.preRenderTable(state);
@@ -261,22 +284,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         }
         this.subjectTableConfig.body = this.tableBody.body;
       }
-    })
-
-    );
+    }));
     if (this.marks) {
       this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
     }
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
-  }
-  public canDeactivate(): boolean | Observable<boolean> {
-    if (this.confirm) {
-      return confirm(CONFIRMATION_MESSAGE);
-    } else {
-      return true;
-    }
   }
 
 
