@@ -39,7 +39,7 @@ export class TableFootComponent implements OnInit, OnChanges {
     this.changeCurrentPage.emit(this.currentPagination);
 
   }
-  public generateMetaCell(): string {
+  public generateMetaCell(preposition: string): string {
     return `${(this.currentPagination - 1)  * this.paginationConstant + 1}
         ...
         ${
@@ -47,7 +47,7 @@ export class TableFootComponent implements OnInit, OnChanges {
       this.currentPagination * this.paginationConstant :
       this.itemsAmount
       }
-        from
+        ${preposition}
         ${this.itemsAmount}`;
   }
 

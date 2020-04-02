@@ -3,14 +3,15 @@ import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableCo
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
-import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
-import {Observable} from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 
 // ngxs
 import * as Ngxs from "@ngxs/store";
 import {Select} from "@ngxs/store";
 import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/students.state";
 import {Students} from "../../../@ngxs/students/students.actions";
+import {TranslateService} from "@ngx-translate/core";
+import {switchMap} from "rxjs/internal/operators";
 
 @Component({
   selector: "app-students-table",
@@ -21,18 +22,22 @@ import {Students} from "../../../@ngxs/students/students.actions";
 export class StudentsTableComponent implements OnInit, OnDestroy {
   private manager: SubscriptionManager = new SubscriptionManager();
   public tableConfig: ITableConfig;
-  public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
   public tableBody: TableBody = new TableBody(TableRow);
+  public readonly confirmation: string;
+  public readonly tableBodyRowConfig: string[] = ["id", "name", "surname", "address", "description"];
   @Select(NgxsStudentsState.Students) public studentsState$: Observable<StudentsStateModel>;
-  constructor(private store: Ngxs.Store) {}
-  public createStudentsTableConfig(students: IStudent[]): ITableConfig {
-    const headers: ReadonlyArray<string> = this.tableHeaders;
-    const caption: string = "Students list:";
+  constructor(
+    private store: Ngxs.Store,
+    private translate: TranslateService
+  ) {
+
+  }
+  public createStudentsTableConfig(headers: string[], caption: string, students: IStudent[]): ITableConfig {
     return {
-      headers, caption, body: this.createBody(students, headers)
+      headers, caption, body: this.createBody(students, this.tableBodyRowConfig)
     };
   }
   public renderSearch($event: Event): void {
@@ -51,7 +56,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.studentsState$.subscribe(students => {
         student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
       }).unsubscribe();
-      confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
+      confirm(`${this.confirmation.START} ${rowData[1]} ${rowData[2]} ${this.confirmation.END}`);
       this.store.dispatch(new Students.Delete(student));
     }
 
@@ -65,18 +70,33 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
 
   }
   public ngOnInit(): void {
-    this.manager.addSubscription(this.studentsState$.subscribe(students => {
+    combineLatest(
+      this.translate.stream("COMPONENTS"),
+      this.studentsState$
+    ).subscribe(([translations, students]) => {
       this.page = students.currentPage;
       this.itemsPerPage = students.paginationConstant;
+      this.confirmation = translations.STUDENTS.DELETE_CONFIRMATION;
+      console.log(this.confirmation);
       if (students.searchBarInputValue) {
         this.searchPlaceholder = students.searchBarInputValue;
       }
-      if (students.searchedStudents) {
-        this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
-      } else {
-        this.tableConfig = this.createStudentsTableConfig(students.data);
+      if (students.data.length) {
+        if (students.searchedStudents) {
+          this.tableConfig = this.createStudentsTableConfig(
+            translations.STUDENTS.TABLE.HEADERS,
+            translations.STUDENTS.TABLE.CAPTION,
+            students.searchedStudents
+          );
+        } else {
+          this.tableConfig = this.createStudentsTableConfig(
+            translations.STUDENTS.TABLE.HEADERS,
+            translations.STUDENTS.TABLE.CAPTION,
+            students.data
+          );
+        }
       }
-    }));
+    });
   }
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();

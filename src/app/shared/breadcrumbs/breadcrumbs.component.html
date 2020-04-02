@@ -4,7 +4,7 @@
       <ng-container *ngIf="!breadcrumb.params">
         <ng-container >
           <a [routerLink]="breadcrumb.url" class="breadcrumbs__link">
-            {{breadcrumb.label}}
+            {{"NAVIGATION." + (breadcrumb.label | uppercase) | translate}}
           </a>
         </ng-container>
 
@@ -12,7 +12,7 @@
       <ng-container *ngIf="breadcrumb.params">
         <a [routerLink]="[breadcrumb.url, breadcrumb.params]">
           <ng-container *ngIf="breadcrumb.label">
-            {{breadcrumb.label}}
+            {{breadcrumb.label | translate}}
           </ng-container>
         </a>
       </ng-container>

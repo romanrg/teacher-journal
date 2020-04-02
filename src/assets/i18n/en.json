@@ -1,0 +1,86 @@
+{
+  "LOGO": "TEACHER JOURNAL",
+  "NAVIGATION": {
+      "HOME": "Home",
+      "STUDENTS": "Students",
+      "SUBJECTS": "Subjects",
+      "STATISTICS" : "Statistics",
+      "EXPORT" : "Export",
+      "NEW SUBJECT": "Add new subject",
+      "ADD NEW STUDENT": "Add new student",
+      "SUBJECT JOURNAL": "Current subject"
+  },
+  "LOADING": "LOADING",
+  "ERROR": {
+    "TITLE": "Server return:"
+  },
+  "EMPTY_DATA": "No data available...",
+  "REQUIRED_ERROR": "This field is required",
+  "BUTTON_TYPE": {
+    "SUBMIT": "Submit"
+  },
+  "PLACEHOLDERS" : {
+    "SEARCH": "What are you looking for?"
+  },
+  "TABLE": {
+    "PAGINATION": {
+      "BUTTONS": {
+        "FIRST": "Move to the beginning",
+        "LAST": "Move to the last page",
+        "PREV": "Move to the previous page",
+        "NEXT": "Move to the next page",
+        "CURRENT": "Show {{page}} of table"
+      },
+      "SELECT": {
+        "TITLE": "Items per page:"
+      },
+      "PREPOSITION": "from"
+    }
+  },
+  "COMPONENTS": {
+    "EXPORT": {
+      "TITLE": "Export As",
+      "PDF": "Export as PDF-file",
+      "EXCEL": "Export for MS Excel"
+    },
+    "404": {
+      "TITLE": "PAGE IS NOT FOUND",
+      "MESSAGE": "Seems like this page doesn't exist",
+      "LINK": "GO TO THE MAIN PAGE"
+    },
+    "STUDENTS": {
+      "ADD_BTN": "Add new student",
+      "TABLE": {
+        "CAPTION": "Students list:",
+        "HEADERS": ["id", "name", "surname", "address", "description"]
+      },
+      "DELETE_CONFIRMATION": {
+        "START": "Do you want to delete",
+        "END": "from journal?"
+      }
+    }
+  },
+  "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",
+  "FORMS": {
+    "NEW_STUDENT": {
+      "LEGEND": "ADD STUDENT",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "name"
+        },
+        "SURNAME": {
+          "TITLE": "surname"
+        },
+        "ADDRESS": {
+          "TITLE": "address"
+        },
+        "DESCRIPTION": {
+          "TITLE": "description"
+        }
+      }
+    },
+    "ERRORS": {
+      "REQUIRED": "This field is required"
+    }
+  }
+}

@@ -21,7 +21,7 @@ export class FormComponent implements OnInit {
     return new FormGroup(
       this.createFormControlFromConfig(config.formGroupName.formControls)
     );
-  }
+  };
 
   private createFormControlFromConfig(config: IFormControlConfig[]): FormControl {
     let result: any = {};

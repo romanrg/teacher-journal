@@ -46,9 +46,10 @@ import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {MissingTranslationService} from "../common/services/missing-translation.service";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 
-export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
-  return new TranslateLoader(http, "./assets/locale/", ".json");
+export function createTranslateLoader(http: HttpClient): TranslateLoader {
+  return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
 @NgModule({
   declarations: [
@@ -97,16 +98,19 @@ export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
     ),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     TranslateModule.forRoot({
+      defaultLanguage: "en",
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: (createTranslateLoader),
         deps: [HttpClient]
       },
+      /*
       missingTranslationHandler: {
         provide: MissingTranslationHandler,
         useClass: MissingTranslationService
       },
       useDefaultLang: false
+      */
     })
   ],
   providers: [

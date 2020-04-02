@@ -1,0 +1,85 @@
+{
+  "LOGO": "Журнал",
+  "NAVIGATION": {
+    "HOME": "Главная",
+    "STUDENTS": "Студенты",
+    "SUBJECTS": "Предметы",
+    "STATISTICS" : "Статистика",
+    "EXPORT" : "Экспорт",
+    "NEW SUBJECT": "Добавить предмет",
+    "ADD NEW STUDENT": "Добавить студента",
+    "SUBJECT JOURNAL": "Предмет"
+  },
+  "LOADING": "ЗАГРУЗКА",
+  "ERROR": {
+    "TITLE": "Сервер вернул:"
+  },
+  "EMPTY_DATA": "Нет данных...",
+  "BUTTON_TYPE": {
+    "SUBMIT": "Отправить"
+  },
+  "PLACEHOLDERS" : {
+    "SEARCH": "Что ищете?"
+  },
+  "TABLE": {
+    "PAGINATION": {
+      "BUTTONS": {
+        "FIRST": "Перейти в начало",
+        "LAST": "Перейти в конец",
+        "PREV": "Пеейти на предыдущую страницу",
+        "NEXT": "Перейти на следующую",
+        "CURRENT": "Показать {{page}} страницу"
+      },
+      "SELECT": {
+        "TITLE": "Показывать на странице:"
+      },
+      "PREPOSITION": "из"
+    }
+  },
+  "COMPONENTS": {
+    "EXPORT": {
+      "TITLE": "Экспортировать в",
+      "PDF": "ПДФ формат",
+      "EXCEL": "Таблица эксель"
+    },
+    "404": {
+      "TITLE": "СТРАНИЦА НЕ НАЙДЕНА",
+      "MESSAGE": "Похоже что страница не существует",
+      "LINK": "Вернуться на главную"
+    },
+    "STUDENTS": {
+      "ADD_BTN": "Добавить студента",
+      "TABLE": {
+        "CAPTION": "Студенты:",
+        "HEADERS": ["номер", "имя", "фамилия", "адрес", "описание"]
+      },
+      "DELETE_CONFIRMATION": {
+        "START": "Удалить",
+        "END": "из журнала?"
+      }
+    }
+  },
+  "CONFIRMATION_MESSAGE": "Хотите покинуть страницу не сохранив изменения?",
+  "FORMS": {
+    "NEW_STUDENT": {
+      "LEGEND": "Добавить студента",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "имя"
+        },
+        "SURNAME": {
+          "TITLE": "фамилия"
+        },
+        "ADDRESS": {
+          "TITLE": "адрес"
+        },
+        "DESCRIPTION": {
+          "TITLE": "описание"
+        }
+      }
+    },
+    "ERRORS": {
+      "REQUIRED": "Обязательное поле"
+    }
+  }
+}
