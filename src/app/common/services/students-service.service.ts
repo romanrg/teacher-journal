@@ -21,14 +21,14 @@ export class StudentsServiceService {
     });
   }
 
-  public addStudent(student: IStudent): void {
+  public addStudent(student: IStudent): Observable<IStudent> {
     return this.http.post(this.URL, student);
   }
   public fetchStudents(): Observable<IStudent[]> {
     return this.http.get(this.URL);
   }
 
-  public removeStudent(studentId: string): void {
+  public removeStudent(studentId: string): object {
     return this.http.delete(`${this.URL}/${studentId}`);
   }
 }

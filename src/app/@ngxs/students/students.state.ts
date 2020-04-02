@@ -1,12 +1,10 @@
 import { State, Action, StateContext, Selector} from "@ngxs/store";
 import {IStudent} from "../../common/models/IStudent";
-import {GetStudents, DeleteStudent, Students} from "./students.actions";
+import {Students} from "./students.actions";
 import {StudentsServiceService} from "../../common/services/students-service.service";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
-import {of} from "rxjs";
-import {pluck} from "../../common/helpers/lib";
-import {Subjects} from "../subjects/subjects.actions";
+import {Observable, of} from "rxjs";
 
 export class StudentsStateModel {
   public data: IStudent[];
@@ -16,7 +14,7 @@ export class StudentsStateModel {
   public loaded: boolean;
   public paginationConstant: number;
   public currentPage: number;
-  public error: string| Error;
+  public error: (string| Error)|null;
 }
 
 @State<StudentsStateModel>({
@@ -46,7 +44,7 @@ export class NgxsStudentsState {
     return state;
   }
   @Action(Students.Get)
-  public getStudents({getState, setState, dispatch}: StateContext<StudentsStateModel>): void {
+  public getStudents({getState, setState, dispatch}: StateContext<StudentsStateModel>): Observable<IStudent[]> {
     setState({
       ...getState(),
       loading: true,
@@ -64,7 +62,7 @@ export class NgxsStudentsState {
   }
 
   @Action(Students.Create)
-  public createStudent({getState, setState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: IStudent): void {
+  public createStudent({getState, setState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: IStudent): Observable<IStudent> {
     setState({
       ...getState(),
       loading: true,
@@ -89,7 +87,7 @@ export class NgxsStudentsState {
   }
 
   @Action(Students.Delete)
-  public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
+  public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): object {
     setState({
       ...getState(),
       loading: true,
@@ -102,7 +100,7 @@ export class NgxsStudentsState {
             data: getState().data.filter(student => student.id !== payload.id),
             loading: false,
             loaded: true
-          })
+          });
         }
       ),
       retry(3),
@@ -115,7 +113,7 @@ export class NgxsStudentsState {
   }
 
   @Action(Students.Search)
-  public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): void {
+  public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): Observable<IStudent[]> {
     return this.studentsService.searchStudent(payload).pipe(
       tap(apiResponse =>  setState({
         ...getState(),
@@ -139,14 +137,7 @@ export class NgxsStudentsState {
   }
   @Action(Students.ChangePagination)
   public changePagination({setState}: StateContext<StudentsStateModel>, {payload}: number): void {
-      setState(state => ({...state, paginationConstant: payload}));
+    setState(state => ({...state, paginationConstant: payload}));
   }
-  /*
-  @Action(Students.Sort)
-  public sortStudents({getState, dispatch}: StateContext<StudentsStateModel>): void {
-    const map = Object.values(pluck(getState().data, "id")).map((id, i) => ({[id]: i}));
-    dispatch(new Subjects.GetSortingMap(map));
-  }
-  */
 }
 

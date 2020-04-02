@@ -1,9 +1,11 @@
+import {Teacher} from "./ITeacher";
+
 export interface ISubject {
   name: string;
   teacher: ITeacher | string;
   address?: string;
   description?: string;
-  id: string | number;
+  id?: string | number;
   uniqueDates?: number[];
 }
 

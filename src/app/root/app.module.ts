@@ -30,7 +30,7 @@ import {AsyncPipe, DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
@@ -38,14 +38,18 @@ import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
-import {TranslateModule} from "@ngx-translate/core";
+import {MissingTranslationHandler, TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {NgxsModule} from "@ngxs/store";
 import {environment} from "../../environments/environment";
 import {NgxsStudentsState} from "../@ngxs/students/students.state";
 import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
+import {MissingTranslationService} from "../common/services/missing-translation.service";
 
+export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
+  return new TranslateLoader(http, "./assets/locale/", ".json");
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,7 +95,19 @@ import {NgxsMarksState} from "../@ngxs/marks/marks.state";
       [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState],
       { developmentMode: !environment.production }
     ),
-    NgxsReduxDevtoolsPluginModule.forRoot()
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: MissingTranslationService
+      },
+      useDefaultLang: false
+    })
   ],
   providers: [
     ExitFormGuard,
