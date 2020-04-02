@@ -249,7 +249,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subject = state.current;
         // this.subjectHeadersConstantNames = ;
         this.subjectTableConfig = {
-          caption: `${this.subject.name} ${translations.CAPTION}:`,
+          caption: `${translations.CAPTION}:`,
           headers: translations.HEADERS,
           body: this.tableBody.body
         };

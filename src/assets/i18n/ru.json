@@ -8,7 +8,7 @@
     "EXPORT" : "Экспорт",
     "NEW SUBJECT": "Добавить предмет",
     "ADD NEW STUDENT": "Добавить студента",
-    "SUBJECT JOURNAL": "Предмет"
+    "SUBJECT JOURNAL": "Журнал"
   },
   "LOADING": "ЗАГРУЗКА",
   "ERROR": {
@@ -121,7 +121,7 @@
     "CHANGE_TEACHER": {
       "LEGEND": "изменить учителя",
       "ERRORS": "Обязательное поле",
-      "DESCRIPTION": "учитель"
+      "DESCRIPTION": "ф.и.о:"
     },
     "ERRORS": {
       "REQUIRED": "Обязательное поле"

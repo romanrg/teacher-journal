@@ -8,7 +8,7 @@
       "EXPORT" : "Export",
       "NEW SUBJECT": "Add new subject",
       "ADD NEW STUDENT": "Add new student",
-      "SUBJECT JOURNAL": "Current subject"
+      "SUBJECT JOURNAL": "journal"
   },
   "LOADING": "LOADING",
   "ERROR": {
@@ -122,7 +122,7 @@
     "CHANGE_TEACHER": {
       "LEGEND": "change teacher",
       "ERRORS": "This field is required",
-      "DESCRIPTION": "teacher"
+      "DESCRIPTION": "full name:"
     },
     "ERRORS": {
       "REQUIRED": "This field is required"
