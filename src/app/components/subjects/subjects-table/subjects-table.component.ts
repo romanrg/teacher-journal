@@ -7,7 +7,7 @@ import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Gener
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
-import {_dispatcherNgxs, pluck} from "../../../common/helpers/lib";
+import {_compose, _dispatcherNgxs, _partial, copyByJSON, nodeCrawler, NodeCrawler, pluck} from "../../../common/helpers/lib";
 import {Teacher} from "../../../common/models/ITeacher";
 
 
@@ -20,10 +20,11 @@ import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
 import {combineLatest, Observable} from "rxjs";
 import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
-import {map, tap} from "rxjs/internal/operators";
+import {map, timestamp} from "rxjs/internal/operators";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
+import {select} from "@ngrx/store";
 
 @Component({
   selector: "app-subjects-table",
@@ -34,7 +35,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
   // config related
   public subjectTableConfig: ITableConfig;
-  public subjectHeadersConstantNames: string[] = ["name", "surname", "average mark"];
   public tableBody: TableBody;
   public teacherConfig: Teacher;
   public sortingState: {col: number, times: number};
@@ -68,7 +68,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private actions$: Actions,
     private translate: TranslateService
   ) {
-    this.listeners = new WeakSet();
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer, this.translate);
     this.dateGenerator = new DatePicker(this.renderer, this.translate);
@@ -93,11 +92,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         errors
       });
     });
+
     this.isLoad$ = store
       .select(state => Object.keys(state)
         .map(key => state[key].loading)
         .some(load => load)
       );
+
     this.store.dispatch([new Subjects.ChangeCurrentPage(1), new Subjects.SetSortedColumn(null)]);
     this.stateChangesForBtn$ = this.actions$.pipe(
       ofActionDispatched(
@@ -118,20 +119,28 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
   // helpers
   public getCellIndex(target: EventTarget): number {
-    return +target.parentNode.getAttribute("index");
+    const crawler: NodeCrawler = new NodeCrawler(target);
+    const predicate: Function = (el) => el.getAttribute("index") !== null;
+    return +_compose(_partial(crawler.executeDOMAttr, "getAttribute", "index"), crawler.crawlUntilTrue)(predicate);
   }
 
   // teacher methods
   public changeTeacher($event: Event): void {
-    const patchedSubject: ISubject = {...this.subject};
-    patchedSubject.teacher = $event[this.teacherConfig.configName];
-    this.store.dispatch(new Subjects.ChangeTeacher(patchedSubject));
+    const changeTeacherName: Function = (newTeacher: string) => (copySubject: ISubject) => {
+      copySubject.teacher = newTeacher;
+      return copySubject;
+    };
+    _compose(
+      _dispatcherNgxs(this.store, Subjects.ChangeTeacher),
+      changeTeacherName($event[this.teacherConfig.configName]),
+      copyByJSON
+    )(this.subject);
   }
 
   // add new date and mark
   public handleClickEvents(target: EventTarget): void {
     if (
-      this.dateGenerator.shouldAddDateInput(target, this.subjectHeadersConstantNames)
+      this.dateGenerator.shouldAddDateInput(target, this.tableBodyConfigData)
     ) {
       this.dateGenerator.generateDatePicker(
         target,
@@ -140,10 +149,12 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.submitDate(_dispatcherNgxs(this.store, Subjects.AddDate), this.subject)
       );
     } else if (
-      this.numberGenerator.shouldAddNumberInput(target, this.subjectHeadersConstantNames, this.getCellIndex(target))
+      this.numberGenerator.shouldAddNumberInput(target, this.tableBodyConfigData, this.getCellIndex(target))
     ) {
       let student: IStudent;
-      const clickRow: HTMLElement[] = [...target.parentNode.parentNode.children];
+      const predicate: Function = (el) => el.classList.contains("table-row");
+      const crawler: NodeCrawler = new NodeCrawler(target);
+      const clickRow: HTMLElement[] = _compose(crawler.getChildsArray, crawler.crawlUntilTrue)(predicate);
       this.state$.subscribe(
         state => student = state.students
           .filter(stud => stud.name === clickRow[0].textContent && stud.surname === clickRow[1].textContent)[0]
@@ -173,7 +184,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     } else if (
       this.dateGenerator.isDeleteDateButton(target)
     ) {
-      const uniqueIndex: number = this.getCellIndex(target.parentNode.parentNode);
+      const uniqueIndex: number = this.getCellIndex(target);
       const timestamp: number = this.subjectTableConfig.headers[uniqueIndex];
       let needToDelete: string[] = [];
       const patchedSubject: ISubject = {...this.subject};
@@ -186,16 +197,21 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
   public submitDate(dispatch: Function, subject: ISubject): void {
     return function(value: string): void {
-      const copy: ISubject = JSON.parse(JSON.stringify(subject));
-      copy.uniqueDates.push((new Date(value)).getTime());
-      dispatch(copy);
+      const time: number = (new Date(value)).getTime();
+      const addTimeStamp: Function = (date: number) => (copy: ISubject) => {
+        copy.uniqueDates = [...copy.uniqueDates, date];
+        return copy;
+      };
+      _compose(dispatch, addTimeStamp(time), copyByJSON)(subject);
     };
   }
   public submitMark(dispatch: Function, mark: Mark): void {
     return function (value: number): void {
-      const copy: Mark = JSON.parse(JSON.stringify(mark));
-      copy.value = +value;
-      dispatch(copy);
+      const addValue: Function = (_value: string) => (copy: Mark) => {
+        copy.value = +_value;
+        return mark;
+      };
+      _compose(dispatch, addValue(value), copyByJSON)(mark);
     };
   }
   // handle pagination
@@ -248,7 +264,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subject = state.current;
         // this.subjectHeadersConstantNames = ;
         this.subjectTableConfig = {
-          caption: `${translations.CAPTION}:`,
+          caption: `${this.subject.name}:`,
           headers: translations.HEADERS,
           body: this.tableBody.body
         };

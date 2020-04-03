@@ -1,7 +1,7 @@
 import {State, Action, StateContext, Selector} from "@ngxs/store";
 import {GetStudents, DeleteStudent, Students} from "./students.actions";
 import {Injectable} from "@angular/core";
-import {MarksServiceService} from "../../common/services/marks-service.service";
+import {MarksServiceService} from "../../common/services/marks.service";
 import {Marks} from "./marks.actions";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {forkJoin, of} from "rxjs";
@@ -46,7 +46,7 @@ export class NgxsMarksState {
     });
     return this.marksService.getMarks().pipe(
       tap(apiResponse => {
-        return setState({...getState(), data: [...apiResponse].filter(({subject}) => subject !== null), loading: false, loaded: true});
+        return setState({...getState(), data: [...apiResponse.flat(1)].filter(({subject}) => subject !== null), loading: false, loaded: true});
       }),
       retry(3),
       catchError(error => of(dispatch(new Marks.GetError(error))))
@@ -76,7 +76,8 @@ export class NgxsMarksState {
   }
   @Action(Marks.Patch)
   public patchMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
-    const getOld: Function = mark => mark.subject === payload.subject && mark.student === payload.student && mark.time === payload.time;
+    const getOld: Function = (mark: Mark)
+      => mark.subject === payload.subject && mark.student === payload.student && mark.time === payload.time;
     const prePatchMark: Mark  = getState().data.filter(getOld)[0];
     const postPatchMark: Mark = {...payload};
     postPatchMark.id = prePatchMark.id;
@@ -114,14 +115,22 @@ export class NgxsMarksState {
 
   @Action(Marks.Submit)
   public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
-    console.log(this.marksService.getMemory());
+    /*
+    const batchForPost: Mark[] = [];
+    const singularitiesForPut: Mark[] = [];
+    this.marksService.getMemory().forEach(mark => mark.id ? singularitiesForPut.push(mark) : batchForPost.push(mark));
+    return forkJoin([
+      batchForPost.length ? this.marksService.submitMark(batchForPost) : null,
+      singularitiesForPut.length ? this.marksService.patchMark(singularitiesForPut) : null
+    ]).pipe(
+      tap(response => console.log(response))
+    )*/
 
     return forkJoin(this.marksService.getMemory().map(mark => {
       setState(patch({
         loading: true,
         loaded: false
       }));
-      console.log(mark);
         if (mark.id) {
           return this.marksService.patchMark(mark);
         } else {
@@ -143,7 +152,6 @@ export class NgxsMarksState {
       retry(3),
       catchError(error => dispatch(new Marks.SubmitError(error)))
     );
-
   }
 
   @Action(Marks.SubmitError)

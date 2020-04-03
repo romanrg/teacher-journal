@@ -38,14 +38,13 @@ import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
-import {MissingTranslationHandler, TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {NgxsModule} from "@ngxs/store";
 import {environment} from "../../environments/environment";
 import {NgxsStudentsState} from "../@ngxs/students/students.state";
 import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
-import {MissingTranslationService} from "../common/services/missing-translation.service";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {

@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector} from "@ngxs/store";
 import {IStudent} from "../../common/models/IStudent";
 import {Students} from "./students.actions";
-import {StudentsServiceService} from "../../common/services/students-service.service";
+import {StudentsServiceService} from "../../common/services/students.service";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";

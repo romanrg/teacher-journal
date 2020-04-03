@@ -129,9 +129,6 @@ export class DatePicker extends Generator {
     return {unlistener, target: form, type: "submit"};
   }
 }
-
-
-
 export class NumberPicker extends Generator {
   public btnText: string;
   constructor(private renderer: Renderer2, min: number, max: number, translate: TranslateService) {

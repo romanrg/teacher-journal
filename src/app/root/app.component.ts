@@ -18,6 +18,7 @@ import {TranslateService} from "@ngx-translate/core";
   styleUrls: ["./app.component.sass"]
 })
 export class AppComponent implements OnInit {
+  public langOptions: [string, string] = ["ru", "en"];
   public isLoad$: Observable<boolean> = store
     .select(state => Object.keys(state)
       .map(key => state[key].loading)
@@ -32,10 +33,10 @@ export class AppComponent implements OnInit {
     private translateService: TranslateService
   ) {
     this.store.dispatch([new Students.Get(), new Subjects.Get(), new Marks.Get()]);
-    this.translateService.setDefaultLang("en");
-    this.translateService.use("en");
+    this.translateService.setDefaultLang(navigator.language);
+    this.translateService.use(navigator.language);
   }
   public isAnyErrorOccur = (errors: (string|Error)[]): boolean => errors.some(err => err);
-
+  public getDefaultLang = () => navigator.language;
   public dispatchLanguage = ($event: Event): void => this.translateService.use($event.target.value);
 }

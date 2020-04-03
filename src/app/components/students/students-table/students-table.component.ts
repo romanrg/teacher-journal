@@ -12,6 +12,7 @@ import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/stu
 import {Students} from "../../../@ngxs/students/students.actions";
 import {TranslateService} from "@ngx-translate/core";
 import {switchMap} from "rxjs/internal/operators";
+import {_partial} from "../../../common/helpers/lib";
 
 @Component({
   selector: "app-students-table",
@@ -35,7 +36,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   ) {
 
   }
-  public createStudentsTableConfig(headers: string[], caption: string, students: IStudent[]): ITableConfig {
+  public createStudentsTableConfig = (headers: string[], caption: string, students: IStudent[]): ITableConfig => {
     return {
       headers, caption, body: this.createBody(students, this.tableBodyRowConfig)
     };
@@ -43,12 +44,12 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public renderSearch($event: Event): void {
     this.store.dispatch(new Students.Search($event));
   }
-  public createBody(students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> {
+  public createBody = (students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> => {
     this.tableBody.clear();
     this.tableBody.generateBodyFromDataAndConfig(config, students);
     this.tableBody.changeAllValuesAtIndexWithArrayValues(0, this.tableBody.generateIdArray(students.length));
     return this.tableBody.body;
-  }
+  };
   public deleteStudent($event: Event): void {
     if ($event.target.parentNode.getAttribute("data")) {
       const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
@@ -77,24 +78,18 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.page = students.currentPage;
       this.itemsPerPage = students.paginationConstant;
       this.confirmation = translations.STUDENTS.DELETE_CONFIRMATION;
-      console.log(this.confirmation);
       if (students.searchBarInputValue) {
         this.searchPlaceholder = students.searchBarInputValue;
       }
       if (students.data.length) {
-        if (students.searchedStudents) {
-          this.tableConfig = this.createStudentsTableConfig(
-            translations.STUDENTS.TABLE.HEADERS,
-            translations.STUDENTS.TABLE.CAPTION,
-            students.searchedStudents
-          );
-        } else {
-          this.tableConfig = this.createStudentsTableConfig(
-            translations.STUDENTS.TABLE.HEADERS,
-            translations.STUDENTS.TABLE.CAPTION,
-            students.data
-          );
-        }
+        const _createStudentsTableConfig: Function = _partial(
+          this.createStudentsTableConfig,
+          translations.STUDENTS.TABLE.HEADERS,
+          translations.STUDENTS.TABLE.CAPTION
+        );
+        this.tableConfig = students.searchedStudents ?
+          _createStudentsTableConfig(students.searchedStudents) :
+          _createStudentsTableConfig(students.data);
       }
     });
   }

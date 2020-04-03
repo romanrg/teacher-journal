@@ -11,7 +11,7 @@ import {Mark} from "../../common/models/IMark";
 import {append, iif, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Marks} from "../marks/marks.actions";
 import {Students} from "../students/students.actions";
-import {MarksServiceService} from "../../common/services/marks-service.service";
+import {MarksServiceService} from "../../common/services/marks.service";
 
 export class SubjectsStateModel {
   public data: ISubject[];

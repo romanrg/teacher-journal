@@ -20,15 +20,10 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
       .map(key => state[key].loading)
       .some(load => load)
     );
-  constructor(
-    private store: Ngxs.Store,
-  ) {
-
-  }
+  constructor(private store: Ngxs.Store) {}
   public deleteSubject($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");
     this.store.dispatch(new Subjects.Delete(subjName));
   }
-  public ngOnInit(): void {
-  }
+  public ngOnInit(): void {}
 }

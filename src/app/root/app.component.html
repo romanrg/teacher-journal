@@ -1,3 +1,4 @@
+<!--[selected]="navigator.language === 'en'"-->
 <div class="wrapper">
   <div class="container">
     <h1 class="logo">
@@ -5,8 +6,12 @@
     </h1>
     <app-navigation></app-navigation>
     <select class="language__select" (change)="dispatchLanguage($event)">
-      <option class="language__option">en</option>
-      <option class="language__option">ru</option>
+      <option
+        *ngFor="let langOption of langOptions"
+        [value]="langOption"
+        [selected]="getDefaultLang() === langOption"
+        class="language__option"
+      >{{langOption}}</option>
     </select>
   </div>
   <app-breadcrumbs class="breadcrumbs"></app-breadcrumbs>

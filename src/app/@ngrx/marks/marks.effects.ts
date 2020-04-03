@@ -5,7 +5,7 @@ import * as MarksActions from "./marks.actions";
 import {Observable, of} from "rxjs";
 import { switchMap } from "rxjs/operators";
 import {catchError, map, retry} from "rxjs/internal/operators";
-import {MarksServiceService} from "../../common/services/marks-service.service";
+import {MarksServiceService} from "../../common/services/marks.service";
 
 @Injectable()
 export class MarksEffects {

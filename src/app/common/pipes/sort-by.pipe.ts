@@ -3,23 +3,23 @@ import {row} from "../models/ITableConfig";
 @Pipe({
   name: "sortBy"
 })
-
+type sortingRow = row;
+type unsortedArray = sortingRow[];
+type sortedArray = sortingRow[];
+type comparativeIndex = number;
 enum splicedArray {valued, empty}
 enum auxMap {row, position}
 enum sortingCb {
   number = (index: comparativeIndex): Function => (a: auxMap, b: auxMap) => b.row[index] - a.row[index],
   string = (index: comparativeIndex): Function => (a: auxMap, b: auxMap) => a.row[index].localeCompare(b.row[index])
 }
-type sortingRow = row;
-type unsortedArray = sortingRow[];
-type sortedArray = sortingRow[];
-type comparativeIndex = number;
+
 export class SortByPipe implements PipeTransform {
   public spliceValuedAndEmpty = (arr: unsortedArray, index: comparativeIndex): splicedArray => {
     let result: splicedArray = {valued: [], empty: []};
-    arr.map(row => row[index] ? result.valued.push(row) : result.empty.push(row));
+    arr.map((row: row) => row[index] ? result.valued.push(row) : result.empty.push(row));
     return result;
-  };
+  }
   public getAuxMapFromSortedArray: Function = (arr: valuedArray
   ): auxMap[] => arr.map((row: sortingRow, position: number) => ({position, row}))
   public isAnyStringValuesForComparision: Function = (

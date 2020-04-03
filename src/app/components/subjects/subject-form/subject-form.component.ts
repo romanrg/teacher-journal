@@ -4,7 +4,6 @@ import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {ISubject} from "../../../common/models/ISubject";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
-import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {Observable} from "rxjs";
 
 // ngxs
@@ -35,54 +34,8 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
     this.store.dispatch(new Subjects.Create($event));
     this.router.navigate(["/subjects"]);
   }
-  public canDeactivate(): boolean | Observable<boolean> {
-    if (this.isSaved === false) {
-      return confirm(this.confirm);
-    } else {
-      return true;
-    }
-  }
+  public canDeactivate = (): boolean | Observable<boolean> => this.isSaved ?  true : confirm(this.confirm);
   public ngOnInit(): void {
-    /*
-    const errorMessages: string[] = ["This field is required"];
-    this.formConfig = {
-      legend: "Add New Subject",
-      formGroupName: {
-        name: "form",
-        formControls: [
-          {
-            name: "name",
-            initialValue: "",
-            type: FormControlType.text,
-            validators: [Validators.required],
-            errorMessages,
-          },
-          {
-            name: "teacher",
-            initialValue: "",
-            type: FormControlType.text,
-            validators: [Validators.required],
-            errorMessages,
-          },
-          {
-            name: "address",
-            initialValue: "",
-            type: FormControlType.text,
-            validators: [],
-            errorMessages,
-          },
-          {
-            name: "description",
-            initialValue: "",
-            type: FormControlType.textarea,
-            validators: [],
-            errorMessages: errorMessages
-          }
-        ]
-      }
-
-    };
-    */
     this.translate.stream("FORMS").subscribe(data => {
       this.translations = data;
       const errorMessages: string[] = [this.translations.ERRORS.REQUIRED];

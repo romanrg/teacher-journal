@@ -81,7 +81,4 @@ export class TableBody {
         }
       });
   }
-  public deleteColumn(columnPosition: number): void {
-    this.body.forEach(bodyRow => bodyRow.splice(columnPosition, 1));
-  }
 }
