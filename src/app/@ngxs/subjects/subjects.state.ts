@@ -184,7 +184,6 @@ export class NgxsSubjectsState implements NgxsOnChanges{
         setState(patch({sortedColumn: {col: payload, times}})) :
         setState(patch({sortedColumn: {col: payload, times: 1}}));
     }
-    dispatch(new Students.Sort());
   }
 
 

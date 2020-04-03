@@ -21,6 +21,7 @@ export class MarksServiceService {
   }
 
   public submitMark(mark: Mark): Observable<Mark[]> {
+    console.log(mark);
     return this.http.post(this.URL, mark);
   }
   public getMarks(): Observable<Mark> {
@@ -46,7 +47,6 @@ export class MarksServiceService {
   }
   public removeHash(item: Mark): boolean {
     const key: string = this.keyGenerator(item, ["id", "value"]);
-
     if (item.id) {
       this.memory.remove(key);
       const shallowCopy: Mark = {...item};
@@ -64,6 +64,13 @@ export class MarksServiceService {
     this.memory.print();
   }
   public keyGenerator(mark: Mark, filteredProps: string[]): string {
-    return JSON.stringify(Object.fromEntries(Object.entries(mark).filter(([key, value]) => !filteredProps.includes(key))));
+    return JSON.stringify(
+      Object.fromEntries(
+        Object
+          .entries(mark)
+          .filter(([key, value]) => !filteredProps.includes(key)
+          )
+      )
+    );
   }
 }

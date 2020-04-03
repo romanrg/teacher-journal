@@ -56,7 +56,6 @@ export class Generator {
   public generateSubmitBtn(): any {
     const submitBtn: any = this.generateElement("button");
     this.generateAttributes(submitBtn, {type: "submit"});
-    console.log(this.btnText);
     this.appendChild(submitBtn, this.renderer.createText(this.btnText));
     this.renderer.addClass(submitBtn, "generated-submit");
     return submitBtn;

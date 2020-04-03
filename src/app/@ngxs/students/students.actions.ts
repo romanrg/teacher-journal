@@ -39,8 +39,5 @@ export namespace Students {
     public static readonly type = "[Students Table] Change Current Page";
     constructor(public payload: number){}
   }
-  export class Sort {
-    public static readonly type = "[Subjects State] Sort";
-  }
 }
 

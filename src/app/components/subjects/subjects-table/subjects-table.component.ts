@@ -209,8 +209,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
   // handle sorting
   public setSortedColumnName($event: number): void {
-    // this.store.dispatch(new Subjects.SetSortedColumn($event));
-    console.log($event);
+    this.store.dispatch(new Subjects.SetSortedColumn($event));
   }
   // merge all data for table;
   public preRenderTable(state: SubjectTableState): void {
@@ -292,7 +291,4 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public ngOnDestroy(): void {
     this.manager.removeAllSubscription();
   }
-
-
-
 }

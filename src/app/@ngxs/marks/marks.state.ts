@@ -1,13 +1,11 @@
-import {State, Action, StateContext, Selector, getValue} from "@ngxs/store";
+import {State, Action, StateContext, Selector} from "@ngxs/store";
 import {GetStudents, DeleteStudent, Students} from "./students.actions";
 import {Injectable} from "@angular/core";
 import {MarksServiceService} from "../../common/services/marks-service.service";
 import {Marks} from "./marks.actions";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {forkJoin, of} from "rxjs";
-import {append, compose, insertItem, patch, removeItem, updateItem} from "@ngxs/store/operators";
-import {SubjectsService} from "../../common/services/subjects.service";
-import {Subjects} from "../subjects/subjects.actions";
+import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
 
 export class MarksStateModel {
@@ -64,64 +62,24 @@ export class NgxsMarksState {
     return setState(patch({
       data: append([payload]),
     }));
-    /*
-    setState({
-      ...getState(),
-      loading: true,
-      loaded: false,
-    });
-    */
-    /*
-    return this.marksService.submitMark(payload).pipe(
-      tap(apiResponse => {
-        return setState(
-          patch({
-            data: append([apiResponse]),
-            loading: false,
-            loaded: true
-          })
-        );
-      }),
-      retry(3),
-      catchError(error => of(dispatch(new Marks.CreateError(error))))
-    );
-    */
+
   }
   @Action(Marks.CreateError)
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
-    /*
-    setState({
-      ...getState(),
-      loading: true,
-      loaded: false,
-    });
-    */
+
     setState(patch({
         data: removeItem(mark => mark.id === payload.id)
     }));
     dispatch(new Marks.RemoveFromTheHashTable(payload));
-    /*
-    return this.marksService.deleteMarks(payload.id).pipe(
-      tap(apiResponse => {
-        return setState(
-          patch({
-            data: removeItem(mark => mark.id === payload),
-            loading: false,
-            loaded: true
-          })
-        );
-      }),
-      retry(3),
-      catchError(error => of(dispatch(new Marks.DeleteError(error))))
-    );
-    */
+
   }
   @Action(Marks.Patch)
   public patchMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     const getOld: Function = mark => mark.subject === payload.subject && mark.student === payload.student && mark.time === payload.time;
     const prePatchMark: Mark  = getState().data.filter(getOld)[0];
     const postPatchMark: Mark = {...payload};
+    postPatchMark.id = prePatchMark.id;
     setState(patch({
       data: updateItem(getOld, postPatchMark)
     }));
@@ -156,15 +114,18 @@ export class NgxsMarksState {
 
   @Action(Marks.Submit)
   public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
+    console.log(this.marksService.getMemory());
+
     return forkJoin(this.marksService.getMemory().map(mark => {
       setState(patch({
         loading: true,
         loaded: false
       }));
+      console.log(mark);
         if (mark.id) {
-          return this.marksService.patchMark(mark)
+          return this.marksService.patchMark(mark);
         } else {
-          return this.marksService.submitMark(mark)
+          return this.marksService.submitMark(mark);
         }
       })).pipe(
       tap(apiResponse => {
@@ -182,6 +143,7 @@ export class NgxsMarksState {
       retry(3),
       catchError(error => dispatch(new Marks.SubmitError(error)))
     );
+
   }
 
   @Action(Marks.SubmitError)
