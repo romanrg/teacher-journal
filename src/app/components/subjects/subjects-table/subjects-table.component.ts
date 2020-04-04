@@ -184,9 +184,15 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     const _generateNumberPicker: Function = _partial(this.numberGenerator.generateNumberPicker, target);
 
     const updateStamps: Function = (stamp: number) => (patchedSubject: ISubject): ISubject => {
+
       patchedSubject.uniqueDates = filterForTimestamps(stamp)(patchedSubject.uniqueDates);
-      this.state$.subscribe(state => needToDelete = filterForDeletedTimestamps(timestamp, patchedSubject)(state.marks)).unsubscribe();
+
+      this.state$.subscribe(
+        state => needToDelete = filterForDeletedTimestamps(timestamp, patchedSubject)(state.marks)
+      ).unsubscribe();
+
       return [needToDelete, patchedSubject];
+
     };
 
     if (this.dateGenerator.shouldAddDateInput(target, this.tableBodyConfigData)) {
@@ -211,9 +217,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     }
   }
+
   public submitDate = (dispatch: Function, subject: ISubject): void => (value: string): void => {
 
       const time: number = (new Date(value)).getTime();
+
       const addTimeStamp: Function = (date: number) => (copy: ISubject) => {
         copy.uniqueDates = [...copy.uniqueDates, date];
         return copy;
@@ -233,21 +241,26 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   };
   // handle pagination
   public dispatchPaginationState($event: Event): void {
-    if ($event.paginationConstant) {
-      this.store.dispatch(new Subjects.ChangePagination($event.paginationConstant));
-    } else {
-      this.store.dispatch(new Subjects.ChangeCurrentPage($event.currentPage));
-    }
 
+    if ($event.paginationConstant) {
+
+      this.store.dispatch(new Subjects.ChangePagination($event.paginationConstant));
+
+    } else {
+
+      this.store.dispatch(new Subjects.ChangeCurrentPage($event.currentPage));
+
+    }
   }
   // handle sorting
-  public setSortedColumnName($event: number): void {
-    this.store.dispatch(new Subjects.SetSortedColumn($event));
-  }
+  public setSortedColumnName = ($event: number): void => this.store.dispatch(new Subjects.SetSortedColumn($event));
   // merge all data for table;
   public preRenderTable(state: SubjectTableState): void {
+
     this.tableBody.clear();
+
     const config: string|number[] = [...this.tableBodyConfigData, ...this.subject.uniqueDates];
+
     state.students.map((student, index) => {
       this.tableBody.generateRowByRow(student, config);
       this.tableBody.addStudentMark(state.marks, student, index, config);
@@ -257,19 +270,25 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public applyChanges = (): void => this.store.dispatch(new Subjects.Submit());
 
   public pushHeaders(): void {
+
     this.translate.stream("COMPONENTS").subscribe(data => {
+
       this.subjectTableConfig.headers.push(data.SUBJECTS.TABLE.FORMS.DATE.SELECT);
+
     }).unsubscribe();
   }
   public canDeactivate = (): boolean | Observable<boolean> => this.confirm ? confirm(CONFIRMATION_MESSAGE) : true;
 
   // life cycle
   public ngOnInit(): void {
+
     this.manager.addSubscription(combineLatest(
       this.translate.stream("COMPONENTS"),
       this.state$
     ).subscribe(([componentTranslations, state]) => {
+
       const translations: any = componentTranslations.SUBJECTS.TABLE;
+
       if (state.loaded) {
         // initialize subject
         this.subject = state.current;
@@ -300,21 +319,29 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subjectTableConfig.headers = [...translations.HEADERS, ...datesPartOfHeaders];
         /// handle data from sources for table
         this.preRenderTable(state);
+
         if (this.sortingState === null || this.sortingState.times % 3 === 0) {
+
           return;
+
         } else if (this.sortingState.times % 2 === 0) {
+
           this.tableBody.body = this.sortPipe.transform(this.tableBody.body, this.sortingState.col, false);
+
         } else {
+
           this.tableBody.body = this.sortPipe.transform(this.tableBody.body, this.sortingState.col, true);
+
         }
+
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
     if (this.marks) {
+
       this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
+
     }
   }
-  public ngOnDestroy(): void {
-    this.manager.removeAllSubscription();
-  }
+  public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }
