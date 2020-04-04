@@ -9,8 +9,10 @@ export const _compose: Function = (...fns) =>
   (...args) =>
     fns.reduceRight((acc, curr) => Array.isArray(acc) ? curr(...acc) : curr(acc), args);
 export const copyByJSON: Function = (original: any): any => _compose(JSON.parse, JSON.stringify)(original);
-export const _curry: Function = (fn) => (...args) => fn.length ? _curry(fn.bind(this, ...args)) : fn.call(this, ...args);
+export const _curry: Function = (fn) => (...args) => fn.length ? _curry(fn.bind(null, ...args)) : fn.call(null, ...args);
 export const _allPass: Function = (...predicates: Function[]) => (element) => predicates.every(predicate => predicate === true);
+
+export const __filter: Function = (predicate: Function) => (source: Array) => source.filter(predicate);
 export class NodeCrawler {
   constructor (node: HTMLElement) {
     this.node = node;

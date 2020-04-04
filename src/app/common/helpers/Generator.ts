@@ -144,7 +144,7 @@ export class NumberPicker extends Generator {
     });
   }
 
-  public generateNumberPicker(element: any, onsubmitAction: Function): void {
+  public generateNumberPicker = (element: any, onsubmitAction: Function): void  => {
     const container: ParentNode = element.parentNode;
     this.removeChild(container, element);
     const form: any = this.generateForm();

@@ -8,6 +8,7 @@ import {forkJoin, of} from "rxjs";
 import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
 import {_allPass, _allTrue, _compose, copyByJSON} from "../../common/helpers/lib";
+import {Equalities} from "../../common/models/filters";
 
 export class MarksStateModel {
   public data: Mark[];
@@ -29,11 +30,7 @@ export class MarksStateModel {
   providedIn: "root"
 })
 export class NgxsMarksState {
-  public equalMark: Function = (payload) => _allTrue(
-    ({student}) => student === payload.student,
-    ({subject}) => subject === payload.subject,
-    ({time}) => time === payload.time,
-  );
+  public equalMark: Equalities.Marks = Equalities.Marks;
   constructor(
     private marksService: MarksServiceService
   ) {}
@@ -64,7 +61,6 @@ export class NgxsMarksState {
   }
   @Action(Marks.Create)
   public createMark({setState, dispatch, getState}: StateContext<MarksStateModel>, {payload}: Mark): void {
-    console.log(getState());
     dispatch(new Marks.AddToTheHashTable(payload));
     return setState(patch({
       data: append([payload]),
@@ -145,11 +141,6 @@ export class NgxsMarksState {
       tap(apiResponse => {
         this.marksService.clearMemory();
         if (getState().data.filter(mark => !mark.id).length !== 0) {
-          console.log(
-            apiResponse.filter(mark => mark.subject !== null),
-            getState().data.filter(mark => mark.id),
-            getState()
-          )
           const newData: Mark[] = [
             ...apiResponse.filter(mark => mark.subject !== null),
             ...getState().data.filter(mark => mark.id)

@@ -141,9 +141,9 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     return dispatch(new Subjects.Update(payload));
   }
   @Action(Subjects.DeleteDate)
-  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject, marks}: ISubject): void {
-    dispatch(new Subjects.Update(subject));
-    marks.forEach(mark => {
+  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject}: ISubject): void {
+    dispatch(new Subjects.Update(subject.subject));
+    subject.marks.forEach(mark => {
       dispatch(new Marks.Delete(mark));
     });
   }
