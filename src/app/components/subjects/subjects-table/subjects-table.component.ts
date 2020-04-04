@@ -7,7 +7,10 @@ import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Gener
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
 import {IMark, Mark} from "../../../common/models/IMark";
-import {_compose, _dispatcherNgxs, _partial, copyByJSON, nodeCrawler, NodeCrawler, pluck} from "../../../common/helpers/lib";
+import {
+  _compose, _dispatcherNgxs, _partial, copyByJSON, nodeCrawler, NodeCrawler, _pluck, _allPass,
+  _take
+} from "../../../common/helpers/lib";
 import {Teacher} from "../../../common/models/ITeacher";
 
 
@@ -18,13 +21,13 @@ import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
-import {combineLatest, Observable} from "rxjs";
+import {combineLatest, from, Observable, of} from "rxjs";
 import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
-import {map, timestamp} from "rxjs/internal/operators";
+import {filter, map, pluck, tap} from "rxjs/internal/operators";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
-import {select} from "@ngrx/store";
+import {flatMap} from "tslint/lib/utils";
 
 @Component({
   selector: "app-subjects-table",
@@ -119,9 +122,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
   // helpers
   public getCellIndex(target: EventTarget): number {
-    const crawler: NodeCrawler = new NodeCrawler(target);
-    const predicate: Function = (el) => el.getAttribute("index") !== null;
-    return +_compose(_partial(crawler.executeDOMAttr, "getAttribute", "index"), crawler.crawlUntilTrue)(predicate);
+    try {
+      const crawler: NodeCrawler = new NodeCrawler(target);
+      const predicate: Function = (el) => el.getAttribute("index") !== null;
+      return +_compose(_partial(crawler.executeDOMAttr, "getAttribute", "index"), crawler.crawlUntilTrue)(predicate);
+    } catch {
+      return;
+    }
   }
 
   // teacher methods
@@ -151,17 +158,22 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     } else if (
       this.numberGenerator.shouldAddNumberInput(target, this.tableBodyConfigData, this.getCellIndex(target))
     ) {
+
       let student: IStudent;
       const predicate: Function = (el) => el.classList.contains("table-row");
       const crawler: NodeCrawler = new NodeCrawler(target);
-      const clickRow: HTMLElement[] = _compose(crawler.getChildsArray, crawler.crawlUntilTrue)(predicate);
-      this.state$.subscribe(
-        state => student = state.students
-          .filter(stud => stud.name === clickRow[0].textContent && stud.surname === clickRow[1].textContent)[0]
-      ).unsubscribe();
+      const [rowName, rowSurname]: HTMLElement[] = _compose(crawler.getChildsArray, crawler.crawlUntilTrue)(predicate);
+
+      this.state$.pipe(
+        pluck("students"),
+      ).subscribe(students => {
+        student = students.filter(({name, surname}) => name === rowName.textContent && surname === rowSurname.textContent)[0];
+      }).unsubscribe();
+
       const newMark: Mark = new Mark(
         student.id, this.subject.id, null, this.subjectTableConfig.headers[this.getCellIndex(target)]
       );
+
       if (!target.textContent) {
         this.numberGenerator.generateNumberPicker(
           target,
@@ -170,11 +182,17 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
       } else {
         let patchMark: Mark;
-        this.state$.subscribe(st => patchMark = st.marks.filter(mark =>
-          mark.student === newMark.student &&
-          mark.subject === newMark.subject &&
-          mark.time === newMark.time
-        )[0]).unsubscribe();
+        this.state$.pipe(
+          pluck("marks")
+        ).subscribe(marks =>
+          patchMark = marks
+            .filter(
+              ({student, subject, time}) =>
+              student === newMark.student &&
+              subject === newMark.subject &&
+              time === newMark.time
+            )[0]
+        ).unsubscribe();
         this.numberGenerator.generateNumberPicker(
           target,
           this.submitMark(_dispatcherNgxs(this.store, Marks.Change), newMark)
@@ -209,7 +227,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     return function (value: number): void {
       const addValue: Function = (_value: string) => (copy: Mark) => {
         copy.value = +_value;
-        return mark;
+        return copy;
       };
       _compose(dispatch, addValue(value), copyByJSON)(mark);
     };
@@ -283,11 +301,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         // initialize table headers with unique sorted dates
         const datesPartOfHeaders: number[] = [
           ...new Set(
-            [...this.subject.uniqueDates].concat(pluck(state.marks, "time"))
+            [...this.subject.uniqueDates].concat(_take(state.marks, "time"))
           )
         ].sort();
         this.subjectTableConfig.headers = [...translations.HEADERS, ...datesPartOfHeaders];
-
         /// handle data from sources for table
         this.preRenderTable(state);
         if (this.sortingState === null || this.sortingState.times % 3 === 0) {

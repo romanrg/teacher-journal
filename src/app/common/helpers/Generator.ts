@@ -3,6 +3,7 @@ import {FormControlType} from "../models/IFormConfig";
 import {ISubject} from "../models/ISubject";
 import {DatePipe} from "@angular/common";
 import {TranslateService} from "@ngx-translate/core";
+import {_allPass, _compose, NodeCrawler} from "./lib";
 export class Generator {
   public btnText: string;
   constructor(
@@ -80,11 +81,13 @@ export class DatePicker extends Generator {
   }
 
   public shouldAddDateInput(target: EventTarget, headers: string[]): boolean {
-    return (
-      target.tagName.toLowerCase() === "th" &&
-      !headers.includes(target.textContent) &&
-      target.textContent.includes(this.selector.add)
+    const crawler: NodeCrawler = new NodeCrawler(target);
+    const _shouldAdd: Function = _allPass(
+      crawler.simpleCheck(({tagName}) => tagName.toLowerCase() === "th"),
+      crawler.simpleCheck(({textContent}) => !headers.includes(textContent)),
+      crawler.simpleCheck(({textContent}) => textContent.includes(this.selector.add))
     );
+    return _shouldAdd(crawler.node);
   }
   public isDeleteDateButton(target: EventTarget): boolean {
     return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === this.selector.remove);
