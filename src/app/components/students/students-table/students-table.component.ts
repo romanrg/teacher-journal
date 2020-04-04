@@ -36,15 +36,13 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   ) {
 
   }
-  public createStudentsTableConfig = (headers: string[], caption: string, students: IStudent[]): ITableConfig => {
-    return {
-      headers, caption, body: this.createBody(students, this.tableBodyRowConfig)
-    };
-  }
-  public renderSearch($event: Event): void {
-    this.store.dispatch(new Students.Search($event));
-  }
-  public createBody = (students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> => {
+  public createStudentsTableConfig = (
+    headers: string[], caption: string, students: IStudent[]
+  ): ITableConfig => ({headers, caption, body: this.createBody(students, this.tableBodyRowConfig)})
+  public renderSearch = ($event: Event): void => this.store.dispatch(new Students.Search($event));
+  public createBody = (
+    students: IStudent[], config: ReadonlyArray<string>
+  ): Array<(string|number|undefined)[]> => {
     this.tableBody.clear();
     this.tableBody.generateBodyFromDataAndConfig(config, students);
     this.tableBody.changeAllValuesAtIndexWithArrayValues(0, this.tableBody.generateIdArray(students.length));
@@ -62,14 +60,12 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     }
 
   }
-  public dispatchPaginationState($event: Event): void {
-    if ($event.paginationConstant) {
-      this.store.dispatch(new Students.ChangePagination($event.paginationConstant));
-    } else {
-      this.store.dispatch(new Students.ChangeCurrentPage($event.currentPage));
-    }
+  public dispatchPaginationState = (
+    $event: Event
+  ): void => $event.paginationConstant ?
+    this.store.dispatch(new Students.ChangePagination($event.paginationConstant)) :
+    this.store.dispatch(new Students.ChangeCurrentPage($event.currentPage))
 
-  }
   public ngOnInit(): void {
     combineLatest(
       this.translate.stream("COMPONENTS"),
@@ -93,7 +89,5 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       }
     });
   }
-  public ngOnDestroy(): void {
-    this.manager.removeAllSubscription();
-  }
+  public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }
