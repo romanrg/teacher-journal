@@ -1,12 +1,9 @@
-export const _pluck: Function = (source: Array<any>, prop: string): Array<any>
-  => source.reduce((acc, curr) => acc = [...acc, {[prop]: curr[prop]}], []);
 export const _take: Function = (source: Array<any>, prop: string): Array<any>
   => source.reduce((acc, curr) => acc = [...acc, curr[prop]], []);
 export const _dispatcherNgxs: Function = (store, dispatcher) => (payload) => store.dispatch(new dispatcher(payload));
 export const _allTrue: Function = (...fns) => (elem) => fns.every(fn => fn(elem) === true);
 export const _partial: Function = (fn: Function, ...first) => (...second) => fn(...first, ...second);
-export const _compose: Function = (...fns) =>
-  (...args) =>
+export const _compose: Function = (...fns) => (...args) =>
     fns.reduceRight((acc, curr) => Array.isArray(acc) ? curr(...acc) : curr(acc), args);
 export const copyByJSON: Function = (original: any): any => _compose(JSON.parse, JSON.stringify)(original);
 export const _curry: Function = (fn) => (...args) => fn.length ? _curry(fn.bind(null, ...args)) : fn.call(null, ...args);
@@ -40,4 +37,5 @@ export class NodeCrawler {
   get tagName(): string {
     return this.node.tagName.toLowerCase();
   }
+  public changeStyle = (styleProp: string, styleValue: string) => this.node.style[styleProp] = styleValue;
 }

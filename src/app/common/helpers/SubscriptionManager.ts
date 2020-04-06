@@ -6,11 +6,7 @@ export class SubscriptionManager {
     this.#subscription = [];
   }
 
-  public addSubscription(sub: Subscription): void  {
-    this.#subscription.push(sub);
-  }
+  public addSubscription = (sub: Subscription): void  => this.#subscription.push(sub);
 
-  public removeAllSubscription(): void {
-    this.#subscription.filter(sub => sub ).forEach(sub => sub.unsubscribe());
-  }
+  public removeAllSubscription = (): void => this.#subscription.filter(sub => sub).forEach(sub => sub.unsubscribe());
 }

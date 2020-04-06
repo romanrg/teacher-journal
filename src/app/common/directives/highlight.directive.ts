@@ -1,29 +1,30 @@
 import {Directive, ElementRef, HostListener} from "@angular/core";
+import {NodeCrawler} from "../helpers/lib";
 
 @Directive({
   selector: "[appHighlight]"
 })
 export class HighlightDirective {
-
+  public node: NodeCrawler;
   constructor(private el: ElementRef) {
+    this.node = new NodeCrawler(this.el.nativeElement);
   }
 
   private highlight(color: string): void {
-    this.el.nativeElement.style.cursor = "pointer";
-    [...this.el.nativeElement.children]
-      .map(cell => cell.style.borderBottom = `solid 0.05rem transparent`);
+    this.node.changeStyle("cursor", "pointer");
+    const children: HTMLElement[] = this.node.getChildsArray();
+    children.map(cell => (new NodeCrawler(cell)).changeStyle("borderBottom", `solid 0.05rem transparent`));
     if (color) {
-      [...this.el.nativeElement.children]
-        .map(cell => cell.style.borderBottom = `solid 0.05rem ${color}`);
+      children.map(cell => (new NodeCrawler(cell)).changeStyle("borderBottom", `solid 0.05rem ${color}`));
     } else {
-      [...this.el.nativeElement.children]
-        .map(cell => cell.style.borderBottom = color);
+      children.map(cell => (new NodeCrawler(cell)).changeStyle("borderBottom", color));
     }
 
   }
 
   @HostListener("mouseenter") public onMouseEnter(): void {
-    const averageValue: string = [...this.el.nativeElement.children][2]?.textContent;
+    const children: HTMLElement[] = this.node.getChildsArray();
+    const averageValue: string = children[2]?.textContent;
     if (averageValue !== "" && averageValue < 5) {
       this.highlight("blue");
     } else if (averageValue !== "" && averageValue >= 5) {
