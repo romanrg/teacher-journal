@@ -2,7 +2,6 @@ import {ActionCreator, createAction, props} from "@ngrx/store";
 import {Mark} from "../../common/models/IMark";
 import {ISubject} from "../../common/models/ISubject";
 
-
 export const getMarks: ActionCreator = createAction(
   "[Main Page (App)] GET_MARKS"
 );

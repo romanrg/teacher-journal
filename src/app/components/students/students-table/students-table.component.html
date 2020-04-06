@@ -1,32 +1,32 @@
-<ng-container *ngIf="(studentsState$ | async).error; else table">
-  <app-error-message-display class="students__error"
-                             [error]="(studentsState$ | async).error"
-  ></app-error-message-display>
-</ng-container>
 
-<ng-template #table>
-<div class="container" *ngIf="(studentsState$ | async).loaded">
+<ng-container *ngIf="(studentsState$ | async).loading">
+  <app-loading></app-loading>
+</ng-container>
+<div class="container">
   <app-search-bar
     class="students__search"
-    (searchRes)="renderSearch($event)"
+    (searchRes)="dispatchSearch($event)"
     [barValue]="searchPlaceholder"
   ></app-search-bar>
-  <app-one-header-table
-    [displayDelete]="true"
-    [config]="tableConfig"
-    (click)="deleteStudent($event)"
-    [paginationConstant]="itemsPerPage"
-    [currentPagination]="page"
-    (emitPagination)="dispatchPaginationState($event)"
-    class="student-table__table"
-  ></app-one-header-table>
+  <ng-container *ngIf="tableConfig">
+    <app-one-header-table
+      [displayDelete]="true"
+      [config]="tableConfig"
+      (click)="deleteStudent($event)"
+      [paginationConstant]="itemsPerPage"
+      [currentPagination]="page"
+      (emitPagination)="dispatchPaginationState($event)"
+      class="student-table__table"
+    ></app-one-header-table>
+  </ng-container>
+
   <a routerLink="/students/new-student" class="table__link">
     <app-button
       class="students__button"
-      screenReader="Add new student"
+      screenReader="{{'COMPONENTS.STUDENTS.ADD_BTN' | translate}}"
       textContent="+"
     ></app-button>
   </a>
 </div>
-</ng-template>
+
 

@@ -1,14 +1,14 @@
 <div class="container">
-  <h2 class="export__header">Export As: </h2>
+  <h2 class="export__header">{{"COMPONENTS.EXPORT.TITLE" | translate}}: </h2>
   <div class="container container--btn">
     <app-button
-      [screenReader]="'Export as PDF-file'"
+      screenReader="{{ 'COMPONENTS.EXPORT.PDF' | translate}}"
       [textContent]=""
       class="export__btn export__btn--pdf"
       (click)="exportAsPDF()"
     ></app-button>
     <app-button
-      [screenReader]="'Export for MS Excel'"
+      screenReader="{{ 'COMPONENTS.EXPORT.EXCEL' | translate}}"
       [textContent]=""
       class="export__btn export__btn--excel"
       (click)="exportAsExcel()"

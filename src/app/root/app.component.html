@@ -1,28 +1,30 @@
+<!--[selected]="navigator.language === 'en'"-->
 <div class="wrapper">
   <div class="container">
     <h1 class="logo">
-      <a href="/" class="logo__link">Teacher Journal</a>
+      <a href="/" class="logo__link">{{"LOGO" | translate}}</a>
     </h1>
     <app-navigation></app-navigation>
     <select class="language__select" (change)="dispatchLanguage($event)">
-      <option class="language__option">en</option>
-      <option class="language__option">ru</option>
+      <option
+        *ngFor="let langOption of langOptions"
+        [value]="langOption"
+        [selected]="getDefaultLang() === langOption"
+        class="language__option"
+      >{{langOption}}</option>
     </select>
   </div>
   <app-breadcrumbs class="breadcrumbs"></app-breadcrumbs>
-  <ng-container *ngIf="!isLoading((componentState$ | async)); else app">
+  <ng-container *ngIf="(isLoad$ | async)">
     <app-loading></app-loading>
   </ng-container>
-  <ng-template #app>
-    <ng-template #content>
-      <router-outlet></router-outlet>
-    </ng-template>
-    <ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else content">
-      <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">
-        <app-error-message-display
-          [error]="error"
-        ></app-error-message-display>
-      </ng-container>
+  <ng-container *ngIf="isAnyErrorOccur((errors$ | async)); else app">
+    <ng-container *ngFor="let error of (errors$ | async)">
+      <app-error-message-display [error]="error"></app-error-message-display>
     </ng-container>
+  </ng-container>
+  <ng-template #app>
+    <router-outlet></router-outlet>
   </ng-template>
 </div>
+

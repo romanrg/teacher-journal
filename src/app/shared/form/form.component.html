@@ -7,7 +7,7 @@
   <ng-container *ngFor="let input of config.formGroupName.formControls">
     <ng-container *ngIf="input.type !== 'textarea'">
       <label class="form__label">
-        <span class="form__label-name">{{input.name | titlecase}}</span>
+        <span class="form__label-name">{{input.description | titlecase}}</span>
           <input
                     type="{{input.type}}"
                     formControlName="{{input.name}}"
@@ -24,7 +24,7 @@
     </ng-container>
     <ng-container *ngIf="input.type === 'textarea'">
       <label class="form__label">
-        <span class="form__label-name">{{input.name}}</span>
+        <span class="form__label-name">{{input.description}}</span>
         <textarea
           formControlName="description"
           class="form__input"
@@ -37,5 +37,5 @@
     type="submit"
     [disabled]="!form.valid"
     class="form__submit"
-  >Submit</button>
+  >{{"BUTTON_TYPE.SUBMIT" | translate}}</button>
 </form>

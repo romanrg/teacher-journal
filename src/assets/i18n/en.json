@@ -1,0 +1,131 @@
+{
+  "LOGO": "TEACHER JOURNAL",
+  "NAVIGATION": {
+      "HOME": "Home",
+      "STUDENTS": "Students",
+      "SUBJECTS": "Subjects",
+      "STATISTICS" : "Statistics",
+      "EXPORT" : "Export",
+      "NEW SUBJECT": "Add new subject",
+      "ADD NEW STUDENT": "Add new student",
+      "SUBJECT JOURNAL": "journal"
+  },
+  "LOADING": "LOADING",
+  "ERROR": {
+    "TITLE": "Server return:"
+  },
+  "EMPTY_DATA": "No data available...",
+  "REQUIRED_ERROR": "This field is required",
+  "BUTTON_TYPE": {
+    "SUBMIT": "Submit"
+  },
+  "PLACEHOLDERS" : {
+    "SEARCH": "What are you looking for?"
+  },
+  "TABLE": {
+    "PAGINATION": {
+      "BUTTONS": {
+        "FIRST": "Move to the beginning",
+        "LAST": "Move to the last page",
+        "PREV": "Move to the previous page",
+        "NEXT": "Move to the next page",
+        "CURRENT": "Show {{page}} of table"
+      },
+      "SELECT": {
+        "TITLE": "Items per page:"
+      },
+      "PREPOSITION": "from"
+    }
+  },
+  "COMPONENTS": {
+    "EXPORT": {
+      "TITLE": "Export As",
+      "PDF": "Export as PDF-file",
+      "EXCEL": "Export for MS Excel"
+    },
+    "404": {
+      "TITLE": "PAGE IS NOT FOUND",
+      "MESSAGE": "Seems like this page doesn't exist",
+      "LINK": "GO TO THE MAIN PAGE"
+    },
+    "STUDENTS": {
+      "ADD_BTN": "Add new student",
+      "TABLE": {
+        "CAPTION": "Students list:",
+        "HEADERS": ["id", "name", "surname", "address", "description"]
+      },
+      "DELETE_CONFIRMATION": {
+        "START": "Do you want to delete",
+        "END": "from journal?"
+      }
+    },
+    "SUBJECTS": {
+      "LIST": {
+        "DELETE_BTN": "Delete {{subject}}",
+        "LINK": "Visit {{subject}} journal page",
+        "LINK_NEW_SUBJECT_FORM": "Create new subject"
+      },
+      "TABLE": {
+        "CAPTION": "journal",
+        "HEADERS": ["name", "surname", "average mark"],
+        "FORMS": {
+          "DATE": {
+            "NEW_DATE_BTN_SCREEN": "Add new date",
+            "SELECT": "Select date"
+          },
+          "NUMBER": {},
+          "TEACHER": {}
+        }
+      }
+    }
+  },
+  "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",
+  "FORMS": {
+    "NEW_STUDENT": {
+      "LEGEND": "ADD STUDENT",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "name"
+        },
+        "SURNAME": {
+          "TITLE": "surname"
+        },
+        "ADDRESS": {
+          "TITLE": "address"
+        },
+        "DESCRIPTION": {
+          "TITLE": "description"
+        }
+      }
+    },
+    "NEW_SUBJECT": {
+      "LEGEND": "ADD SUBJECT",
+      "CONTROLS_NAME": {
+        "NAME": {
+          "TITLE": "name"
+        },
+        "TEACHER": {
+          "TITLE": "teacher"
+        },
+        "ADDRESS": {
+          "TITLE": "address"
+        },
+        "DESCRIPTION": {
+          "TITLE": "description"
+        }
+      }
+    },
+    "DATE_GENERATOR": {
+      "SELECTOR_ADD": "Select date",
+      "SELECTOR_DELETE": "Delete column"
+    },
+    "CHANGE_TEACHER": {
+      "LEGEND": "change teacher",
+      "ERRORS": "This field is required",
+      "DESCRIPTION": "full name:"
+    },
+    "ERRORS": {
+      "REQUIRED": "This field is required"
+    }
+  }
+}

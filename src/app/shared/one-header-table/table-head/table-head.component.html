@@ -1,3 +1,7 @@
 <thead class="table-head">
-  <app-table-row [row]="headers" [cellType]="'th'" (emitSorting)="emitUp($event)"></app-table-row>
+  <app-table-row
+    [row]="headers"
+    [cellType]="'th'" (emitSorting)="emitUp($event)"
+    [rowLength]="headers.length * 10"
+  ></app-table-row>
 </thead>

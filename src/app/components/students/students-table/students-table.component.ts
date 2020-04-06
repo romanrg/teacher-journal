@@ -3,86 +3,142 @@ import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableCo
 import {RowCreator} from "../../../common/helpers/RowCreator";
 import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
-import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
-import {select, Store} from "@ngrx/store";
-import {AppState} from "../../../@ngrx/app.state";
-import {Observable} from "rxjs";
-import {StudentsState} from "../../../@ngrx/students/students.state";
-import * as StudentsActions from "src/app/@ngrx/students/students.actions.ts";
+import {combineLatest, Observable} from "rxjs";
+
+// ngxs
+import * as Ngxs from "@ngxs/store";
+import {Select} from "@ngxs/store";
+import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/students.state";
+import {Students} from "../../../@ngxs/students/students.actions";
+import {TranslateService} from "@ngx-translate/core";
+import {map, pluck} from "rxjs/internal/operators";
+import {__filter, _chain, _compose, _curry, _dispatcherNgxs, _partial, NodeCrawler} from "../../../common/helpers/lib";
+import {Equalities} from "../../../common/models/filters";
 
 @Component({
   selector: "app-students-table",
   templateUrl: "./students-table.component.html",
   styleUrls: ["./students-table.component.sass"]
 })
+
 export class StudentsTableComponent implements OnInit, OnDestroy {
   private manager: SubscriptionManager = new SubscriptionManager();
   public tableConfig: ITableConfig;
-  public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
-  public studentsState$: Observable<StudentsState>;
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
-  public tableBody: TableBody;
+  public tableBody: TableBody = new TableBody(TableRow);
+  public readonly confirmation: string;
+  public readonly tableBodyRowConfig: string[] = ["id", "name", "surname", "address", "description"];
+  @Select(NgxsStudentsState.Students) public studentsState$: Observable<StudentsStateModel>;
   constructor(
-    private store: Store<AppState>,
-  ) {
-    this.tableBody = new TableBody(TableRow);
-  }
-  public createStudentsTableConfig(students: IStudent[]): ITableConfig {
-    const headers: ReadonlyArray<string> = this.tableHeaders;
-    const caption: string = "Students list:";
-    return {
-      headers, caption, body: this.createBody(students, headers)
-    };
-  }
-  public renderSearch($event: Event): void {
-    this.store.dispatch(StudentsActions.searchStudentsBar({searchString: $event}));
-  }
-  public createBody(students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> {
-    this.tableBody.clear();
-    this.tableBody.generateBodyFromDataAndConfig(config, students);
-    this.tableBody.changeAllValuesAtIndexWithArrayValues(0, this.tableBody.generateIdArray(students.length));
+    private store: Ngxs.Store,
+    private translate: TranslateService
+  ) {}
+
+  public createStudentsTableConfig = (
+    headers: string[],
+    caption: string,
+    students: IStudent[]
+  ): ITableConfig => (
+    {
+      headers,
+      caption,
+      body: this.createBody(students, this.tableBodyRowConfig)
+    }
+  );
+
+  public dispatchSearch = ($event: Event): void => this.store.dispatch(new Students.Search($event));
+
+  public createBody = (
+    students: IStudent[],
+    config: ReadonlyArray<string>
+  ): Array<(string|number|undefined)[]> => {
+
+    const _clearBody: Function = this.tableBody.clear;
+
+    const _generateBodyFromDataAndConfig: Function = _curry(
+      this.tableBody.generateBodyFromDataAndConfig
+    )(config, students);
+
+    const _changeAllValuesAtFirstPositionWithId: Function = _curry(
+      this.tableBody.changeAllValuesAtIndexWithArrayValues
+    )(0, this.tableBody.generateIdArray(students.length));
+
+    _chain(_clearBody, _generateBodyFromDataAndConfig, _changeAllValuesAtFirstPositionWithId);
+
     return this.tableBody.body;
-  }
+
+  };
+
   public deleteStudent($event: Event): void {
-    if ($event.target.parentNode.getAttribute("data")) {
-      const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
-      let student: string;
-      this.studentsState$.subscribe(students => {
-        student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
-      }).unsubscribe();
-      confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
-      this.store.dispatch(StudentsActions.deleteStudent(student));
+
+    let student: string;
+
+    const crawler: NodeCrawler = new NodeCrawler($event.target);
+
+    const predicate: Function = (node): null|boolean => node.getAttribute("data");
+
+    const _executeDOM: Function = _partial(crawler.executeDOMAttr, "getAttribute", "data");
+
+    const [, name, surname] = _compose(_executeDOM, crawler.crawlUntilTrue)(predicate).split(",");
+
+    if (name && surname) {
+
+      this.studentsState$
+        .pipe(
+          pluck("data"),
+          map(
+            students => __filter(Equalities.Students({name, surname}))(students)[0]
+          )
+        )
+        .subscribe(removedStudent => student = removedStudent)
+        .unsubscribe();
+
+      confirm(`${this.confirmation.START} ${name} ${surname} ${this.confirmation.END}`);
+
+      this.store.dispatch(new Students.Delete(student));
+
     }
 
   }
-  public dispatchPaginationState($event: Event): void {
-    if ($event.paginationConstant) {
-      this.store.dispatch(StudentsActions.changePaginationConstant($event));
-    } else {
-      this.store.dispatch(StudentsActions.changeCurrentPage($event));
-    }
+  public dispatchPaginationState = (
+    $event: Event
+  ): void => $event.paginationConstant ?
+    this.store.dispatch(new Students.ChangePagination($event.paginationConstant)) :
+    this.store.dispatch(new Students.ChangeCurrentPage($event.currentPage));
 
-  }
   public ngOnInit(): void {
-    this.studentsState$ = this.store.pipe(select("students"));
-    this.manager.addSubscription(
-      this.studentsState$.subscribe(students => {
-        this.page = students.currentPage;
-        this.itemsPerPage = students.paginationConstant;
-        if (students.searchBar) {
-          this.searchPlaceholder = students.searchBar;
-        }
-        if (students.searchedStudents) {
-          this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
-        } else {
-          this.tableConfig = this.createStudentsTableConfig(students.data);
-        }
-      })
-    );
+    combineLatest(
+      this.translate.stream("COMPONENTS"),
+      this.studentsState$
+    ).subscribe(([translations, students]) => {
+
+      this.page = students.currentPage;
+
+      this.itemsPerPage = students.paginationConstant;
+
+      this.confirmation = translations.STUDENTS.DELETE_CONFIRMATION;
+
+      const _createStudentsTableConfig: Function = _partial(
+        this.createStudentsTableConfig,
+        translations.STUDENTS.TABLE.HEADERS,
+        translations.STUDENTS.TABLE.CAPTION
+      );
+
+      if (students.searchBarInputValue) {
+
+        this.searchPlaceholder = students.searchBarInputValue;
+
+      }
+      if (students.data.length) {
+
+        this.tableConfig = students.searchedStudents ?
+          _createStudentsTableConfig(students.searchedStudents) :
+          _createStudentsTableConfig(students.data);
+
+      }
+    });
   }
-  public ngOnDestroy(): void {
-    this.manager.removeAllSubscription();
-  }
+  public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }

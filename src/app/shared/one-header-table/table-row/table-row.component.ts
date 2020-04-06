@@ -10,6 +10,7 @@ export class TableRowComponent implements OnInit {
   @Input() public cellType: string;
   @Input() public row: string[];
   @Input() public displayDelete: boolean;
+  @Input() public rowLength: number;
   @Output() public emitSorting: EventEmitter = new EventEmitter();
   public sortedCell: number;
   public isLowOrHigh: boolean = true;
@@ -24,6 +25,10 @@ export class TableRowComponent implements OnInit {
       this.isLowOrHigh = !this.isLowOrHigh;
     }
     this.sortedCell = index;
+  }
+
+  public attuneRowWidth(): string {
+    return `${this.rowLength}rem`;
   }
 
 }

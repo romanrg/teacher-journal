@@ -1,4 +1,7 @@
-<app-form
-  [config]="formConfig"
-  (onSubmit)="submit($event)"
-></app-form>
+<ng-container *ngIf="formConfig">
+  <app-form
+    [config]="formConfig"
+    (onSubmit)="submit($event)"
+  ></app-form>
+</ng-container>
+

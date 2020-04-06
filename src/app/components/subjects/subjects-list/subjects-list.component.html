@@ -1,13 +1,11 @@
-<ng-container *ngIf="(subjectsState$|async).error; else list">
-  <app-error-message-display
-    [error]="(subjectsState$|async).error"
-  ></app-error-message-display>
+<ng-container *ngIf="isLoad$ | async">
+  <app-loading></app-loading>
 </ng-container>
-<ng-template #list>
+<ng-container>
     <nav class="subjects__nav">
-      <ng-container *ngIf="subjects.length; else empty">
+      <ng-container *ngIf="(subjects$ | async).data.length; else empty">
         <ul class="subjects__list">
-          <li *ngFor="let subject of subjects"
+          <li *ngFor="let subject of (subjects$ | async).data"
               class="subjects__item"
 
           >
@@ -15,7 +13,7 @@
               (click)="deleteSubject($event)"
               class="subjects__btn subjects__btn--delete"
               textContent="{{'X'}}"
-              screenReader="delete subject"
+              [screenReader]="'COMPONENTS.SUBJECTS.LIST.DELETE_BTN' | translate:{subject: subject.name}"
               [attr.subject]="subject.name"
             ></app-button>
             <a class="subjects__link"
@@ -24,7 +22,7 @@
               <app-button
                 class="subjects__btn"
                 textContent="{{subject.name}}"
-                screenReader="Go to {{subject.name}}"
+                [screenReader]="'COMPONENTS.SUBJECTS.LIST.LINK' | translate:{subject: subject.name}"
               ></app-button>
             </a>
           </li>
@@ -39,7 +37,7 @@
     >
       <app-button
         class="subjects__btn"
-        screenReader="Create new subject"
+        screenReader="{{'COMPONENTS.SUBJECTS.LIST.LINK_NEW_SUBJECT_FORM' | translate}}"
         textContent="+"
         [action]="addNewSubject"
         (emitter)="addNewSubject()"
@@ -48,5 +46,5 @@
       </app-button>
 
     </a>
-</ng-template>
+</ng-container>
 

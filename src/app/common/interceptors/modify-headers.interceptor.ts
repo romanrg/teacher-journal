@@ -10,15 +10,15 @@ import {Observable} from "rxjs";
 
 @Injectable()
 export class ModifyHeadersInterceptor implements HttpInterceptor {
-
-  constructor() {}
+  constructor() {
+  }
 
   public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
     const req: HttpRequest<unknown> = request.clone({
       headers: request.headers.set("Modified", "Modified with interceptor")
     });
-    return next.handle(req);
+    return next.handle(request);
   }
 }
 

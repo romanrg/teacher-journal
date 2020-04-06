@@ -1,4 +1,7 @@
-<div class="table-row" appHighlight>
+<div
+  class="table-row" appHighlight
+  [ngStyle]="{'width': attuneRowWidth()}"
+>
 <ng-container *ngFor="let cell of row; let i = index">
         <app-table-cell
           (sortEmitter)="emitTopLevel(i)"
@@ -6,7 +9,6 @@
           [isSorted]="sortedCell === i"
           [cell]="cell"
           [cellType]="cellType"
-          [class.sticky]="i < 2  && row.length > 5"
           [ngStyle]="{'z-index': i < 2 ? 2 : 1}"
           [class.sticky-1]="i === 0"
           [class.sticky-2]="i === 1"

@@ -1,20 +1,12 @@
 import {Subscription} from "rxjs";
 
 export class SubscriptionManager {
-  constructor(
-    private _subscription: Subscription[] = []
-  ) {}
-
-  public addSubscription(sub: Subscription): void  {
-    this._subscription.push(sub);
+  #subscription: Subscription[];
+  constructor() {
+    this.#subscription = [];
   }
 
-  public removeAllSubscription(): void {
-    this._subscription.filter(sub => sub ).forEach(sub => sub.unsubscribe());
-  }
+  public addSubscription = (sub: Subscription): void  => this.#subscription.push(sub);
 
-  get subscriptions(): Subscription[] {
-    return this._subscription;
-  }
-
+  public removeAllSubscription = (): void => this.#subscription.filter(sub => sub).forEach(sub => sub.unsubscribe());
 }

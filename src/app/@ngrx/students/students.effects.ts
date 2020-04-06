@@ -4,7 +4,7 @@ import {Action, createAction} from "@ngrx/store";
 import * as StudentsActions from "./students.actions";
 import {Observable, of} from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { StudentsServiceService} from "../../common/services/students-service.service";
+import { StudentsServiceService} from "../../common/services/students.service";
 import {catchError, map, retry, skip, startWith} from "rxjs/internal/operators";
 
 @Injectable()

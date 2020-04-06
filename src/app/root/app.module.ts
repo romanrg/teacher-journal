@@ -1,6 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import {StudentsComponent} from "../components/students/students.component";
@@ -31,16 +30,26 @@ import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
-import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from "../common/interceptors/modify-headers.interceptor";
+import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import {NgxsModule} from "@ngxs/store";
+import {environment} from "../../environments/environment";
+import {NgxsStudentsState} from "../@ngxs/students/students.state";
+import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
+import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
+import {NgxsMarksState} from "../@ngxs/marks/marks.state";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 
+export function createTranslateLoader(http: HttpClient): TranslateLoader {
+  return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -81,14 +90,34 @@ import {TranslateModule} from "@ngx-translate/core";
     HttpClientModule,
     RootStoreModule,
     EffectsModule.forRoot([]),
-    TranslateModule.forRoot()
+    TranslateModule.forRoot(),
+    NgxsModule.forRoot(
+      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState],
+      { developmentMode: !environment.production }
+    ),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    TranslateModule.forRoot({
+      defaultLanguage: "en",
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      },
+      /*
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: MissingTranslationService
+      },
+      useDefaultLang: false
+      */
+    })
   ],
   providers: [
     ExitFormGuard,
     DecimalPipe,
     SortByPipe,
     DatePipe,
-    modifyHeadersProvider,
+    modifyHeadersProvider
   ],
   bootstrap: [AppComponent]
 })

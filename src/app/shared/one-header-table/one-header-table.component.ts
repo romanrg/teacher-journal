@@ -15,12 +15,15 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   @Input() public currentPagination: number;
   @Output() public emitMap: EventEmitter = new EventEmitter();
   @Output() public emitPagination: EventEmitter = new EventEmitter();
+  public tableRowLength: number
   public dataForBody: string[][];
   public currentlySorted: {col: (null|number), times: (null|number)} = {col: null, times: null};
   public init: Map = new Map();
   constructor(
     private sortPipe: SortByPipe
-  ) { }
+  ) {
+
+  }
   public changeCurrent($event: number): void {
     this.emitPagination.emit({currentPage: $event});
     this.currentPagination = $event;
@@ -55,7 +58,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
     if (this.currentlySorted.col === null) {
       initializeSort($event, 0);
       this.dataForBody = createBody(this.config, true);
-      this.emitMap.emit(this.config.body);
+      this.emitMap.emit(/*this.config.body*/$event);
     } else if (this.currentlySorted.col === $event) {
       this.currentlySorted.times++;
       if (this.currentlySorted.times === 2) {
@@ -71,15 +74,15 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
         this.dataForBody = this.cutBodyDataForPagination(
           this.config.body, this.paginationConstant, this.currentPagination
         );
-        this.emitMap.emit(this.config.body);
+        this.emitMap.emit(/*this.config.body*/$event);
       } else {
         this.dataForBody = createBody(this.config, false);
-        this.emitMap.emit(this.config.body);
+        this.emitMap.emit(/*this.config.body*/$event);
       }
     } else {
       initializeSort($event, 0);
       this.dataForBody = createBody(this.config, true);
-      this.emitMap.emit(this.config.body);
+      this.emitMap.emit(/*this.config.body*/$event);
     }
 
   }
@@ -90,13 +93,13 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
     }
   }
   public ngDoCheck(): void {
+    this.tableRowLength = this.config?.headers.length * 10;
     if (this.config) {
       this.dataForBody = this.cutBodyDataForPagination(this.config.body, this.paginationConstant, this.currentPagination);
     }
   }
   public ngOnChanges(changes: SimpleChanges): void {
-    changes.config?.currentValue.body
-      .map(
+    changes.config?.currentValue.body?.map(
         (row, i) => this.init.set(JSON.stringify(row.filter(v => typeof v === "string")), i)
       );
   }

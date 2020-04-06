@@ -50,6 +50,7 @@ const subjectsRoutes: Routes = [
   {
     path: ":name",
     component: SubjectsTableComponent,
+    canDeactivate: [ExitFormGuard],
     data : {
       breadcrumb: `subject journal`
     }
