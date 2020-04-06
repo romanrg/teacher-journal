@@ -26,13 +26,13 @@ import {TableBodyComponent} from "../shared/one-header-table/table-body/table-bo
 import {TableFootComponent} from "../shared/one-header-table/table-foot/table-foot.component";
 import {TableRowComponent} from "../shared/one-header-table/table-row/table-row.component";
 import {TableCellComponent} from "../shared/one-header-table/table-cell/table-cell.component";
-import {AsyncPipe, DatePipe, DecimalPipe} from "@angular/common";
+import {DatePipe, DecimalPipe} from "@angular/common";
 import {SortByPipe} from "../common/pipes/sort-by.pipe";
 import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
-import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from "../common/interceptors/modify-headers.interceptor";
+import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";

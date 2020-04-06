@@ -11,6 +11,7 @@ export const _compose: Function = (...fns) =>
 export const copyByJSON: Function = (original: any): any => _compose(JSON.parse, JSON.stringify)(original);
 export const _curry: Function = (fn) => (...args) => fn.length ? _curry(fn.bind(null, ...args)) : fn.call(null, ...args);
 export const _allPass: Function = (...predicates: Function[]) => (element) => predicates.every(predicate => predicate === true);
+export const _chain: Function = (...fns) => fns.map(fn => fn());
 
 export const __filter: Function = (predicate: Function) => (source: Array) => source.filter(predicate);
 export class NodeCrawler {
@@ -40,5 +41,3 @@ export class NodeCrawler {
     return this.node.tagName.toLowerCase();
   }
 }
-
-

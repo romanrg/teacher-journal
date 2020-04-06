@@ -21,9 +21,7 @@ export class TableRow {
     [...this.#config.values()].map(prop => result.push(this.#initial[prop]));
     return result;
   }
-  public changeValueAt(bodyRow: row, index: number, value: cell): row {
-    bodyRow[index] = value;
-  }
+  public changeValueAt = (bodyRow: row, index: number, value: cell): row => bodyRow[index] = value;
 }
 export class TableBody {
   #body: row[];
@@ -41,26 +39,14 @@ export class TableBody {
   get row(): TableRow {
     return this.#row;
   }
-  public clear(): void {
-    this.body.length = 0;
-  }
-  public generateBodyFromDataAndConfig(config: string[], data: Array<any>): void {
-    data.map(value => {
-      this.generateRowByRow(value, config);
-    });
-  }
-  public changeAllValuesAtIndexWithArrayValues(index: number, arr: Array<any>): void {
-    this.body.forEach((bodyRow, i) => this.row().changeValueAt(bodyRow, index, arr[i]));
-  }
+  public clear = (): void =>  this.body.length = 0;
+  public generateBodyFromDataAndConfig = (config: string[], data: Array<any>): void => data.map(value => this.generateRowByRow(value, config));
+  public changeAllValuesAtIndexWithArrayValues = (index: number, arr: Array<any>): void => this.body.forEach((bodyRow, i) => this.row().changeValueAt(bodyRow, index, arr[i]));
   public changeOnlyOneValueAt(newValue: cell, bodyRowIndex: number, cellIndex: number): void {
     this.row().changeValueAt(this.body[bodyRowIndex], cellIndex, newValue);
   }
-  public generateRowByRow(dataPiece: any, config: string[]): void {
-    this.body.push((this.row(config, dataPiece)).createRowFromObject());
-  }
-  public generateIdArray(n: number): number[] {
-    return Array.from(Array(n).keys()).map( i => i + 1);
-  }
+  public generateRowByRow = (dataPiece: any, config: string[]): void => this.body.push((this.row(config, dataPiece)).createRowFromObject());
+  public generateIdArray = (n: number): number[] => Array.from(Array(n).keys()).map( i => i + 1);
   public addStudentMark(
     subjectsMarks: Mark[],
     student: IStudent,

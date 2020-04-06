@@ -5,7 +5,7 @@
 <div class="container">
   <app-search-bar
     class="students__search"
-    (searchRes)="renderSearch($event)"
+    (searchRes)="dispatchSearch($event)"
     [barValue]="searchPlaceholder"
   ></app-search-bar>
   <ng-container *ngIf="tableConfig">
