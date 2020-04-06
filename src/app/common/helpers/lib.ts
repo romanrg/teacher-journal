@@ -9,8 +9,10 @@ export const copyByJSON: Function = (original: any): any => _compose(JSON.parse,
 export const _curry: Function = (fn) => (...args) => fn.length ? _curry(fn.bind(null, ...args)) : fn.call(null, ...args);
 export const _allPass: Function = (...predicates: Function[]) => (element) => predicates.every(predicate => predicate === true);
 export const _chain: Function = (...fns) => fns.map(fn => fn());
-
 export const __filter: Function = (predicate: Function) => (source: Array) => source.filter(predicate);
+export const _if: Function = (
+  predicate: boolean, leftBranch: Function, rightBranch: Function
+) => predicate ? leftBranch : rightBranch;
 export class NodeCrawler {
   constructor (node: HTMLElement) {
     this.node = node;

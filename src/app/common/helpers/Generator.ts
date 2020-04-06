@@ -3,7 +3,7 @@ import {FormControlType} from "../models/IFormConfig";
 import {ISubject} from "../models/ISubject";
 import {DatePipe} from "@angular/common";
 import {TranslateService} from "@ngx-translate/core";
-import {_allPass, _compose, NodeCrawler} from "./lib";
+import {_allPass, _chain, _compose, _if, NodeCrawler} from "./lib";
 export class Generator {
   public btnText: string;
   constructor(
@@ -78,6 +78,17 @@ export class DatePicker extends Generator {
     this.translate?.stream("BUTTON_TYPE").subscribe(data => {
       this.btnText = data.SUBMIT;
     });
+    this.emptyAttrubutes = {
+      type: FormControlType.date,
+      name: FormControlType.date
+    };
+    this.attributes = (min: number, initialValue: string) => ({
+      type: FormControlType.date,
+      value: initialValue,
+      name: FormControlType.date,
+      pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+      min
+    });
   }
 
   public shouldAddDateInput(target: EventTarget, headers: string[]): boolean {
@@ -90,7 +101,12 @@ export class DatePicker extends Generator {
     return _shouldAdd(crawler.node);
   }
   public isDeleteDateButton(target: EventTarget): boolean {
-    return (target.tagName.toLowerCase() === "button" && target.children[0]?.textContent === this.selector.remove);
+    const crawler: NodeCrawler = new NodeCrawler(target);
+    const _shouldDelete: Function = _allPass(
+      crawler.simpleCheck(({tagName}) => tagName.toLowerCase() === "button"),
+      crawler.simpleCheck(({children}) => children[0]?.textContent === this.selector.remove)
+    );
+    return _shouldDelete(crawler.node);
   }
   public generateDatePicker(
     element: any,
@@ -98,42 +114,38 @@ export class DatePicker extends Generator {
     pipe: DatePipe,
     onsubmitAction: Function
   ): number[] {
-
-      const container: ParentNode = element.parentNode;
-      const initialValue: string = element.textContent;
-      this.removeChild(container, element);
-      const dateInput: any = this.generateElement("input");
-      this.renderer.addClass(dateInput, "date-input");
-      if (!uniqueDates.length) {
-        this.generateAttributes(dateInput, {
-          type: FormControlType.date,
-          name: FormControlType.date
-        });
-      } else {
-        const minDate: number = (uniqueDates.sort((a, b) => b - a)[0]);
-        this.generateAttributes(dateInput, {
-          type: FormControlType.date,
-          value: initialValue,
-          name: FormControlType.date,
-          pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}",
-          min: pipe.transform((minDate + this.ONE_DAY_CONSTANT), "yyyy-MM-dd")
-        });
-      }
-      const form: any = this.generateForm();
-      const submitBtn: any = this.generateSubmitBtn();
-
-      this.appendChild(container, form);
-      this.appendChild(form, dateInput);
-      this.appendChild(form, submitBtn);
-    const unlistener = this.renderer.listen(form, "submit", (e) => {
+      const [container, initialValue, dateInput, minDate] = _chain(
+        () => element.parentNode,
+        () => element.textContent,
+        this.generateElement.bind(this, "input"),
+        () => uniqueDates.sort((a, b) => b - a)[0]
+      );
+      const transformedMinDate: string = pipe.transform((minDate + this.ONE_DAY_CONSTANT), "yyyy-MM-dd");
+      const [form, submitBtn] = _chain(
+        this.generateForm.bind(this),
+        this.generateSubmitBtn.bind(this),
+        this.removeChild.bind(this, container, element),
+        this.renderer.addClass.bind(this, dateInput, "date-input"),
+        _if(
+            !uniqueDates.length,
+            this.generateAttributes.bind(this, dateInput, this.emptyAttrubutes),
+            this.generateAttributes.bind(this, dateInput, this.attributes(transformedMinDate, initialValue))
+        )
+      );
+      _chain(
+        this.appendChild.bind(this, container, form),
+        this.appendChild.bind(this, form, dateInput),
+        this.appendChild.bind(this, form, submitBtn),
+      );
+      this.renderer.listen(form, "submit", (e) => {
         e.preventDefault();
         onsubmitAction(e.target[FormControlType.date].value, e.target);
       });
-    return {unlistener, target: form, type: "submit"};
   }
 }
 export class NumberPicker extends Generator {
   public btnText: string;
+  public numberAttributes: any;
   constructor(private renderer: Renderer2, min: number, max: number, translate: TranslateService) {
     super(renderer, translate);
     this.min = min;
@@ -142,34 +154,49 @@ export class NumberPicker extends Generator {
     this.translate?.stream("BUTTON_TYPE").subscribe(data => {
       this.btnText = data.SUBMIT;
     });
-  }
-
-  public generateNumberPicker = (element: any, onsubmitAction: Function): void  => {
-    const container: ParentNode = element.parentNode;
-    this.removeChild(container, element);
-    const form: any = this.generateForm();
-    const submitBtn: any = this.generateSubmitBtn();
-    const numberInput: any = this.generateElement("input");
-    this.renderer.addClass(numberInput, "number-input");
-    this.generateAttributes(numberInput, {
+    this.numberAttributes = {
       type: FormControlType.number,
       min: this.min,
       max: this.max,
       pattern: this.validation,
       name: FormControlType.number
-    });
-    this.appendChild(container, form);
-    this.appendChild(form, numberInput);
-    this.appendChild(form, submitBtn);
-    const unlistener = this.renderer.listen(form, "submit", (e) => {
+    };
+  }
+
+  public generateNumberPicker = (element: any, onsubmitAction: Function): void  => {
+
+    const container: ParentNode = element.parentNode;
+
+    const [form, submitBtn, numberInput] = _chain(
+      this.generateForm.bind(this),
+      this.generateSubmitBtn.bind(this),
+      this.generateElement.bind(this, "input")
+    );
+
+    _chain(
+      this.removeChild.bind(this, container, element),
+      this.renderer.addClass.bind(this, numberInput, "number-input"),
+      this.generateAttributes.bind(this, numberInput, this.numberAttributes),
+      this.appendChild.bind(this, container, form),
+      this.appendChild.bind(this, form, numberInput),
+      this.appendChild.bind(this, form, submitBtn)
+    );
+    this.renderer.listen(form, "submit", (e) => {
       e.preventDefault();
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);
     });
-    return {unlistener, target: form, type: "submit"};
-  }
+  };
 
   public shouldAddNumberInput(target: EventTarget, headers: string[], cellIndex: number): boolean {
-    return (target.tagName.toLowerCase() === "td" && cellIndex >= headers.length);
+
+    const crawler: NodeCrawler = new NodeCrawler(target);
+
+    const _shouldAdd: Function = _allPass(
+      crawler.simpleCheck(({tagName}) => tagName.toLowerCase() === "td"),
+      cellIndex >= headers.length
+    );
+
+    return _shouldAdd(crawler.node);
   }
 }
 
