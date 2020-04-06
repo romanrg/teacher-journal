@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 
-
-
-//ngxs
+// ngxs
 import * as Ngxs from "@ngxs/store";
 import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
@@ -42,7 +40,7 @@ export class StatisticsComponent implements OnInit {
         this.marks =  this.subjects.reduce((acc, subj) => {
           acc[subj.id] = __filter(({subject}) => subj.id === subject)(marks);
           return acc;
-        }, {});
+        },                                 {});
 
         this.students = students;
 
@@ -56,9 +54,6 @@ export class StatisticsComponent implements OnInit {
   public getOnlyUniqueDates = (marks: Mark[]) => Array.from(new Set(marks.map(mark => _pluck("time", mark))));
 
   public expandItem(target: EventTarget): void {
-    const crawler: NodeCrawler = new NodeCrawler(target);
-    const expandTarget: HTMLElement = crawler.getChildsArray()[0];
-    console.log(expandTarget.style.display = "flex");
 
   }
 }

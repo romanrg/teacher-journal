@@ -59,6 +59,12 @@
 .dropdown__item
   padding: 1rem
   cursor: pointer
+  text-transform: capitalize
+  &::before
+    content: ">"
+    color: $active-color
+.dropdown__expand-wrapper
+  display: none
 @keyframes appear
   from
     transform: translateY(0)

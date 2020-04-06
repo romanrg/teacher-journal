@@ -17,11 +17,11 @@
             class="dropdown__item"
             (click)="expandItem($event.target)"
         >
-          {{subject.name}}
-          <div [ngStyle]="{'display': 'none'}">
+          <label><input type="checkbox" [value]="subject.id">{{subject.name}}</label>
+          <div class="dropdown__expand-wrapper">
             <ul class="dropdown__list">
               <li *ngFor="let time of getOnlyUniqueDates(marks[subject.id])">
-                <label><input type="checkbox" value="{{time}}">{{time | date:"yyyy-mm-dd"}}</label>
+                <label><input type="checkbox" value="{{time}}">{{time | date:"yyyy-MM-dd"}}</label>
               </li>
             </ul>
           </div>
