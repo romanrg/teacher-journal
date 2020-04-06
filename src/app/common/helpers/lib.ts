@@ -13,6 +13,8 @@ export const __filter: Function = (predicate: Function) => (source: Array) => so
 export const _if: Function = (
   predicate: boolean, leftBranch: Function, rightBranch: Function
 ) => predicate ? leftBranch : rightBranch;
+export const _pluck: Function = (property: string, source: object) => source[property];
+export const _reverseArguments: Function = (fn) => (...args) => fn(args.reverse());
 export class NodeCrawler {
   constructor (node: HTMLElement) {
     this.node = node;

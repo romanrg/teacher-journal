@@ -1,0 +1,77 @@
+@import "src/styles/variables.sass"
+.statistic
+  display: flex
+  align-items: center
+  justify-content: center
+  font: inherit
+  color: $color
+  flex-direction: column
+.statistic__title
+  color: $active-color
+  display: flex
+  align-self: center
+  text-transform: uppercase
+  user-select: none
+.statistic__dropdown
+  width: 20rem
+  border: 0.05rem solid crimson
+
+.dropdown
+  display: flex
+  flex-direction: column
+  position: relative
+.dropdown__select-btn
+  border: none
+  background: $bg-color
+  font: inherit
+  color: inherit
+  width: 100%
+  padding: 1rem
+  z-index: 10
+.dropdown__content
+  flex-direction: column
+  position: absolute
+  opacity: 0
+  transition: all 0.2s
+  animation: disappear linear 0.2s
+  animation-fill-mode: forwards
+  width: 100%
+.dropdown__controller
+  display: flex
+  justify-content: space-around
+  align-items: center
+  width: 100%
+  border: 0.05rem solid $active-color
+
+.dropdown__content--visible
+  display: flex
+  animation: appear linear 0.2s
+  animation-fill-mode: forwards
+.dropdown__btn
+  background: transparent
+  color: $color
+  border: none
+  padding: 1rem
+.dropdown__list
+  list-style: none
+  padding: 0
+  margin: 0
+.dropdown__item
+  padding: 1rem
+  cursor: pointer
+@keyframes appear
+  from
+    transform: translateY(0)
+  to
+    display: flex
+    opacity: 1
+    transform: translateY(4rem)
+
+@keyframes disappear
+  from
+    display: flex
+    transform: translateY(4rem)
+  to
+    transform: translateY(0)
+
+

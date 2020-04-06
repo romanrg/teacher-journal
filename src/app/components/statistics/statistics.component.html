@@ -1,0 +1,44 @@
+<section class="statistic">
+  <h2 class="statistic__title">Statistic</h2>
+  <div class="statistic__dropdown dropdown">
+    <button class="dropdown__select-btn" (click)="toggleDropdown()">
+      Select date
+      <span>V</span>
+    </button>
+    <div class="dropdown__content" [ngClass]="isVisibleDropdown ?  'dropdown__content--visible' : 'dropdown__content--hide'">
+      <div class="dropdown__controller">
+        <button class="dropdown__btn">Check All</button>
+        <button class="dropdown__btn">Uncheck All</button>
+      </div>
+      <ul class="dropdown__list"
+
+      >
+        <li *ngFor="let subject of subjects"
+            class="dropdown__item"
+            (click)="expandItem($event.target)"
+        >
+          {{subject.name}}
+          <div [ngStyle]="{'display': 'none'}">
+            <ul class="dropdown__list">
+              <li *ngFor="let time of getOnlyUniqueDates(marks[subject.id])">
+                <label><input type="checkbox" value="{{time}}">{{time | date:"yyyy-mm-dd"}}</label>
+              </li>
+            </ul>
+          </div>
+
+        </li>
+      </ul>
+      <div class="dropdown__controller">
+        <button class="dropdown__btn">Expand All</button>
+        <button class="dropdown__btn">Collapse All</button>
+        <button class="dropdown__btn">Close</button>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!--
+
+-->
