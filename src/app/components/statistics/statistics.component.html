@@ -1,44 +1,27 @@
 <section class="statistic">
   <h2 class="statistic__title">Statistic</h2>
   <div class="statistic__dropdown dropdown">
-    <button class="dropdown__select-btn" (click)="toggleDropdown()">
+    <button class="dropdown__select-btn">
       Select date
       <span>V</span>
     </button>
-    <div class="dropdown__content" [ngClass]="isVisibleDropdown ?  'dropdown__content--visible' : 'dropdown__content--hide'">
+    <form [formGroup]="dropdown" class="dropdown__content dropdown__content--visible">
       <div class="dropdown__controller">
-        <button class="dropdown__btn">Check All</button>
-        <button class="dropdown__btn">Uncheck All</button>
+        <button class="dropdown__btn" (click)="checkAll()">Check All</button>
+        <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
       </div>
-      <ul class="dropdown__list"
-
-      >
-        <li *ngFor="let subject of subjects"
-            class="dropdown__item"
-            (click)="expandItem($event.target)"
-        >
-          <label><input type="checkbox" [value]="subject.id">{{subject.name}}</label>
-          <div class="dropdown__expand-wrapper">
-            <ul class="dropdown__list">
-              <li *ngFor="let time of getOnlyUniqueDates(marks[subject.id])">
-                <label><input type="checkbox" value="{{time}}">{{time | date:"yyyy-MM-dd"}}</label>
-              </li>
-            </ul>
-          </div>
-
-        </li>
-      </ul>
-      <div class="dropdown__controller">
-        <button class="dropdown__btn">Expand All</button>
-        <button class="dropdown__btn">Collapse All</button>
-        <button class="dropdown__btn">Close</button>
-      </div>
-    </div>
-
+        <ul class="dropdown__list">
+          <li class="dropdown__item" *ngFor="let subject of subjects">
+              <label>
+                <input type="checkbox"
+                       formControlName="{{subject.name}}"
+                       checked="{{dropdown.get(subject.name).value}}"
+                >{{subject.name}}
+              </label>
+          </li>
+        </ul>
+    </form>
   </div>
-
 </section>
 
-<!--
 
--->

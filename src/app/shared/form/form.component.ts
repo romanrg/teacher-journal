@@ -1,8 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {IFormConfig, IFormControlConfig} from "../../common/models/IFormConfig";
 import {AbstractControl, FormControl, FormGroup} from "@angular/forms";
-import {ComponentCanDeactivate} from "../../common/guards/exit-form.guard";
-import {Observable} from "rxjs";
 
 @Component({
   selector: "app-form",
