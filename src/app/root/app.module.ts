@@ -46,6 +46,7 @@ import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {DropdownComponent} from "../shared/dropdown/dropdown.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -80,7 +81,8 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     SearchBarComponent,
     EmptyDataComponent,
     ErrorMessageDisplayComponent,
-    LoadingComponent
+    LoadingComponent,
+    DropdownComponent
   ],
   imports: [
     BrowserModule,

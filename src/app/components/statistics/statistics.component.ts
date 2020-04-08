@@ -7,36 +7,29 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {forkJoin, Observable, of} from "rxjs";
 import {ISubject} from "../../common/models/ISubject";
-import {__filter, _chain, _compose, _partial, _pluck, _take} from "../../common/helpers/lib";
+import {__filter, _chain, _compose, _partial, _pluck} from "../../common/helpers/lib";
 import {IStudent} from "../../common/models/IStudent";
 import {Mark} from "../../common/models/IMark";
-import {ControlValueAccessor, FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {mergeMap, tap} from "rxjs/internal/operators";
+import {ControlValueAccessor} from "@angular/forms";
+import {tap} from "rxjs/internal/operators";
 @Component({
   selector: "app-statistics",
   templateUrl: "./statistics.component.html",
   styleUrls: ["./statistics.component.sass"],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => StatisticsComponent),
-      multi: true
-    }
-  ]
 })
 export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public state$: Observable<SubjectTableState>;
-  public subjects: Observable<ISubject[]>;
+  // [subj, checked, expaneded]
+  public subjects: [ISubject, boolean, boolean][];
   public students: Observable<IStudent[]>;
   public marks: Observable<Mark[]>;
+  public dates: [number, boolean, boolean][];
 
   // form
-  public dropdown: FormGroup;
-  public changesArray: [];
+  public selected: [number, number] = [null, null];
 
   constructor(
     private store: Ngxs.Store,
-    private formBuilder: FormBuilder
   ) {
     this.state$ = this.store.select(state => _chain(
       () => _compose(_partial(_pluck, "data"), _partial(_pluck, "subjects"))(state),
@@ -45,54 +38,82 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     ));
   }
 
-  public writeValue(value: any): void {}
-
-  public registerOnTouched(fn: any): void {}
-
-  public registerOnChange(fn: any): void {}
-
   public ngOnInit(): void {
 
 
     this.state$.pipe(
       tap(([subjects, students, marks]) => {
 
-        this.subjects = __filter(({uniqueDates}) => uniqueDates.length > 0)(subjects);
+        this.subjects = __filter(({uniqueDates}) => uniqueDates.length > 0)(subjects).reduce((acc, subject) => {
+          acc = [...acc, [subject, false, false]];
+          return acc;
+        }, []);
 
-        this.marks =  this.subjects.reduce((acc, {id}) => {
-          acc[id] = __filter(({subject}) => id === subject)(marks);
+        this.marks =  this.subjects.reduce((acc, tuple) => {
+          acc[tuple[0].id] = __filter(({subject}) => tuple[0].id === subject)(marks);
           return acc;
         }, {});
 
-        this.dropdown = new FormGroup(this.generateSubjectsFormControls(this.subjects));
-      }),
+        this.dates = this.subjects.reduce((acc, subject) => {
+          const id = subject[0].id;
+          acc = [...acc, this.getOnlyUniqueDates(this.marks[id])];
+          return acc;
+        }, []);
+
+        console.log(this.dates)
+
+      })
     ).subscribe();
 
 
   }
 
-  public getSubjectControl = (i: number): FormGroup => this.dropdown.controls.subjs.controls[i];
+  public getOnlyUniqueDates = (marks: Mark[]) => Array.from(new Set(marks.map(mark => _pluck("time", mark)))).reduce((acc, subject) => {
+    acc = [...acc, [subject, false, false]];
+    return acc;
+  }, []);
 
-  public generateSubjectsFormControls = (subjects: ISubject[]): FormArray  => {
-    return _take(subjects, "name").reduce((acc, current) => {
-      acc[current] = new FormControl(false);
-      return acc;
-    }, {})
-  };
-
-  public getOnlyUniqueDates = (marks: Mark[]) => Array.from(new Set(marks.map(mark => _pluck("time", mark))));
-
-  public expandItem(target: EventTarget): void {
-
-  }
 
   public checkAll(): void {
-    const ctrls: FormGroup = this.dropdown.controls;
-    Object.keys(ctrls).map((controlName: string) => ctrls[controlName].setValue(true));
+    this.subjects.map((tuple) => {
+      tuple[1] = true;
+    });
   }
 
   public unCheckAll(): void {
-    const ctrls: FormGroup = this.dropdown.controls;
-    Object.keys(ctrls).map((controlName: string) => ctrls[controlName].setValue(false));
+    this.subjects.map(tuple => tuple[1] = false);
+  }
+
+  public expandAll(): void {
+    this.subjects.map(tuple => tuple[2] = true);
+  }
+
+  public collapseAll(): void {
+    this.subjects.map(tuple => tuple[2] = false);
+  }
+
+  public changeCheck(tuple: [ISubject, boolean, boolean]): void {
+    tuple[2] = tuple[1];
+  }
+
+  public addDate(date: [number, boolean, boolean]): void {
+
+    console.log(date);
+
+
+    if (date < this.selected[0] || this.selected[0] === null) {
+      this.selected[0] = date[0];
+    }
+
+    if (date > this.selected[0] || this.selected[1] === null) {
+      this.selected[1] = date[0];
+    } else if (this.date > this.selected[1]) {
+      his.selected[1] = date[0];
+    }
+
+    date[1] = true;
+
+    console.log(date);
+
   }
 }

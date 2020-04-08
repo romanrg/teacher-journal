@@ -2,24 +2,53 @@
   <h2 class="statistic__title">Statistic</h2>
   <div class="statistic__dropdown dropdown">
     <button class="dropdown__select-btn">
-      Select date
-      <span>V</span>
+      Selected dates:
+      <br>
+      <span *ngIf="selected[0]"> {{selected[0] | date}};</span>
+      <span *ngIf="selected[1]"> {{selected[1] | date}}</span>
+      <span *ngIf="selected.length === 0">V</span>
     </button>
-    <form [formGroup]="dropdown" class="dropdown__content dropdown__content--visible">
+    <form
+      #form="ngForm"
+      class="dropdown__content dropdown__content--visible"
+    >
       <div class="dropdown__controller">
         <button class="dropdown__btn" (click)="checkAll()">Check All</button>
         <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
       </div>
-        <ul class="dropdown__list">
-          <li class="dropdown__item" *ngFor="let subject of subjects">
-              <label>
-                <input type="checkbox"
-                       formControlName="{{subject.name}}"
-                       checked="{{dropdown.get(subject.name).value}}"
-                >{{subject.name}}
-              </label>
-          </li>
-        </ul>
+      <ul class="dropdown__list">
+        <li class="dropdown__item" *ngFor="let subject of subjects">
+          <app-dropdown
+            [(ngModel)]="subject[1]"
+            name="{{subject[0].name}}"
+            [label]="subject[0].name"
+            [checked]="subject[1]"
+            (change)="changeCheck(subject)"
+          ></app-dropdown>
+          <br>
+          <ng-container *ngIf="subject[2]">
+            <form>
+              <ul>
+                <li *ngFor="let date of getOnlyUniqueDates(marks[subject[0].id])">
+                  <label>
+                    {{date[1]}}
+                    <input
+                      (change)="addDate(date)"
+                      type="checkbox"
+                      value="{{date[0]}}"
+                      [checked]="date[1]"
+                    >{{date[0] | date}}
+                  </label>
+                </li>
+              </ul>
+            </form>
+          </ng-container>
+        </li>
+      </ul>
+      <div class="dropdown__controller">
+        <button class="dropdown__btn" (click)="expandAll()">Expand All</button>
+        <button class="dropdown__btn" (click)="collapseAll()">Collapse All</button>
+      </div>
     </form>
   </div>
 </section>

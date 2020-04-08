@@ -15,16 +15,21 @@ export const _if: Function = (
 ) => predicate ? leftBranch : rightBranch;
 export const _pluck: Function = (property: string, source: object) => source[property];
 export const _reverseArguments: Function = (fn) => (...args) => fn(args.reverse());
+
+
+
+
 export class NodeCrawler {
   constructor (node: HTMLElement) {
     this.node = node;
   }
 
   private runner: Function = (
-    predicate: Function
+    predicate: (elem: HTMLElement) => boolean
   ): (boolean|HTMLElement) => (predicate(this.node) ? true : this.node.parentNode);
+
   public crawlUntilTrue = (
-    predicate: Function
+    predicate: (elem: HTMLElement) => boolean
   )  => {
     let step: (boolean|HTMLElement) = this.runner(predicate);
     while (step !== true) {
