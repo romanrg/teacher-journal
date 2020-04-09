@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
     private store: Ngxs.Store,
     private translateService: TranslateService
   ) {
-    this.store.dispatch([new Students.Get()/*, new Subjects.Get(), new Marks.Get()*/]);
+    this.store.dispatch([new Students.Get(), new Subjects.Get(), new Marks.Get()]);
     this.translateService.setDefaultLang(navigator.language);
     this.translateService.use(navigator.language);
   }

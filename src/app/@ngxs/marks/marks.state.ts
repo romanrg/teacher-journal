@@ -49,6 +49,7 @@ export class NgxsMarksState {
     });
     return this.marksService.getMarks().pipe(
       tap(apiResponse => {
+        apiResponse.forEach(mark => mark.id = mark._id);
         return setState({...getState(), data: [...apiResponse.flat(1)].filter(({subject}) => subject !== null), loading: false, loaded: true});
       }),
       retry(3),
@@ -67,7 +68,6 @@ export class NgxsMarksState {
     }));
 
   }
-  @Action(Marks.CreateError)
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
 
@@ -139,6 +139,7 @@ export class NgxsMarksState {
         }
       })).pipe(
       tap(apiResponse => {
+        apiResponse.map(mark => mark.id = mark._id);
         this.marksService.clearMemory();
         if (getState().data.filter(mark => !mark.id).length !== 0) {
           const newData: Mark[] = [

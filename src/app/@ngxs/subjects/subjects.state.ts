@@ -64,7 +64,10 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     });
 
     return this.subjectsService.fetchSubjects().pipe(
-      tap(apiResponse => setState({...getState(),   data: [...apiResponse], loading: false, loaded: true})),
+      tap(apiResponse => {
+        apiResponse.forEach(subject => subject.id = subject._id);
+        return setState({...getState(),   data: [...apiResponse], loading: false, loaded: true})
+      }),
       retry(3),
       catchError(error => of(dispatch(new Subjects.GetError(error))))
     );
@@ -88,6 +91,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
     return this.subjectsService.addSubject(payload).pipe(
       tap(apiResponse => {
+        apiResponse.id = apiResponse._id;
         return setState(
           patch({
             data: append([apiResponse]),
