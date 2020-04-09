@@ -14,7 +14,7 @@ export class StudentsServiceService {
   ) { }
   public searchStudent = (searchString: string): Observable<IStudent[]> => this.http.get(
     this.URL, {params: new HttpParams().set("q", searchString)}
-  )
+  );
 
   public addStudent = (student: IStudent): Observable<IStudent> => this.http.post(this.URL, student);
 

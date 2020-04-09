@@ -51,7 +51,10 @@ export class NgxsStudentsState {
       loaded: false,
     });
     return this.studentsService.fetchStudents().pipe(
-      tap(studentsResponse => setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})),
+      tap(studentsResponse => {
+        studentsResponse.forEach(student => student.id = student._id);
+        return setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})
+      }),
       retry(3),
       catchError(error => of(dispatch(new Students.GetError(error))))
     );
@@ -71,6 +74,7 @@ export class NgxsStudentsState {
     const state: StudentsStateModel = getState();
     return this.studentsService.addStudent(payload).pipe(
       tap(apiResponse => {
+        apiResponse.id = apiResponse._id;
         patchState({
           data: [...state.data].concat(apiResponse),
           loading: false,
@@ -95,6 +99,7 @@ export class NgxsStudentsState {
     });
     return this.studentsService.removeStudent(payload.id).pipe(
       tap(deleteResponse => {
+        console.log(deleteResponse);
           setState({
             ...getState(),
             data: getState().data.filter(student => student.id !== payload.id),
