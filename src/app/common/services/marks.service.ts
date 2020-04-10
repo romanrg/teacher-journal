@@ -13,12 +13,14 @@ export class MarksServiceService {
   private URL: string = `${API}${MARKS_ROUTE}`;
   private memory: HashTable;
   private filteredProperties: [string, string] = ["id", "value"];
-  public _key: Function = this.getKey(this.filteredProperties);
   #hash = HashFunctions.knuthMultiplicative;
   constructor(private http: HttpClient) {
     this.memory = new HashTable(this.#hash);
   }
-  public submitMark = (mark: Mark): Observable<Mark[]> => this.http.post(this.URL, mark);
+  public submitMark = (mark: Mark): Observable<Mark[]> => {
+    console.log(mark);
+    return this.http.post(this.URL, mark);
+  };
 
   public getMarks = (): Observable<Mark> => this.http.get(this.URL);
 
@@ -63,4 +65,6 @@ export class MarksServiceService {
   }
 
   public getKey = (properties: [string, string]) => (value: Mark) => this.keyGenerator(value, properties);
+
+  public _key: Function = this.getKey(this.filteredProperties);
 }

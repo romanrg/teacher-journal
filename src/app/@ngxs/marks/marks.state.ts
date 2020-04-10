@@ -116,47 +116,23 @@ export class NgxsMarksState {
 
   @Action(Marks.Submit)
   public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
-    /*
-    const batchForPost: Mark[] = [];
-    const singularitiesForPut: Mark[] = [];
-    this.marksService.getMemory().forEach(mark => mark.id ? singularitiesForPut.push(mark) : batchForPost.push(mark));
-    return forkJoin([
-      batchForPost.length ? this.marksService.submitMark(batchForPost) : null,
-      singularitiesForPut.length ? this.marksService.patchMark(singularitiesForPut) : null
-    ]).pipe(
-      tap(response => console.log(response))
-    )*/
-
-    return forkJoin(this.marksService.getMemory().map(mark => {
-      setState(patch({
-        loading: true,
-        loaded: false
-      }));
-        if (mark.id) {
-          return this.marksService.patchMark(mark);
-        } else {
-          return this.marksService.submitMark(mark);
-        }
-      })).pipe(
-      tap(apiResponse => {
+    setState(patch({
+      loading: true,
+      loaded: false
+    }));
+    return this.marksService.submitMark(this.marksService.getMemory()).pipe(
+      tap(this.marksService.clearMemory),
+      tap((apiResponse: Mark[]) => {
         apiResponse.map(mark => mark.id = mark._id);
-        this.marksService.clearMemory();
-        if (getState().data.filter(mark => !mark.id).length !== 0) {
-          const newData: Mark[] = [
-            ...apiResponse.filter(mark => mark.subject !== null),
-            ...getState().data.filter(mark => mark.id)
-          ];
-          return setState(patch({
-            loading: false,
-            loaded: true,
-            data: newData,
-          }));
-        } else {
-          return setState(patch({
-            loading: false,
-            loaded: true,
-          }));
-        }
+        const newData: Mark[] = [
+          ...apiResponse.filter(mark => mark.subject !== null),
+          ...getState().data.filter(mark => mark.id)
+        ];
+        return setState(patch({
+          loading: false,
+          loaded: true,
+          data: newData,
+        }));
       }),
       retry(3),
       catchError(error => dispatch(new Marks.SubmitError(error)))

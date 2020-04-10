@@ -26,6 +26,7 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
 import {Equalities} from "../../../common/models/filters";
+import {tryCatch} from "rxjs/internal/util/tryCatch";
 
 @Component({
   selector: "app-subjects-table",
@@ -159,7 +160,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     const timestamp: number = this.subjectTableConfig.headers[targetCellIndex];
 
-    const predicateForNumberPicker: Function = (el) => el.classList.contains("table-row");
+    const predicateForNumberPicker: Function = (el) => {
+      try {
+        return el.classList.contains("table-row");
+      } catch {
+        return
+      }
+    };
 
     const [name, surname]: HTMLElement[] = _compose(crawler.getChildsArray, crawler.crawlUntilTrue)(predicateForNumberPicker);
 

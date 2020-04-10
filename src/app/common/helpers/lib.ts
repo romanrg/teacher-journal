@@ -26,7 +26,7 @@ export class NodeCrawler {
 
   private runner: Function = (
     predicate: (elem: HTMLElement) => boolean
-  ): (boolean|HTMLElement) => (predicate(this.node) ? true : this.node.parentNode);
+  ): (boolean|HTMLElement) => (predicate(this.node) ? true : this.node.parentNode)
 
   public crawlUntilTrue = (
     predicate: (elem: HTMLElement) => boolean
@@ -40,9 +40,7 @@ export class NodeCrawler {
   }
   public getChildsArray = (node: HTMLElement = this.node): HTMLElement[] => [...node.children];
   public executeDOMAttr = (attr: string, key: string, node?: HTMLElement = this.node) => node[attr](key);
-  public simpleCheck = (predicate: Function): boolean => {
-    return predicate(this.node);
-  };
+  public simpleCheck = (predicate: Function): boolean => predicate(this.node);
   get tagName(): string {
     return this.node.tagName.toLowerCase();
   }

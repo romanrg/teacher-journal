@@ -1,55 +1,67 @@
 <section class="statistic">
   <h2 class="statistic__title">Statistic</h2>
-  <div class="statistic__dropdown dropdown">
-    <button class="dropdown__select-btn">
-      Selected dates:
-      <br>
-      <span *ngIf="selected[0]"> {{selected[0] | date}};</span>
-      <span *ngIf="selected[1]"> {{selected[1] | date}}</span>
-      <span *ngIf="selected.length === 0">V</span>
-    </button>
-    <form
-      #form="ngForm"
-      class="dropdown__content dropdown__content--visible"
-    >
-      <div class="dropdown__controller">
-        <button class="dropdown__btn" (click)="checkAll()">Check All</button>
-        <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
-      </div>
-      <ul class="dropdown__list">
-        <li class="dropdown__item" *ngFor="let subject of subjects">
-          <app-dropdown
-            [(ngModel)]="subject[1]"
-            name="{{subject[0].name}}"
-            [label]="subject[0].name"
-            [checked]="subject[1]"
-            (change)="changeCheck(subject)"
-          ></app-dropdown>
-          <br>
-          <ng-container *ngIf="subject[2]">
-            <form>
-              <ul>
-                <li *ngFor="let date of getOnlyUniqueDates(marks[subject[0].id])">
-                  <label>
-                    {{date[1]}}
-                    <input
-                      (change)="addDate(date)"
-                      type="checkbox"
-                      value="{{date[0]}}"
-                      [checked]="date[1]"
-                    >{{date[0] | date}}
-                  </label>
+  <div class="wrapper">
+    <div class="statistic__dropdown dropdown">
+      <button class="dropdown__select-btn"
+              (click)="isHidden = !isHidden"
+      >
+        Selected dates:<span *ngIf="selected.length === 0"> V </span>
+        <br>
+        <span *ngIf="selected[0]"> {{selected[0] | date:"dd/MM/yy"}}</span>
+        <span *ngIf="selected.length > 1">
+        <span>{{selected.length === 2 ? " and " : " ... "}}</span>
+        {{selected[selected.length - 1] | date:"dd/MM/yy"}}</span>
+
+      </button>
+      <form
+        #form="ngForm"
+        class="dropdown__content"
+        [class.dropdown__content--hidden]="isHidden"
+        [class.dropdown__content--visible]="!isHidden"
+      >
+        <div class="dropdown__controller">
+          <button class="dropdown__btn" (click)="checkAll()">Check All</button>
+          <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
+        </div>
+        <ul class="dropdown__list">
+          <li class="dropdown__item" *ngFor="let subject of subjects">
+            <app-dropdown
+              [(ngModel)]="subject[1]"
+              name="{{subject[0].name}}"
+              [label]="subject[0].name"
+              [checked]="subject[1]"
+              (change)="changeCheck(subject)"
+            ></app-dropdown>
+
+            <form class="dropdown__dates"
+                  #formDate="ngForm"
+                  [class.dropdown__dates--hidden]="!subject[2]"
+                  [class.dropdown__dates--visible]="subject[2]"
+            >
+              <ul class="dropdown__list">
+                <li class="dropdown__item dropdown__item--scale" *ngFor="let data of dates[subject[0].id]">
+                  <app-dropdown
+                    [(ngModel)]="data[1]"
+                    name="{{data[0]}}"
+                    [label]="data[0] | date:'MMM d, y'"
+                    [checked]="data[1]"
+                    (change)="changeCheck(data)"
+                  ></app-dropdown>
                 </li>
               </ul>
             </form>
-          </ng-container>
-        </li>
-      </ul>
-      <div class="dropdown__controller">
-        <button class="dropdown__btn" (click)="expandAll()">Expand All</button>
-        <button class="dropdown__btn" (click)="collapseAll()">Collapse All</button>
-      </div>
-    </form>
+          </li>
+        </ul>
+        <div class="dropdown__controller">
+          <button class="dropdown__btn" (click)="expandAll()">Expand All</button>
+          <button class="dropdown__btn" (click)="collapseAll()">Collapse All</button>
+        </div>
+      </form>
+    </div>
+    <div class="statistic__students">
+      <!--<pre>{{selected | json}}</pre>-->
+      <pre>{{ render | json}}</pre>
+    </div>
   </div>
 </section>
 

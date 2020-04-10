@@ -99,7 +99,6 @@ export class NgxsStudentsState {
     });
     return this.studentsService.removeStudent(payload.id).pipe(
       tap(deleteResponse => {
-        console.log(deleteResponse);
           setState({
             ...getState(),
             data: getState().data.filter(student => student.id !== payload.id),

@@ -1,3 +1,9 @@
 <label class="label">
-  <input type="checkbox" [(ngModel)]="value" [checked]="checked">{{label}}
+  <input
+    class="input"
+    type="checkbox"
+    [(ngModel)]="value"
+    [checked]="checked">
+  <span class="checkbox"></span>
+  <span class="title">{{label}}</span>
 </label>

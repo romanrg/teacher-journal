@@ -1,4 +1,4 @@
-import {Component, forwardRef, OnInit, HostBinding, Input} from "@angular/core";
+import {Component, forwardRef, OnInit, HostBinding, Input, OnChanges, SimpleChanges} from "@angular/core";
 import {NG_VALUE_ACCESSOR, ControlValueAccessor} from "@angular/forms";
 
 @Component({
@@ -13,7 +13,7 @@ import {NG_VALUE_ACCESSOR, ControlValueAccessor} from "@angular/forms";
     }
   ]
 })
-export class DropdownComponent implements OnInit, ControlValueAccessor {
+export class DropdownComponent implements OnInit, ControlValueAccessor, OnChanges {
 
   @Input() public label: string;
   @Input() public checked: boolean;
@@ -22,7 +22,11 @@ export class DropdownComponent implements OnInit, ControlValueAccessor {
 
   constructor() { }
 
-  public ngOnInit(): void {}
+  public ngOnInit(): void {};
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    this.checked = changes.checked.currentValue;
+  }
 
   public onChange: any = ( ) => {};
 
