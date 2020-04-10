@@ -55,7 +55,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         }, {});
 
         this.dates = this.subjects.reduce((acc, subject) => {
-          const id = subject[0].id;
+          const id: string = subject[0].id;
           acc = [...acc, this.getOnlyUniqueDates(this.marks[id])];
           return acc;
         }, []);

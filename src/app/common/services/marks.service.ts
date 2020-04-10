@@ -13,6 +13,7 @@ export class MarksServiceService {
   private URL: string = `${API}${MARKS_ROUTE}`;
   private memory: HashTable;
   private filteredProperties: [string, string] = ["id", "value"];
+  public _key: Function = this.getKey(this.filteredProperties);
   #hash = HashFunctions.knuthMultiplicative;
   constructor(private http: HttpClient) {
     this.memory = new HashTable(this.#hash);
@@ -37,17 +38,10 @@ export class MarksServiceService {
 
   public removeHash(item: Mark): boolean {
     const key: string = this._key(item);
-    if (item.id) {
-      this.memory.remove(key);
-      const shallowCopy: Mark = {...item};
-      Object
-        .keys(shallowCopy)
-        .map((prop: string) => prop === "id" ? shallowCopy[prop] === shallowCopy[prop] : shallowCopy[prop] = null);
-      this.memory.put(key, shallowCopy);
-    } else {
-      this.memory.remove(key);
-    }
-    this.memory.print();
+    const shallowCopy: Mark = {...item};
+    shallowCopy._deletedAt = Date.now();
+    this.memory.remove(key);
+    this.memory.put(key, shallowCopy);
   }
 
   public replaceHash(item: Mark): void {
@@ -68,7 +62,5 @@ export class MarksServiceService {
     );
   }
 
-  public getKey = (propetires: [string, string]) => (value: Mark) => this.keyGenerator(value, propetires);
-
-  public _key: Function = this.getKey(this.filteredProperties);
+  public getKey = (properties: [string, string]) => (value: Mark) => this.keyGenerator(value, properties);
 }

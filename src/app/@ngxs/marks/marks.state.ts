@@ -70,7 +70,7 @@ export class NgxsMarksState {
   }
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
-
+    console.log(payload);
     setState(patch({
         data: removeItem(mark => mark.id === payload.id)
     }));
