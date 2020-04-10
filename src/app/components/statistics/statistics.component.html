@@ -60,7 +60,14 @@
     </div>
     <div class="statistic__students">
       <!--<pre>{{selected | json}}</pre>-->
-      <pre>{{ render | json}}</pre>
+      <ul>
+        <li *ngFor="let data of getFromRender()">
+          <h2>{{data[0]}}</h2>
+          <ul>
+            <li *ngFor="let student of data[1]">{{student}}</li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </section>

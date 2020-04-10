@@ -147,4 +147,13 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   private unSelectDate = (holder: [], date: number): void => {
     return holder.filter(time => time !== date);
   }
+
+  getFromRender() {
+    const representation =  Array.from(this.render);
+    representation.forEach(([id, set], i, rep) => {
+      rep[i][0] = this.subjects.find(sub => sub[0].id === id)[0].name;
+      rep[i][1] = _take(Array.from(set), "surname");
+    });
+    return representation;
+  }
 }
