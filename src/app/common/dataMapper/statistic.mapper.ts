@@ -64,14 +64,34 @@ export class StatisticMapper {
     students: {[string]: IStudent},
     selectedDatesArray?: number[]
   ): string[] => {
-    return dates[tuple[0].id].reduce((row, dateTuple) => {
+    const columns: string[] = dates[tuple[0].id].reduce((col, dateTuple) => {
       if (!selectedDatesArray || selectedDatesArray.includes(dateTuple[0])) {
         const thatDateMarks: Mark[] = __filter((mark) => mark.time === dateTuple[0])(marks[tuple[0].id]);
-        row = [...row, this.fromMarksToRow(thatDateMarks, students)];
-        return row;
+        const averageMark: number = thatDateMarks.reduce((acc, m) => acc + m.value, 0) / thatDateMarks.length;
+        const academicPerformance: number = thatDateMarks.filter(mark => mark.value >= 4).length / thatDateMarks.length;
+        const quality: number = thatDateMarks.filter(mark => mark.value >= 7).length / thatDateMarks.length;
+        const degree: number = (
+          thatDateMarks.filter(mark => mark.value < 4).length * 0.16 +
+          thatDateMarks.filter(mark => mark.value >= 4 && mark.value < 7).length * 0.36 +
+          thatDateMarks.filter(mark => mark.value >= 7 && mark.value < 9).length * 0.64 +
+          thatDateMarks.filter(mark => mark.value >= 9).length * 1
+        ) / thatDateMarks.length;
+        const report: string = this.generateReport(averageMark, academicPerformance, quality, degree);
+        col = [...col, this.fromMarksToRow(thatDateMarks, students).concat(
+          report
+        )];
+        return col;
       }
-      return row;
+      return col;
     },[]);
+    return columns;
+  };
+
+  public generateReport = (average: number, performance: number, quality: number, degree: number) => {
+      return `Average: ${(average).toFixed(2)}\n` +
+      `Academic performance: ${(performance * 100).toFixed(2)}%\n` +
+      `Quality of education: ${(quality * 100).toFixed(2) }%\n` +
+      `Degree of learning: ${(degree * 100).toFixed(2) }%`;
   };
 
   public fromStudentToName = (student: IStudent): string => `${student.name} ${student.surname}`;

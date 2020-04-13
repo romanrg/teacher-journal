@@ -88,10 +88,14 @@
                 >
                   <ul class="statistic__data-body-list">
                     <li
-                      *ngFor="let stat of cell"
+                      *ngFor="let stat of cell; let i = index"
                       class="statistic__data-body-item"
                     >
-                      {{stat}}
+                      <span *ngIf="i !== cell.length - 1">{{stat}}</span>
+                      <span
+                        *ngIf="i === cell.length - 1"
+                        class="statistic__data-item--average"
+                      ><pre>{{stat}}</pre></span>
                     </li>
                   </ul>
                 </td>

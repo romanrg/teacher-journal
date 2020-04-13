@@ -86,7 +86,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     this.selected.sort((a, b) => a - b);
     this.render.length = 0;
     this.subjects.map(tuple => {
-      this.render = this.generateStatisticViewForSubject(tuple, this.render, this.dates, this.marks, this.students);
+      this.render = this.generateStatisticViewForSubject(
+        tuple, this.render, this.dates, this.marks, this.students
+      );
     });
 
   };
@@ -111,58 +113,85 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public changeCheck = (tuple: [ISubject, boolean, boolean], date?: [number, boolean, boolean]): void => {
 
     if (date) {
+
+      const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
+
       if (date[1]) {
 
         this.selected = this.selectDate(this.selected, date[0]);
         this.checkOne(tuple);
-        const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
 
         if (this.render.some(config => config.caption.includes(tuple[0].name))) {
+
           this.replaceAtIndex(
             this.render,
             index,
-            this.mapper.statisticForTable(tuple, this.dates, this.marks, this.students),
-            this.getHeaders(this.dates, tuple, this.selected)
+            this.mapper.statisticForTable(
+              tuple, this.dates, this.marks, this.students, this.selected
+            ),
+            this.getHeaders(
+              this.dates, tuple, this.selected
+            )
           );
+
         } else {
+
           this.render = this.generateStatisticViewForSubject(
             tuple, this.render, this.dates, this.marks, this.students, this.mapper.statisticForTable, this.selected
           );
+
         }
       } else {
 
         this.selected = this.unSelectDate(this.selected, date[0]);
 
         if (!this.dates[tuple[0].id].some(dateTuple => dateTuple[1])) {
+
           this.uncheckOne(tuple);
           this.render = this.removeSubjectStatisticFromView(tuple, this.render);
+
         } else {
-          const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
+
           this.replaceAtIndex(
             this.render,
             index,
-            this.mapper.statisticForTable(tuple, this.dates, this.marks, this.students, this.selected),
-            this.getHeaders(this.dates, tuple, this.selected)
+            this.mapper.statisticForTable(
+              tuple, this.dates, this.marks, this.students, this.selected
+            ),
+            this.getHeaders(
+              this.dates, tuple, this.selected
+            )
           );
+
         }
       }
 
     }
 
     if (!date) {
+
       if (tuple[1]) {
+
         this.expandOne(tuple);
+
         this.dates[tuple[0].id].map(dateTuple => {
           this.checkOne(dateTuple);
           this.selectDate(this.selected, dateTuple[0]);
         });
-        this.render = this.generateStatisticViewForSubject(tuple, this.render, this.dates, this.marks, this.students);
+
+        this.render = this.generateStatisticViewForSubject(
+          tuple, this.render, this.dates, this.marks, this.students
+        );
+
       } else {
+
         this.dates[tuple[0].id].map(dateTuple => {
           this.uncheckOne(dateTuple);
           this.selected = this.unSelectDate(this.selected, dateTuple[0]);
         });
+
         this.render = this.removeSubjectStatisticFromView(tuple, this.render);
+
       }
 
     }
