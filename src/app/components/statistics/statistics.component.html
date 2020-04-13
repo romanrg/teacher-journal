@@ -45,7 +45,7 @@
                     name="{{data[0]}}"
                     [label]="data[0] | date:'MMM d, y'"
                     [checked]="data[1]"
-                    (change)="changeCheck(data)"
+                    (change)="changeCheck(subject, data)"
                   ></app-dropdown>
                 </li>
               </ul>
@@ -59,13 +59,45 @@
       </form>
     </div>
     <div class="statistic__students">
-      <!--<pre>{{selected | json}}</pre>-->
-      <ul>
-        <li *ngFor="let data of getFromRender()">
-          <h2>{{data[0]}}</h2>
-          <ul>
-            <li *ngFor="let student of data[1]">{{student}}</li>
-          </ul>
+      <ul class="statistic__data-list">
+        <li
+          *ngFor="let microTable of render"
+          class="statistic__data-item"
+        >
+          <table class="statistic__data-table">
+            <caption
+              class="statistic__data-caption"
+            >{{microTable.caption}}</caption>
+            <thead class="statistic__data-head">
+              <tr class="statistic__data-header-row">
+                <th
+                  class="statistic__data-body-cell"
+                  *ngFor="let header of microTable.headers"
+                  [ngStyle]="{'width.%': 100 / microTable.headers.length}"
+                >
+                  {{header | date:"yyyy/MM/dd"}}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="statistic__data-body">
+              <tr class="statistic__data-body-row">
+                <td
+                  *ngFor="let cell of microTable.body"
+                  class="statistic__data-body-cell"
+                  [ngStyle]="{'width.%': 100 / microTable.headers.length}"
+                >
+                  <ul class="statistic__data-body-list">
+                    <li
+                      *ngFor="let stat of cell"
+                      class="statistic__data-body-item"
+                    >
+                      {{stat}}
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </li>
       </ul>
     </div>

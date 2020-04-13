@@ -45,13 +45,25 @@ export class TableBody {
 
   public clear = (): void =>  this.body.length = 0;
 
-  public generateBodyFromDataAndConfig = (config: string[], data: Array<any>): void => data.map(value => this.generateRowByRow(value, config));
+  public generateBodyFromDataAndConfig = (
+    config: string[],
+    data: Array<any>
+  ): void => data.map(value => this.generateRowByRow(value, config));
 
-  public changeAllValuesAtIndexWithArrayValues = (index: number, arr: Array<any>): void => this.body.forEach((bodyRow, i) => this.row().changeValueAt(bodyRow, index, arr[i]));
+  public changeAllValuesAtIndexWithArrayValues = (
+    index: number,
+    arr: Array<any>
+  ): void => this.body.forEach((bodyRow, i) => this.row().changeValueAt(bodyRow, index, arr[i]));
 
-  public changeOnlyOneValueAt = (newValue: cell, bodyRowIndex: number, cellIndex: number): void => this.row().changeValueAt(this.body[bodyRowIndex], cellIndex, newValue);
+  public changeOnlyOneValueAt = (
+    newValue: cell,
+    bodyRowIndex: number,
+    cellIndex: number
+  ): void => this.row().changeValueAt(this.body[bodyRowIndex], cellIndex, newValue);
 
-  public generateRowByRow = (dataPiece: any, config: string[]): void => this.body.push((this.row(config, dataPiece)).createRowFromObject());
+  public generateRowByRow = (
+    dataPiece: any, config: string[]
+  ): void => this.body.push((this.row(config, dataPiece)).createRowFromObject());
 
   public generateIdArray = (n: number): number[] => Array.from(Array(n).keys()).map( i => i + 1);
 

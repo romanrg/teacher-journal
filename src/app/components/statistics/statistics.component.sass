@@ -15,7 +15,9 @@
 .wrapper
   display: flex
   flex-grow: 1
-  justify-content: space-evenly
+  justify-content: center
+  min-width: 60rem
+  align-self: center
 .statistic__dropdown
   width: 20rem
 
@@ -23,14 +25,17 @@
   display: flex
   flex-direction: column
   position: relative
+  width: 21%
 .dropdown__select-btn
   border: none
   background: $bg-color
   font: inherit
   color: inherit
   width: 100%
-  padding: 1rem
+  padding: 2rem 1rem
   z-index: 10
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
 .dropdown__content
   flex-direction: column
   position: absolute
@@ -39,12 +44,14 @@
   animation: disappear linear 0.2s
   animation-fill-mode: forwards
   width: 100%
+  padding: 2rem 0
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
 .dropdown__controller
   display: flex
   justify-content: space-around
   align-items: center
   width: 100%
-  border: 0.05rem solid $active-color
   z-index: 1
 
 .dropdown__content--visible
@@ -76,15 +83,13 @@
 .dropdown__expand-wrapper
   display: none
 
-
-
 @keyframes appear
   from
     transform: translateY(0)
   to
     display: flex
     opacity: 1
-    transform: translateY(4rem)
+    transform: translateY(7rem)
 
 @keyframes disappear
   from
@@ -93,4 +98,63 @@
   to
     transform: translateY(0)
 
+.statistic__students
+  flex-grow: 1
+  margin-left: 3rem
+.statistic__data-list,
+.statistic__data-body-list
+  display: flex
+  flex-direction: column
+  list-style: none
+  padding: 0
+  max-width: 40rem
+.statistic__data-list
+  margin-left: 3rem
+.statistic__data-item
+  margin-top: 2rem
+  padding: 2rem
+  display: flex
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.statistic__data-table
+  flex-grow: 1
+  display: flex
+  flex-direction: column
+.statistic__data-caption
+  font: inherit
+  text-transform: uppercase
+  display: flex
+  align-self: center
+  padding: 1rem
+.statistic__data-head
+  display: flex
+  flex-wrap: nowrap
+.statistic__data-header-row
+  display: flex
+  flex-grow: 1
+  align-items: center
+  justify-content: space-around
 
+.statistic__data-body
+  display: flex
+  flex-wrap: nowrap
+.statistic__data-body-row
+  flex-grow: 1
+  display: flex
+  justify-content: center
+.statistic__data-body-cell
+  box-sizing: border-box
+  padding: 0.5rem 1.5rem
+  flex-grow: 1
+  display: flex
+  &:not(:last-child)
+    border-right: 0.05rem solid $active-color
+  & ul
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+.statistic__data-body-item
+  padding-bottom: 0.5rem
+  background-color: $bg-color
+  flex-grow: 1
+  align-self: flex-start
