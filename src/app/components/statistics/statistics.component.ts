@@ -110,33 +110,39 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public changeCheck = (tuple: [ISubject, boolean, boolean], date?: [number, boolean, boolean]): void => {
 
-    // tuple[2] = tuple[1];
-
     if (date) {
       if (date[1]) {
 
         this.selected = this.selectDate(this.selected, date[0]);
         this.checkOne(tuple);
+        const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
 
         if (this.render.some(config => config.caption.includes(tuple[0].name))) {
-          this.render = this.removeSubjectStatisticFromView(tuple, this.render);
-        }
-        this.render = this.generateStatisticViewForSubject(
-          tuple, this.render, this.dates, this.marks, this.students, this.mapper.statisticForTable, this.selected
-        );
-
-      } else {
-
-        this.selected = this.unSelectDate(this.selected, date[0]);
-        if (this.render.some(config => config.caption.includes(tuple[0].name))) {
-          this.render = this.removeSubjectStatisticFromView(tuple, this.render);
-        }
-
-        if (!this.dates[tuple[0].id].some(dateTuple => dateTuple[1])) {
-          this.uncheckOne(tuple);
+          this.replaceAtIndex(
+            this.render,
+            index,
+            this.mapper.statisticForTable(tuple, this.dates, this.marks, this.students),
+            this.getHeaders(this.dates, tuple, this.selected)
+          );
         } else {
           this.render = this.generateStatisticViewForSubject(
             tuple, this.render, this.dates, this.marks, this.students, this.mapper.statisticForTable, this.selected
+          );
+        }
+      } else {
+
+        this.selected = this.unSelectDate(this.selected, date[0]);
+
+        if (!this.dates[tuple[0].id].some(dateTuple => dateTuple[1])) {
+          this.uncheckOne(tuple);
+          this.render = this.removeSubjectStatisticFromView(tuple, this.render);
+        } else {
+          const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
+          this.replaceAtIndex(
+            this.render,
+            index,
+            this.mapper.statisticForTable(tuple, this.dates, this.marks, this.students, this.selected),
+            this.getHeaders(this.dates, tuple, this.selected)
           );
         }
       }
@@ -145,6 +151,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (!date) {
       if (tuple[1]) {
+        this.expandOne(tuple);
         this.dates[tuple[0].id].map(dateTuple => {
           this.checkOne(dateTuple);
           this.selectDate(this.selected, dateTuple[0]);
@@ -170,9 +177,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     statisticGenerator: () => string[] = this.mapper.statisticForTable,
     selectedDatesArray?: number[]
   ): ITableConfig[] => {
-    const headers: number[] = !selectedDatesArray ?
-      dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
-      dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
+    const headers: number[] = this.getHeaders(dates, subjectTuple, selectedDatesArray);
     return [...tableConfigArray, {
       caption: `Statistic for ${subjectTuple[0].name}:`,
       body: statisticGenerator(subjectTuple, dates, marks, students, selectedDatesArray),
@@ -188,6 +193,26 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     const beginFrom: number = copy.findIndex(config => config.caption.includes(subjectTuple[0].name));
     copy.splice(beginFrom, 1);
     return copy;
+  };
+
+  public replaceAtIndex = (
+    tableConfig: ITableConfig[],
+    index: number,
+    body: ITableConfig,
+    headers: string[],
+  ): ITableConfig[] => {
+    tableConfig[index].body = body;
+    tableConfig[index].headers = headers;
+  };
+
+  public getHeaders = (
+    dates: {[string]: [number, boolean, boolean][]},
+    subjectTuple: [ISubject, boolean, boolean],
+    selectedDatesArray?: number[]
+  ): string[] => {
+    return !selectedDatesArray ?
+      dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
+      dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
   };
 
 
