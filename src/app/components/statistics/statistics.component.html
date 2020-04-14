@@ -25,7 +25,6 @@
         </div>
         <ul class="dropdown__list">
           <li class="dropdown__item" *ngFor="let subject of subjects">
-            <!--"-->
             <app-dropdown
               [(ngModel)]="subject[1]"
               name="{{subject[0].name}}"
@@ -63,30 +62,31 @@
     <div class="statistic__students">
       <ul class="statistic__data-list">
         <li
-          *ngFor="let microTable of render"
+          *ngFor="let microTable of render; let i = index"
           class="statistic__data-item"
         >
           <table class="statistic__data-table">
             <caption
               class="statistic__data-caption"
             >{{microTable.caption}}</caption>
-            <thead class="statistic__data-head">
+            <div class="scroll">
+              <thead class="statistic__data-head">
               <tr class="statistic__data-header-row">
                 <th
                   class="statistic__data-body-cell"
                   *ngFor="let header of microTable.headers"
-                  [ngStyle]="{'width.%': 100 / microTable.headers.length}"
+
                 >
                   {{header | date:"yyyy/MM/dd"}}
                 </th>
               </tr>
-            </thead>
-            <tbody class="statistic__data-body">
+              </thead>
+              <tbody class="statistic__data-body">
               <tr class="statistic__data-body-row">
                 <td
                   *ngFor="let cell of microTable.body"
                   class="statistic__data-body-cell"
-                  [ngStyle]="{'width.%': 100 / microTable.headers.length}"
+
                 >
                   <ul class="statistic__data-body-list">
                     <li
@@ -102,10 +102,12 @@
                   </ul>
                 </td>
               </tr>
-            </tbody>
+              </tbody>
+            </div>
           </table>
         </li>
       </ul>
+      <div class="chart"></div>
     </div>
   </div>
 </section>

@@ -101,6 +101,7 @@
 .statistic__students
   flex-grow: 1
   margin-left: 3rem
+  display: flex
 .statistic__data-list,
 .statistic__data-body-list
   display: flex
@@ -123,8 +124,10 @@
   font: inherit
   text-transform: uppercase
   display: flex
-  align-self: center
+  align-self: flex-start
   padding: 1rem
+  position: sticky
+  left: 0
 .statistic__data-head
   display: flex
   flex-wrap: nowrap
@@ -146,6 +149,7 @@
   padding: 0.5rem 1.5rem
   flex-grow: 1
   display: flex
+  width: 17rem
   &:not(:last-child)
     border-right: 0.05rem solid $active-color
   & ul
@@ -161,3 +165,6 @@
 .statistic__data-item--average
   color: $active-color
   align-self: flex-end
+.scroll
+  width: 18rem
+  overflow-x: scroll

@@ -7,7 +7,7 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {Observable} from "rxjs";
 import {ISubject} from "../../common/models/ISubject";
-import {copyByJSON} from "../../common/helpers/lib";
+import {_take, copyByJSON} from "../../common/helpers/lib";
 import {IStudent} from "../../common/models/IStudent";
 import {Mark} from "../../common/models/IMark";
 import {ControlValueAccessor} from "@angular/forms";
@@ -15,6 +15,10 @@ import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
 import {Select} from "@ngxs/store";
 import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
+import * as d3 from "d3";
+import {selectAll, style} from "d3-selection";
+import {StatisticResearcher} from "../../common/helpers/statistics";
+
 @Component({
   selector: "app-statistics",
   templateUrl: "./statistics.component.html",
@@ -53,16 +57,15 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
       this.marks = copyByJSON(marks);
       this.dates = copyByJSON(dates);
     });
-
-
-
   }
 
   public checkOne = (tuple: [any, boolean, boolean]): void => tuple[1] = true;
 
   public uncheckOne = (tuple: [any, boolean, boolean]): void => tuple[1] = false;
 
-  public expandOne = (tuple: [any, boolean, boolean]): void => tuple[2] = true;
+  public expandOne = (tuple: [any, boolean, boolean]): void => {
+    tuple[2] = true;
+  };
 
   public collapseOne = (tuple: [any, boolean, boolean]): void => tuple[2] = false;
 
@@ -100,12 +103,16 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (date) {
 
+
+
+
       const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
 
       if (date[1]) {
 
         this.selected = this.selectDate(this.selected, date[0]);
         this.checkOne(tuple);
+
 
         if (this.render.some(config => config.caption.includes(tuple[0].name))) {
 
@@ -156,9 +163,45 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (!date) {
 
+      d3.select(".chart").selectAll("div").remove()
+
+
+      const data = Object.entries(this.marks[tuple[0].id].reduce((acc, mark) => {
+        acc[mark.student] !== undefined ? acc[mark.student] = [...acc[mark.student], mark.value] : acc[mark.student] = [mark.value];
+        return acc;
+      }, {}));
+      const av = (arr: number[]) => arr.reduce((acc, curr) => acc + curr, 0) / arr.length
+      d3.select(".chart")
+        .style("height", "100%")
+        .style("width", "100%")
+        .style("display", "flex")
+        .style("align-items", "flex-end")
+        // .style("flex-direction", "column")
+        .selectAll("div")
+        .data(data)
+        .enter()
+        .append("div")
+        .style("background", ([, marksArr]) => av(marksArr) < 5 ? "blue" : "green")
+        .style("height", ([, marksArr]) => av(marksArr) * 10 + "%")
+        .style("width", "1rem")
+        .style("padding", "1rem")
+        .style("margin", "1rem")
+        .style("display", "flex")
+        .append("span")
+        // .style("writing-mode", "vertical-rl")
+        .style("display", "flex")
+        .style("align-self", "flex-end")
+        .style("margin", "0rem 0rem -5rem -1rem")
+        .style("z-index", 2)
+        .style("width", "1rem")
+        .text(([student, marksArr]) => this.mapper.fromStudentToName(this.students[student]) + " " + av(marksArr).toFixed(2));
+
+
+
       if (tuple[1]) {
 
         this.expandOne(tuple);
+
 
         this.dates[tuple[0].id].map(dateTuple => {
 
@@ -172,6 +215,8 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         );
 
       } else {
+
+        d3.select(".chart").selectAll("div").remove()
 
         this.dates[tuple[0].id].map(dateTuple => {
           this.uncheckOne(dateTuple);
@@ -195,6 +240,14 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     selectedDatesArray?: number[]
   ): ITableConfig[] => {
     const headers: number[] = this.mapper.getHeaders(dates, subjectTuple, selectedDatesArray);
+
+
+
+
+
+
+
+
     return [...tableConfigArray, {
       caption: `Statistic for ${subjectTuple[0].name}:`,
       body: statisticGenerator(subjectTuple, dates, marks, students, selectedDatesArray),
