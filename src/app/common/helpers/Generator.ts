@@ -155,7 +155,7 @@ export class NumberPicker extends Generator {
       this.btnText = data.SUBMIT;
     });
     this.numberAttributes = {
-      type: FormControlType.number,
+      type: FormControlType.text,
       min: this.min,
       max: this.max,
       pattern: this.validation,
