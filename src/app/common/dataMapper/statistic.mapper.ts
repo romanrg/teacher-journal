@@ -3,6 +3,7 @@ import {__filter, _chain, _compose, _partial, _pluck} from "../helpers/lib";
 import {ISubject} from "../models/ISubject";
 import {Mark} from "../models/IMark";
 import {IStudent} from "../models/IStudent";
+import {StatisticResearcher} from "../helpers/statistics";
 
 export class StatisticMapper {
   constructor(store: Store) {
@@ -62,34 +63,25 @@ export class StatisticMapper {
     dates: {[string]: [number, boolean, boolean][]},
     marks: {[string]: Mark[]},
     students: {[string]: IStudent},
-    selectedDatesArray?: number[]
+    selectedDatesArray?: number[],
   ): string[] => {
-    const columns: string[] = dates[tuple[0].id].reduce((col, dateTuple) => {
+    return dates[tuple[0].id].reduce((col, dateTuple) => {
       if (!selectedDatesArray || selectedDatesArray.includes(dateTuple[0])) {
         const thatDateMarks: Mark[] = __filter((mark) => mark.time === dateTuple[0])(marks[tuple[0].id]);
-        const averageMark: number = thatDateMarks.reduce((acc, m) => acc + m.value, 0) / thatDateMarks.length;
-        const academicPerformance: number = thatDateMarks.filter(mark => mark.value >= 4).length / thatDateMarks.length;
-        const quality: number = thatDateMarks.filter(mark => mark.value >= 7).length / thatDateMarks.length;
-        const degree: number = (
-          thatDateMarks.filter(mark => mark.value < 4).length * 0.16 +
-          thatDateMarks.filter(mark => mark.value >= 4 && mark.value < 7).length * 0.36 +
-          thatDateMarks.filter(mark => mark.value >= 7 && mark.value < 9).length * 0.64 +
-          thatDateMarks.filter(mark => mark.value >= 9).length * 1
-        ) / thatDateMarks.length;
-        const report: string = this.generateReport(averageMark, academicPerformance, quality, degree);
-        col = [...col, this.fromMarksToRow(thatDateMarks, students).concat(
-          report
-        )];
+        const statistics: StatisticResearcher = new StatisticResearcher(thatDateMarks);
+        const report: string = this.fromReportToString(
+          statistics.getReport("average", "quality", "degree", "academicPerformance")
+        );
+        col = [...col, this.fromMarksToRow(thatDateMarks, students).concat(report)];
         return col;
       }
       return col;
-    },[]);
-    return columns;
+    }, []);
   };
 
-  public generateReport = (average: number, performance: number, quality: number, degree: number) => {
+  public fromReportToString = ({average, academicPerformance, quality, degree}: {[string]: number}): string => {
       return `Average: ${(average).toFixed(2)}\n` +
-      `Academic performance: ${(performance * 100).toFixed(2)}%\n` +
+      `Academic performance: ${(academicPerformance * 100).toFixed(2)}%\n` +
       `Quality of education: ${(quality * 100).toFixed(2) }%\n` +
       `Degree of learning: ${(degree * 100).toFixed(2) }%`;
   };
@@ -102,4 +94,14 @@ export class StatisticMapper {
         return acc;
       },[]);
   }
+
+  public getHeaders = (
+    dates: {[string]: [number, boolean, boolean][]},
+    subjectTuple: [ISubject, boolean, boolean],
+    selectedDatesArray?: number[]
+  ): string[] => {
+    return !selectedDatesArray ?
+      dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
+      dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
+  };
 }

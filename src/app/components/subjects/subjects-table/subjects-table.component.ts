@@ -26,7 +26,6 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
 import {Equalities} from "../../../common/models/filters";
-import {tryCatch} from "rxjs/internal/util/tryCatch";
 
 @Component({
   selector: "app-subjects-table",

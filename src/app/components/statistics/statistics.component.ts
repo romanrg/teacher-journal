@@ -7,15 +7,14 @@ import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {Observable} from "rxjs";
 import {ISubject} from "../../common/models/ISubject";
-import {__filter, _chain, _compose, _if, _partial, _pluck, _take, copyByJSON} from "../../common/helpers/lib";
+import {copyByJSON} from "../../common/helpers/lib";
 import {IStudent} from "../../common/models/IStudent";
 import {Mark} from "../../common/models/IMark";
 import {ControlValueAccessor} from "@angular/forms";
-import {tap} from "rxjs/internal/operators";
 import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
-import {mark} from "@angular/compiler-cli/src/ngtsc/perf/src/clock";
-import {compareSegments} from "@angular/compiler-cli/ngcc/src/sourcemaps/segment_marker";
+import {Select} from "@ngxs/store";
+import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
 @Component({
   selector: "app-statistics",
   templateUrl: "./statistics.component.html",
@@ -27,13 +26,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public mapper: StatisticMapper;
   public tableBody: TableBody;
   public render: ITableConfig[] = [];
-  /*
-  {
-    caption: "Statistics for subjects:",
-    headers: [],
-    body: []
-  }
-   */
+  @Select(NgxsStatisticsState.Statistics) public state$: Observable<StatisticsStateModel>;
 
   // [subj, checked, expaneded]
   public subjects: [ISubject, boolean, boolean][];
@@ -50,22 +43,18 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   ) {
     this.mapper = new StatisticMapper(this.store);
     this.tableBody = new TableBody(TableRow);
-    this.state$ = this.mapper.fromState();
   }
 
   public ngOnInit(): void {
 
-    this.state$.pipe(
-      tap(([subjects, students, marks]) => {
-        this.subjects = this.mapper.subjectsFromState(subjects);
+    this.state$.subscribe(({students, marks, dates, subjects}) => {
+      this.subjects = copyByJSON(subjects);
+      this.students = copyByJSON(students);
+      this.marks = copyByJSON(marks);
+      this.dates = copyByJSON(dates);
+    });
 
-        this.marks =  this.mapper.marksFromState(this.subjects, marks);
 
-        this.dates = this.mapper.datesFromState(this.subjects, this.marks);
-
-        this.students = this.mapper.studentsFromState(students);
-      })
-    ).subscribe();
 
   }
 
@@ -85,21 +74,18 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     }));
     this.selected.sort((a, b) => a - b);
     this.render.length = 0;
-    this.subjects.map(tuple => {
-      this.render = this.generateStatisticViewForSubject(
+    this.render = this.subjects
+      .map(tuple => this.generateStatisticViewForSubject(
         tuple, this.render, this.dates, this.marks, this.students
-      );
-    });
-
+      ))
+      .flat(1);
   };
 
   public unCheckAll = (): void => {
     this.subjects.map(this.uncheckOne);
     Object.values(this.dates).forEach(dates => dates.map(this.uncheckOne));
     this.selected.length = 0;
-    this.subjects.map(tuple => {
-      this.render = this.removeSubjectStatisticFromView(tuple, this.render);
-    });
+    this.render.length = 0;
   };
 
   public expandAll = (): void => {
@@ -129,7 +115,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
             this.mapper.statisticForTable(
               tuple, this.dates, this.marks, this.students, this.selected
             ),
-            this.getHeaders(
+            this.mapper.getHeaders(
               this.dates, tuple, this.selected
             )
           );
@@ -158,7 +144,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
             this.mapper.statisticForTable(
               tuple, this.dates, this.marks, this.students, this.selected
             ),
-            this.getHeaders(
+            this.mapper.getHeaders(
               this.dates, tuple, this.selected
             )
           );
@@ -175,8 +161,10 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         this.expandOne(tuple);
 
         this.dates[tuple[0].id].map(dateTuple => {
+
           this.checkOne(dateTuple);
           this.selectDate(this.selected, dateTuple[0]);
+
         });
 
         this.render = this.generateStatisticViewForSubject(
@@ -206,7 +194,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     statisticGenerator: () => string[] = this.mapper.statisticForTable,
     selectedDatesArray?: number[]
   ): ITableConfig[] => {
-    const headers: number[] = this.getHeaders(dates, subjectTuple, selectedDatesArray);
+    const headers: number[] = this.mapper.getHeaders(dates, subjectTuple, selectedDatesArray);
     return [...tableConfigArray, {
       caption: `Statistic for ${subjectTuple[0].name}:`,
       body: statisticGenerator(subjectTuple, dates, marks, students, selectedDatesArray),
@@ -234,16 +222,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     tableConfig[index].headers = headers;
   };
 
-  public getHeaders = (
-    dates: {[string]: [number, boolean, boolean][]},
-    subjectTuple: [ISubject, boolean, boolean],
-    selectedDatesArray?: number[]
-  ): string[] => {
-    return !selectedDatesArray ?
-      dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
-      dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
-  };
-
 
 
   public selectDate = (holder: [], date: number): void => {
@@ -256,4 +234,5 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   };
 
   public unSelectDate = (holder: [], date: number): void => holder.filter(time => time !== date);
+
 }

@@ -25,6 +25,7 @@
         </div>
         <ul class="dropdown__list">
           <li class="dropdown__item" *ngFor="let subject of subjects">
+            <!--"-->
             <app-dropdown
               [(ngModel)]="subject[1]"
               name="{{subject[0].name}}"
@@ -40,6 +41,7 @@
             >
               <ul class="dropdown__list">
                 <li class="dropdown__item dropdown__item--scale" *ngFor="let data of dates[subject[0].id]">
+                  <!---->
                   <app-dropdown
                     [(ngModel)]="data[1]"
                     name="{{data[0]}}"

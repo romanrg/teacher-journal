@@ -5,6 +5,7 @@ import {StudentsServiceService} from "../../common/services/students.service";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
+import {Statistics} from "../statistics/statistics.actions";
 
 export class StudentsStateModel {
   public data: IStudent[];
@@ -53,6 +54,7 @@ export class NgxsStudentsState {
     return this.studentsService.fetchStudents().pipe(
       tap(studentsResponse => {
         studentsResponse.forEach(student => student.id = student._id);
+        dispatch(new Statistics.SetStudents(studentsResponse));
         return setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})
       }),
       retry(3),

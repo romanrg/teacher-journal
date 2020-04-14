@@ -47,6 +47,7 @@ import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {DropdownComponent} from "../shared/dropdown/dropdown.component";
+import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -94,7 +95,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
-      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState],
+      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState, NgxsStatisticsState],
       { developmentMode: !environment.production }
     ),
     NgxsReduxDevtoolsPluginModule.forRoot(),

@@ -12,6 +12,7 @@ import {append, iif, patch, removeItem, updateItem} from "@ngxs/store/operators"
 import {Marks} from "../marks/marks.actions";
 import {Students} from "../students/students.actions";
 import {MarksServiceService} from "../../common/services/marks.service";
+import {Statistics} from "../statistics/statistics.actions";
 
 export class SubjectsStateModel {
   public data: ISubject[];
@@ -66,6 +67,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     return this.subjectsService.fetchSubjects().pipe(
       tap(apiResponse => {
         apiResponse.forEach(subject => subject.id = subject._id);
+        dispatch(new Statistics.SetSubjects(apiResponse));
         return setState({...getState(),   data: [...apiResponse], loading: false, loaded: true})
       }),
       retry(3),

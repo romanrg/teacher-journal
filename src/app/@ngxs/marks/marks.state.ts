@@ -9,6 +9,8 @@ import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
 import {_allPass, _allTrue, _compose, copyByJSON} from "../../common/helpers/lib";
 import {Equalities} from "../../common/models/filters";
+import {Statistics} from "../statistics/statistics.actions";
+import {IStudent} from "../../common/models/IStudent";
 
 export class MarksStateModel {
   public data: Mark[];
@@ -50,7 +52,9 @@ export class NgxsMarksState {
     return this.marksService.getMarks().pipe(
       tap(apiResponse => {
         apiResponse.forEach(mark => mark.id = mark._id);
-        return setState({...getState(), data: [...apiResponse.flat(1)].filter(({subject}) => subject !== null), loading: false, loaded: true});
+        const marks: IStudent[] = [...apiResponse.flat(1)].filter(({subject}) => subject !== null);
+        dispatch(new Statistics.SetMarks(marks));
+        return setState({...getState(), data: marks, loading: false, loaded: true});
       }),
       retry(3),
       catchError(error => of(dispatch(new Marks.GetError(error))))
