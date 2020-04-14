@@ -49,7 +49,12 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   public ngOnInit(): void {
     this.manager.addSubscription(this.translate.stream("FORMS").subscribe(data => {
       this.translations = data;
-      const errorMessages: string[] = [this.translations.ERRORS.REQUIRED];
+      const errorMessages: string[] = [
+        this.translations.ERRORS.REQUIRED,
+        this.translations.ERRORS.MAX_LENGTH_50,
+        this.translations.ERRORS.ONLY_LETTERS,
+        this.translations.ERRORS.MAX_LENGTH_200,
+      ];
       this.formConfig = {
         legend: this.translations.NEW_STUDENT.LEGEND,
         formGroupName: {
@@ -59,7 +64,11 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
               description: this.translations.NEW_STUDENT.CONTROLS_NAME.NAME.TITLE,
               initialValue: "",
               type: FormControlType.text,
-              validators: [Validators.required],
+              validators: [
+                Validators.required,
+                Validators.maxLength(50),
+                Validators.pattern(/^[A-Za-z]+$/)
+              ],
               errorMessages,
               name: "name"
             },
@@ -67,7 +76,11 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
               description: this.translations.NEW_STUDENT.CONTROLS_NAME.SURNAME.TITLE,
               initialValue: "",
               type: FormControlType.text,
-              validators: [Validators.required],
+              validators: [
+                Validators.required,
+                Validators.maxLength(50),
+                Validators.pattern(/^[A-Za-z]+$/)
+              ],
               errorMessages,
               name: "surname"
             },
@@ -83,8 +96,8 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
               description: this.translations.NEW_STUDENT.CONTROLS_NAME.DESCRIPTION.TITLE,
               initialValue: "",
               type: FormControlType.textarea,
-              validators: [],
-              errorMessages,
+              validators: [Validators.maxLength(200)],
+              errorMessages: [errorMessages[3]],
               name: "description"
             }
           ]

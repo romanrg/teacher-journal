@@ -125,7 +125,10 @@
       "DESCRIPTION": "full name:"
     },
     "ERRORS": {
-      "REQUIRED": "This field is required"
+      "REQUIRED": "This field is required",
+      "MAX_LENGTH_50": "No longer than 50 characters",
+      "ONLY_LETTERS": "Only letters",
+      "MAX_LENGTH_200": "No longer than 200 characters"
     }
   }
 }

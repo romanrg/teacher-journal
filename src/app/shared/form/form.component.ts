@@ -36,7 +36,11 @@ export class FormComponent implements OnInit {
   }
 
   public isShowErrorMessage(control: AbstractControl): boolean {
-    return (!control.valid && control.touched && control.errors.required);
+    return (
+      !control.valid &&
+      control.touched &&
+      control.errors
+    );
   }
 
   public submit(): void {
