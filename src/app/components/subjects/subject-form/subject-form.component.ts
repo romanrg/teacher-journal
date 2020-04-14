@@ -38,7 +38,12 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
   public ngOnInit(): void {
     this.translate.stream("FORMS").subscribe(data => {
       this.translations = data;
-      const errorMessages: string[] = [this.translations.ERRORS.REQUIRED];
+      const errorMessages: string[] = [
+        this.translations.ERRORS.REQUIRED,
+        this.translations.ERRORS.MAX_LENGTH_50,
+        this.translations.ERRORS.ONLY_LETTERS,
+        this.translations.ERRORS.MAX_LENGTH_200
+      ];
       this.formConfig = {
         legend: this.translations.NEW_SUBJECT.LEGEND,
         formGroupName: {
@@ -48,7 +53,11 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
               name: "name",
               initialValue: "",
               type: FormControlType.text,
-              validators: [Validators.required],
+              validators: [
+                Validators.required,
+                Validators.maxLength(50),
+                Validators.pattern(/^[A-Za-z]+$/)
+              ],
               errorMessages,
               description: this.translations.NEW_SUBJECT.CONTROLS_NAME.NAME.TITLE,
             },
@@ -56,7 +65,11 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
               name: "teacher",
               initialValue: "",
               type: FormControlType.text,
-              validators: [Validators.required],
+              validators: [
+                Validators.required,
+                Validators.maxLength(50),
+                Validators.pattern(/^[A-Za-z]+$/)
+              ],
               errorMessages,
               description: this.translations.NEW_SUBJECT.CONTROLS_NAME.TEACHER.TITLE,
             },
@@ -72,8 +85,8 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
               name: "description",
               initialValue: "",
               type: FormControlType.textarea,
-              validators: [],
-              errorMessages,
+              validators: [Validators.maxLength(200)],
+              errorMessages: [errorMessages[3]],
               description: this.translations.NEW_SUBJECT.CONTROLS_NAME.DESCRIPTION.TITLE,
             }
           ]
