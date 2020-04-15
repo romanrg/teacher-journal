@@ -48,6 +48,9 @@ import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {DropdownComponent} from "../shared/dropdown/dropdown.component";
 import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
+import {D3Directive} from "../d3/d3.directive";
+import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
+import {BarComponent} from "../d3/visuals/bar/bar.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -83,7 +86,10 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     EmptyDataComponent,
     ErrorMessageDisplayComponent,
     LoadingComponent,
-    DropdownComponent
+    DropdownComponent,
+    D3Directive,
+    BarplotComponent,
+    BarComponent
   ],
   imports: [
     BrowserModule,
@@ -106,13 +112,6 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
         useFactory: (createTranslateLoader),
         deps: [HttpClient]
       },
-      /*
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: MissingTranslationService
-      },
-      useDefaultLang: false
-      */
     })
   ],
   providers: [

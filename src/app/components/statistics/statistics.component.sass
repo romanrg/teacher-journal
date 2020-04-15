@@ -26,7 +26,6 @@
   display: flex
   flex-direction: column
   position: relative
-  width: 21%
 .dropdown__select-btn
   border: none
   background: $bg-color
@@ -45,15 +44,35 @@
   animation: disappear linear 0.2s
   animation-fill-mode: forwards
   width: 100%
-  padding: 2rem 0
+  padding: 0 0 2rem
   border-radius: 25px
   box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  max-height: 25rem
+  overflow-y: scroll
+  &::-webkit-scrollbar
+    background: transparent
+    max-height: 0.5rem
+    max-width: 0.5rem
+  &::-webkit-scrollbar-thumb
+    background-color: $active-color
+    max-width: 0.3rem
+  &::-webkit-scrollbar-corner
+    display: none
 .dropdown__controller
+  padding-top: 2rem
+  padding-bottom: 2rem
   display: flex
   justify-content: space-around
   align-items: center
-  width: 100%
   z-index: 1
+  position: sticky
+  top: 0
+  background: $bg-color
+  flex-wrap: wrap
+  background: $active-color
+.dropdown__controller-wrapper
+  display: flex
+  flex-wrap: nowrap
 .dropdown__content--visible
   display: flex
   animation: appear linear 0.2s
@@ -62,16 +81,29 @@
   background: transparent
   color: $color
   border: none
-  padding: 1rem
+  font-size: 0.7rem
 .dropdown__list
   list-style: none
   padding: 0
   margin: 0
+.dropdown__list--child
+  width: 10rem
+  overflow-y: auto
+.dropdown__expand
+  background: transparent
+  color: $active-color
+  border: none
+  align-self: flex-start
 .dropdown__item
   padding: 1rem
   cursor: pointer
   text-transform: capitalize
+  display: flex
   color: $color
+  flex-direction: column
+
+.dropdown__item-wrapper
+  display: flex
 .dropdown__dates
   transition: all 0.2s
 .dropdown__dates--hidden
@@ -168,3 +200,12 @@
 .scroll
   width: 18rem
   overflow-x: scroll
+.statistics__visuals-wrapper
+  display: flex
+  flex-direction: column
+  flex-grow: 1
+.statistic__barplot
+  flex-grow: 1
+  display: flex
+  align-items: flex-end
+  padding-bottom: 2rem

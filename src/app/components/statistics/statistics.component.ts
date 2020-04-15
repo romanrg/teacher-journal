@@ -15,9 +15,6 @@ import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
 import {Select} from "@ngxs/store";
 import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
-import * as d3 from "d3";
-import {selectAll, style} from "d3-selection";
-import {StatisticResearcher} from "../../common/helpers/statistics";
 
 @Component({
   selector: "app-statistics",
@@ -163,44 +160,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (!date) {
 
-      d3.select(".chart").selectAll("div").remove()
-
-
-      const data = Object.entries(this.marks[tuple[0].id].reduce((acc, mark) => {
-        acc[mark.student] !== undefined ? acc[mark.student] = [...acc[mark.student], mark.value] : acc[mark.student] = [mark.value];
-        return acc;
-      }, {}));
-      const av = (arr: number[]) => arr.reduce((acc, curr) => acc + curr, 0) / arr.length
-      d3.select(".chart")
-        .style("height", "100%")
-        .style("width", "100%")
-        .style("display", "flex")
-        .style("align-items", "flex-end")
-        // .style("flex-direction", "column")
-        .selectAll("div")
-        .data(data)
-        .enter()
-        .append("div")
-        .style("background", ([, marksArr]) => av(marksArr) < 5 ? "blue" : "green")
-        .style("height", ([, marksArr]) => av(marksArr) * 10 + "%")
-        .style("width", "1rem")
-        .style("padding", "1rem")
-        .style("margin", "1rem")
-        .style("display", "flex")
-        .append("span")
-        // .style("writing-mode", "vertical-rl")
-        .style("display", "flex")
-        .style("align-self", "flex-end")
-        .style("margin", "0rem 0rem -5rem -1rem")
-        .style("z-index", 2)
-        .style("width", "1rem")
-        .text(([student, marksArr]) => this.mapper.fromStudentToName(this.students[student]) + " " + av(marksArr).toFixed(2));
-
-
-
       if (tuple[1]) {
 
-        this.expandOne(tuple);
+        // this.expandOne(tuple);
 
 
         this.dates[tuple[0].id].map(dateTuple => {
@@ -216,7 +178,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
       } else {
 
-        d3.select(".chart").selectAll("div").remove()
 
         this.dates[tuple[0].id].map(dateTuple => {
           this.uncheckOne(dateTuple);
