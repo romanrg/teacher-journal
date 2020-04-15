@@ -11,7 +11,6 @@
         <span *ngIf="selected.length > 1">
         <span>{{selected.length === 2 ? " and " : " ... "}}</span>
         {{selected[selected.length - 1] | date:"dd/MM/yy"}}</span>
-
       </button>
       <form
         #form="ngForm"
@@ -72,6 +71,7 @@
       </form>
     </div>
     <div class="statistic__students">
+      <!--
       <ul class="statistic__data-list">
         <li
           *ngFor="let microTable of render; let i = index"
@@ -119,8 +119,27 @@
           </table>
         </li>
       </ul>
+      -->
       <div class="statistics__visuals-wrapper">
         <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
+          <select>
+            <option value="month">month</option>
+            <option value="week">week</option>
+            <option value="date">date</option>
+          </select>
+          <div>
+            <form>
+              <label>From: <input type="month"></label>
+              <label>To: <input type="month"></label>
+            </form>
+          </div>
+          <!--
+          <div>
+
+            <input type="week">
+            <input type="date">
+          </div>
+          -->
           <app-barplot class="statistic__barplot" [data]="[subjects, marks, dates, students, selected]"></app-barplot>
         </ng-container>
       </div>

@@ -39,11 +39,9 @@ export class BarplotComponent implements OnInit, OnChanges {
       const avarage = Object.entries(map).map(entry => {
         entry[1] = (entry[1].reduce((acc, curr) => acc + curr) / entry[1].length).toFixed(2);
         return entry;
-      }).sort((a, b) => a[1] - b[1]);
+      }).sort((a, b) => b[1] - a[1]);
       return avarage
     });
-
-    console.log(stats);
 
 
     const divider: Function = ([, mark]): string => {
@@ -63,7 +61,8 @@ export class BarplotComponent implements OnInit, OnChanges {
         .style("height", "20rem")
         .style("width", "30rem")
         .style("display", "flex")
-        .style("align-items", "flex-end")
+        .style("align-items", "flex-start")
+        .style("flex-direction", "column")
         .style("justify-content", "space-evenly")
         .selectAll("div")
         .data(average)
@@ -71,13 +70,13 @@ export class BarplotComponent implements OnInit, OnChanges {
         .append("div")
         .style("display", "flex")
         .style("background", divider)
-        .style("height", (([, mark]) => mark * 10 + "%"))
-        .style("width", "2rem")
+        .style("width", (([, mark]) => mark * 10 + "%"))
+        .style("height", "2rem")
         .append("span")
         .text(toName)
-        .style("writing-mode", "vertical-rl")
+        // .style("writing-mode", "vertical-rl")
         .style("display", "flex")
-        .style("margin", "-12rem 0 0 0")
+        // .style("margin", "-12rem 0 0 0")
         .style("transform", "scale(0.8)")
     })
 
