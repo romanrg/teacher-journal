@@ -26,5 +26,10 @@ export namespace Statistics {
     public static readonly type = "[Statistics] Check One";
     constructor (public payload: [any, boolean, boolean]) {}
   }
+
+  export class ChangeSelector {
+    public static readonly type = "[Statistics] Change Selector";
+    constructor (public payload: string) {}
+  }
 }
 

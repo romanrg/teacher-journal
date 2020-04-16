@@ -24,18 +24,30 @@
             <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
           </div>
           <div class="dropdown__controller-wrapper">
-            <button class="dropdown__btn" (click)="expandAll()">Expand All</button>
-            <button class="dropdown__btn" (click)="collapseAll()">Collapse All</button>
+            <button
+              class="dropdown__btn"
+              (click)="expandAll()"
+              [disabled]="dateSelector.value.from || dateSelector.value.to">Expand All</button>
+            <button
+              class="dropdown__btn"
+              (click)="collapseAll()"
+              [disabled]="dateSelector.value.from || dateSelector.value.to">Collapse All</button>
           </div>
         </div>
         <ul class="dropdown__list">
           <li class="dropdown__item" *ngFor="let subject of subjects">
             <div class="dropdown__item-wrapper">
               <ng-container *ngIf="!subject[2]; else close">
-                <button class="dropdown__expand" (click)="expandOne(subject)">▼</button>
+                <button
+                  class="dropdown__expand"
+                  (click)="expandOne(subject)"
+                  [disabled]="dateSelector.value.from || dateSelector.value.to"
+                >▼</button>
               </ng-container>
               <ng-template #close>
-                <button class="dropdown__expand" (click)="collapseOne(subject)">▲</button>
+                <button
+                  class="dropdown__expand"
+                  (click)="collapseOne(subject)">▲</button>
               </ng-template>
 
               <app-dropdown
@@ -55,7 +67,7 @@
             >
               <ul class="dropdown__list dropdown__list--child">
                 <li class="dropdown__item dropdown__item--scale" *ngFor="let data of dates[subject[0].id]">
-                  <!---->
+
                   <app-dropdown
                     [(ngModel)]="data[1]"
                     name="{{data[0]}}"
@@ -121,16 +133,28 @@
       </ul>
       -->
       <div class="statistics__visuals-wrapper">
-        <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
-          <select>
-            <option value="month">month</option>
-            <option value="week">week</option>
-            <option value="date">date</option>
+
+          <select (change)="changeSelectionType($event.target.value)">
+            <option
+              *ngFor="let option of ['date', 'week', 'month']"
+              [selected]="selectorType === option"
+              value="{{option}}"
+            >{{option}}</option>
           </select>
           <div>
-            <form>
-              <label>From: <input type="month"></label>
-              <label>To: <input type="month"></label>
+            <form [formGroup]="dateSelector" (ngSubmit)="showChanges(dateSelector.value)">
+              <label>From: <input
+                formControlName="from"
+                type="{{selectorType}}"
+                [max]="dateSelector.value.to"
+              ></label>
+              <label>To:
+                <input
+                  formControlName="to" type="{{selectorType}}"
+                  [min]="dateSelector.value.from"
+                >
+              </label>
+              <button type="submit">search</button>
             </form>
           </div>
           <!--
@@ -140,7 +164,22 @@
             <input type="date">
           </div>
           -->
-          <app-barplot class="statistic__barplot" [data]="[subjects, marks, dates, students, selected]"></app-barplot>
+        <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
+          <app-barplot
+            class="statistic__barplot"
+            [data]="[subjects, marks, dates, students, selected]"
+            [index]="combined"
+          ></app-barplot>
+          <ul class="statistics__visuals-list">
+            <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
+              <h3>{{barplot[0].name}}</h3>
+              <app-barplot
+                class="statistic__barplot"
+                [data]="[barplot, marks, dates, students, selected]"
+                [index]="i"
+              ></app-barplot>
+            </li>
+          </ul>
         </ng-container>
       </div>
     </div>

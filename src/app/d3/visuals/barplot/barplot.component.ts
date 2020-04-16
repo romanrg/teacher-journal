@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import * as d3 from "d3";
 
 @Component({
@@ -6,44 +6,173 @@ import * as d3 from "d3";
   templateUrl: "./barplot.component.html",
   styleUrls: ["./barplot.component.sass"]
 })
-export class BarplotComponent implements OnInit, OnChanges {
+export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input("data") public data: [];
+  @Input("index") public index: number;
 
-  public options: {height: string, width: string} = {width: 640, height: 480};
-
-  constructor(
-  ) { }
+  constructor() { }
 
   public ngOnInit(): void {
-      const [subjects, marks, dates, students, selected] = this.data;
-      this.createBars(subjects, marks, dates, students, selected);
+  }
+
+  public ngAfterViewInit(): void {
+    const [subject, marks, dates, students, selected] = this.data;
+    if (!Array.isArray(subject[0])) {
+      this.createAverageBars(subject, marks, dates, students, selected);
+    } else {
+      this.createMarksBar(subject, marks, dates, students, selected);
+    }
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    const [subjects, marks, dates, students, selected] = changes.data.currentValue;
-    this.createBars(subjects, marks, dates, students, selected);
+    const [subject, marks, dates, students, selected] = changes.data.currentValue;
+    if (!Array.isArray(subject[0])) {
+      this.createAverageBars(subject, marks, dates, students, selected);
+    } else {
+      this.createMarksBar(subject, marks, dates, students, selected);
+    }
+
   }
 
+  public createMarksBar = (subjects, marks, dates, students, selected) => {
+    const dateRange = [selected[0], selected[selected.length - 1]];
+    const ONE_DAY = 1000 * 24 * 60 * 60;
+    const generateDays: Function = ([start, end]: [number, number]) => {
+      const result = [];
 
-  public createBars(subjects, marks, dates, students, selected): void {
-    const checked = subjects.filter(tuple => tuple[1] === true);
-    console.log(checked);
-    const stats = checked.map(check => {
-      const map = marks[check[0].id].reduce((dictionary, mark) => {
-        const id: string = mark.student;
-        const value: number = mark.value;
-        dictionary[id] = dictionary[id] !== undefined ? [...dictionary[id], value] : [value];
-        return dictionary;
-      }, {});
-      const avarage = Object.entries(map).map(entry => {
-        entry[1] = (entry[1].reduce((acc, curr) => acc + curr) / entry[1].length).toFixed(2);
-        return entry;
-      }).sort((a, b) => b[1] - a[1]);
-      return avarage
+      while (start <= end) {
+        result.push(start);
+        start = start + ONE_DAY;
+      }
+      return result;
+    };
+    const map = {};
+
+    const colormap = subjects.reduce((map, sub) => {
+      map[sub[0].name] = getRandomColor();
+      return map;
+    }, {});
+
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+    Object.entries(marks).map(([subjectId, marksArr]) => {
+      marksArr.forEach(mark => {
+        if (map[mark.time] === undefined) {
+          map[mark.time] = {subjectId: [mark]};
+        } else {
+          if (map[mark.time][subjectId] === undefined) {
+            map[mark.time][subjectId] = [mark];
+          } else {
+            map[mark.time][subjectId] = [...map[mark.time][subjectId], mark];
+          }
+        }
+      });
+    });
+    const barData = {};
+    const days = generateDays(dateRange);
+    Object.keys(map).map(timestamp => {
+      if (days.includes(+timestamp)) {
+        if (barData[timestamp] === !undefined) {
+          barData[timestamp] = [...barData[timestamp], map[timestamp]];
+        } else {
+          barData[timestamp] = map[timestamp];
+        }
+      }
+    });
+    const getData = (data, day, subjects) => {
+        const subjectsId = Object.keys(data).splice(1, Object.keys(data).length);
+        const equalMarks = subjectsId.map(id => marks[id]).map(arr => arr.filter(mk => mk.time === day));
+        return equalMarks.map(mks => [subjects.map(tup => tup[0]).filter(sub => sub.id === mks[0].subject)[0].name, mks.length]);
+
+
+    };
+
+
+
+    const selector: string = `.barplot${this.index}`;
+
+
+
+    d3.select("app-barplot " + selector)
+      .style("height", "20rem")
+      .style("width", "30rem")
+      .style("display", "flex")
+      .style("align-items", "flex-start")
+      .style("flex-direction", "column")
+      .selectAll("div")
+      .data(days)
+      .enter()
+      .append("div")
+      .attr("class", (d) => "container" + d)
+      .style("display", "flex")
+      .style("width", "100%")
+      .text(d => (new Date(d)).getDate());
+      // .append("div")
+        // .style("display", "flex")
+        // .style("background", "red")
+        // .text((d) => d)
+
+    const legendsValue: string[] = Object.entries(colormap);
+    d3.select("app-barplot " + selector)
+      .append("div")
+      .attr("class", "legend")
+      .style("order", "1")
+      .style("display", "flex");
+    legendsValue.map(entry => {
+      d3.select(".legend").append("div").text(entry[0]).style("background", entry[1]).style("padding", "0.3rem");
+    })
+
+
+    days.forEach(day => {
+      if (barData[day]) {
+        const time: string = `.container${day}`;
+        const data = getData(barData[day], day, subjects);
+        if (data.length === 1) {
+          d3.select("app-barplot " + selector)
+            .selectAll(time)
+            .data(data)
+            .append("div")
+            .style("background", d => colormap[d[0]])
+            .style("display", "flex")
+            .style("width", d => d[1] + "rem").enter();
+        } else {
+          data.forEach((tuple) => {
+            d3.select("app-barplot " + selector)
+              .selectAll(time)
+              .data([tuple])
+              .append("div")
+              .style("background", d => colormap[d[0]])
+              .style("display", "flex")
+              .style("width", d => d[1] + "rem").enter();
+          })
+        }
+      }
     });
 
 
+
+  };
+
+
+  public createAverageBars = (subject, marks, dates, students, selected): void => {
+    const map = marks[subject[0].id].reduce((dictionary, mark) => {
+      const id: string = mark.student;
+      const value: number = mark.value;
+      dictionary[id] = dictionary[id] !== undefined ? [...dictionary[id], value] : [value];
+      return dictionary;
+    }, {});
+    const average = Object.entries(map).map(entry => {
+      entry[1] = (entry[1].reduce((acc, curr) => acc + curr) / entry[1].length).toFixed(2);
+      return entry;
+    }).sort((a, b) => b[1] - a[1]);
     const divider: Function = ([, mark]): string => {
       if (mark <= 4 ) {
         return "blue";
@@ -56,57 +185,25 @@ export class BarplotComponent implements OnInit, OnChanges {
       }
     };
     const toName: Function = ([id, value]) => students[id].name + " " + students[id].surname + ": " + value;
-    stats.forEach(average => {
-      d3.select(".barplot")
-        .style("height", "20rem")
-        .style("width", "30rem")
-        .style("display", "flex")
-        .style("align-items", "flex-start")
-        .style("flex-direction", "column")
-        .style("justify-content", "space-evenly")
-        .selectAll("div")
-        .data(average)
-        .enter()
-        .append("div")
-        .style("display", "flex")
-        .style("background", divider)
-        .style("width", (([, mark]) => mark * 10 + "%"))
-        .style("height", "2rem")
-        .append("span")
-        .text(toName)
-        // .style("writing-mode", "vertical-rl")
-        .style("display", "flex")
-        // .style("margin", "-12rem 0 0 0")
-        .style("transform", "scale(0.8)")
-    })
-
-
-/*
-
-        element.style {
-    writing-mode: vertical-rl;
-    background: green;
-    height: 65%;
-    width: 2rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-}
-        .style("background", ([, marksArr]) => av(marksArr) < 5 ? "blue" : "green")
-        .style("height", ([, marksArr]) => av(marksArr) * 10 + "%")
-        .style("width", "1rem")
-        .style("padding", "1rem")
-        .style("margin", "1rem")
-        .style("display", "flex")
-
-        // .style("writing-mode", "vertical-rl")
-        .style("display", "flex")
-        .style("align-self", "flex-end")
-        .style("margin", "0rem 0rem -5rem -1rem")
-        .style("z-index", 2)
-        .style("width", "1rem")
-        .text(([student, marksArr]) => this.mapper.fromStudentToName(this.students[student]) + " " + av(marksArr).toFixed(2));
-        */
+    const selector: string = `.barplot${this.index}`;
+    d3.select("app-barplot " + selector)
+      .style("height", "20rem")
+      .style("width", "30rem")
+      .style("display", "flex")
+      .style("align-items", "flex-start")
+      .style("flex-direction", "column")
+      .selectAll("div")
+      .data(average)
+      .enter()
+      .append("div")
+      .style("display", "flex")
+      .style("background", divider)
+      .style("width", (([, mark]) => mark * 10 + "%"))
+      .style("height", "2rem")
+      .append("span")
+      .text(toName)
+      .style("display", "flex")
+      .style("transform", "scale(0.8)")
   }
 
 }

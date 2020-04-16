@@ -10,11 +10,13 @@ import {ISubject} from "../../common/models/ISubject";
 import {_take, copyByJSON} from "../../common/helpers/lib";
 import {IStudent} from "../../common/models/IStudent";
 import {Mark} from "../../common/models/IMark";
-import {ControlValueAccessor} from "@angular/forms";
+import {ControlValueAccessor, FormControl, FormGroup} from "@angular/forms";
 import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
 import {Select} from "@ngxs/store";
 import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
+import {Statistics} from "../../@ngxs/statistics/statistics.actions";
+import {startWith} from "rxjs/internal/operators";
 
 @Component({
   selector: "app-statistics",
@@ -24,6 +26,7 @@ import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/
 export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public state$: Observable<SubjectTableState>;
+  public selectorType: string;
   public mapper: StatisticMapper;
   public tableBody: TableBody;
   public render: ITableConfig[] = [];
@@ -38,6 +41,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   // form
   public selected: [number, number] = [];
   public isHidden: boolean = true;
+  public dateSelector: FormGroup;
 
   constructor(
     private store: Ngxs.Store
@@ -48,11 +52,17 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public ngOnInit(): void {
 
-    this.state$.subscribe(({students, marks, dates, subjects}) => {
+    this.state$.subscribe(({students, marks, dates, subjects, selectorType}) => {
       this.subjects = copyByJSON(subjects);
       this.students = copyByJSON(students);
       this.marks = copyByJSON(marks);
       this.dates = copyByJSON(dates);
+      this.selectorType = selectorType;
+    });
+
+    this.dateSelector = new FormGroup({
+      from: new FormControl(""),
+      to: new FormControl("")
     });
   }
 
@@ -162,9 +172,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
       if (tuple[1]) {
 
-        // this.expandOne(tuple);
-
-
         this.dates[tuple[0].id].map(dateTuple => {
 
           this.checkOne(dateTuple);
@@ -249,4 +256,31 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public unSelectDate = (holder: [], date: number): void => holder.filter(time => time !== date);
 
+  public getSelected = (subjects: [ISubject, Boolean, Boolean][]): void => subjects.filter(tuple => tuple[1]);
+
+  public changeSelectionType(value: string): void {
+      this.store.dispatch(new Statistics.ChangeSelector(value));
+  }
+
+  public showChanges(value: any): void {
+    function getDateOfWeek(y: string, w: string): Date {
+      let date: Date = new Date(y, 0, (1 + (w - 1) * 7));
+      date.setDate(date.getDate() + (1 - date.getDay()));
+      return date;
+    }
+    const parseWeek: Function = (weekString: string): [string, string] => weekString.split("-W");
+
+    let start: number, end: number;
+    if (this.selectorType === "week") {
+      start = getDateOfWeek(...parseWeek(value.from)).getTime();
+      end = getDateOfWeek(...parseWeek(value.to)).getTime();
+    } else {
+      start = (new Date(value.from)).getTime();
+      end = (new Date(value.to)).getTime();
+    }
+
+
+    this.selected = [start, end];
+
+  }
 }

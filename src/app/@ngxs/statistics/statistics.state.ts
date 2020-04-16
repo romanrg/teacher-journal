@@ -1,24 +1,24 @@
 import { State, Action, StateContext, Selector} from "@ngxs/store";
 import {IStudent} from "../../common/models/IStudent";
 import {Statistics, Students} from "./statistics.actions";
-import {StudentsServiceService} from "../../common/services/students.service";
-import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
-import {Observable, of} from "rxjs";
 import {ISubject} from "../../common/models/ISubject";
-import {Mark} from "../../common/models/IMark";
 import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import * as Ngxs from "@ngxs/store";
-import {NgxsStudentsState} from "../students/students.state";
-import {NgxsSubjectsState} from "../subjects/subjects.state";
-import {patch, updateItem} from "@ngxs/store/operators";
-import set = Reflect.set;
+import {patch} from "@ngxs/store/operators";
+
+enum selectorType {
+  date = "date",
+  month = "month",
+  week = "week"
+}
 
 export class StatisticsStateModel {
   public readonly students: {[string]: IStudent[]};
   public dates: [number, boolean, boolean][];
   public readonly subjects: ISubject[];
   public marks: {[string]: [number, boolean, boolean][]};
+  public selectorType: selectorType;
 }
 
 @State<StatisticsStateModel>({
@@ -27,7 +27,8 @@ export class StatisticsStateModel {
     students: {},
     dates: [],
     subjects: [],
-    marks: {}
+    marks: {},
+    selectorType: selectorType.date
   }
 })
 @Injectable({
@@ -70,6 +71,11 @@ export class NgxsStatisticsState {
     const mapper: StatisticMapper = new StatisticMapper();
     const {subjects, marks} = payload;
     setState(patch({dates: mapper.datesFromState(subjects, marks)}));
+  }
+
+  @Action(Statistics.ChangeSelector)
+  public changeSelector({getState, setState, dispatch}: StateContext<StateModel>, {payload}: string): void {
+    setState(patch({selectorType: selectorType[payload]}));
   }
 
 }
