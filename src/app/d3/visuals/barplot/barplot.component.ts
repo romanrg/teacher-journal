@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import * as d3 from "d3";
 
+
 @Component({
   selector: "app-barplot",
   templateUrl: "./barplot.component.html",
@@ -100,21 +101,42 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
     const selector: string = `.barplot${this.index}`;
 
 
+    const x = d3.scaleLinear().domain([days[0], days[days.length - 1]]).range([0, 30]);
+    const step = x(days[1]) - x(days[0]);
 
     d3.select("app-barplot " + selector)
-      .style("height", "20rem")
-      .style("width", "30rem")
+      .style("height", "30rem")
+      .style("width", "20rem")
       .style("display", "flex")
       .style("align-items", "flex-start")
       .style("flex-direction", "column")
+      .style("justify-content", "space-between")
       .selectAll("div")
       .data(days)
       .enter()
       .append("div")
       .attr("class", (d) => "container" + d)
+      .style("align-items", "center")
       .style("display", "flex")
       .style("width", "100%")
-      .text(d => (new Date(d)).getDate());
+      //.style("padding", "0.2rem")
+      .style("position", "absolute")
+      .style("top", (d) => x(d) + "rem")
+      .style("height", step + "rem")
+      .append("span").attr("class", "date")
+      .style("position", "absolute")
+      .style("writing-mode", "vertical-rl")
+      .style("left", "-15%")
+      .style("font-size", "0.5rem")
+      .text((d, i) => {
+      if (i === 0 || i === days.length - 1) {
+        return (new Date(d)).toDateString()
+      }
+      });
+
+
+
+
       // .append("div")
         // .style("display", "flex")
         // .style("background", "red")
@@ -125,7 +147,12 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
       .append("div")
       .attr("class", "legend")
       .style("order", "1")
-      .style("display", "flex");
+      .style("transform", "rotate(90deg)")
+      .style("top", 40 + "%")
+      .style("left", 40 + "%")
+      .style("display", "flex")
+      .style("left", 40 + "%")
+      .style("position", "absolute")
     legendsValue.map(entry => {
       d3.select(".legend").append("div").text(entry[0]).style("background", entry[1]).style("padding", "0.3rem");
     })
@@ -142,6 +169,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
             .append("div")
             .style("background", d => colormap[d[0]])
             .style("display", "flex")
+            .style("min-height", "100%")
             .style("width", d => d[1] + "rem").enter();
         } else {
           data.forEach((tuple) => {
@@ -149,6 +177,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
               .selectAll(time)
               .data([tuple])
               .append("div")
+              .style("min-height", "100%")
               .style("background", d => colormap[d[0]])
               .style("display", "flex")
               .style("width", d => d[1] + "rem").enter();

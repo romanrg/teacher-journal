@@ -166,7 +166,7 @@
           -->
         <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
           <app-barplot
-            class="statistic__barplot"
+            class="statistic__barplot statistic__barplot--all"
             [data]="[subjects, marks, dates, students, selected]"
             [index]="combined"
           ></app-barplot>
