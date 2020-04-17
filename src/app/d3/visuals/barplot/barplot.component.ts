@@ -26,7 +26,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoChe
     {name: "Jo Do", value: "9.1"},
   ];
 
-  public view: [number, number] = [640, 340];
+  public view: [number, number] = [940, 480];
   public showXAxis = true;
   public showYAxis = true;
   public gradient = false;
@@ -86,10 +86,12 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoChe
   };
 
   public ngOnChanges(changes: SimpleChanges): void {
+    /*
     if (changes.whatToShow.currentValue) {
       this.whatToShow = {...changes.whatToShow.currentValue};
     }
-    const [subject, marks, dates, students, selected] = changes?.data?.currentValue;
+    */
+    const [subject, marks, dates, students, selected] = changes.data.currentValue;
 
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);

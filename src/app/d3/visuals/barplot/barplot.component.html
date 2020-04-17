@@ -2,7 +2,7 @@
 <div [class]="'barplot' + index" class="barplot"></div>
 -->
 <div class="wrapper">
-  <div class="wrapper" *ngIf="whatToShow.average">
+  <div class="wrapper" *ngIf="true">
     <h3 class="title-barplot">Average:</h3>
     <ngx-charts-bar-horizontal
       [view]="view"
@@ -23,15 +23,17 @@
   </div>
 
 
-  <div class="wrapper" *ngIf="whatToShow.dates">
+  <div class="wrapper" *ngIf="true">
     <h3 class="title-barplot">Students performance over time:</h3>
     <!--
       [legend]="true"-->
-    <ngx-charts-line-chart
+    <ngx-charts-heat-map
+      [groupPadding]="10"
+      [barPadding]="0"
       [view]="view"
-      [scheme]="colorSchemeDates"
+      [scheme]="{ domain: ['yellowgreen'] }"
       [results]="byDates"
-      [gradient]="gradient"
+      [gradient]="false"
       [xAxis]="showXAxis"
       [yAxis]="true"
       [showXAxisLabel]="false"
@@ -42,7 +44,7 @@
       [yScaleMax]="10"
       [showGridLines]="false"
       (select)="onSelect($event)"
-    ></ngx-charts-line-chart>
+    ></ngx-charts-heat-map>
     <ul class="barplot__individual-list">
       <li *ngFor="let student of byDates" >
         <div *ngIf="student.series.length >= 2" class="barplot__individual-item">
@@ -89,7 +91,7 @@
 
   </div>
 
-  <div class="wrapper" *ngIf="whatToShow.performance">
+  <div class="wrapper" *ngIf="true">
     <h3 class="title-barplot">Overall performance:</h3>
     <ngx-charts-bar-vertical
       [view]="view"
