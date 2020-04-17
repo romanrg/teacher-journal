@@ -1,1 +1,58 @@
+<!--
 <div [class]="'barplot' + index" class="barplot"></div>
+-->
+<div class="wrapper">
+  <div class="wrapper">
+    <h3 class="title-barplot">Average:</h3>
+    <ngx-charts-bar-horizontal
+      [view]="view"
+      [scheme]="colorSchemeDates"
+      [results]="marks"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxixLabel]="yAxisLabel"
+      (select)="onSelect($event)"
+    ></ngx-charts-bar-horizontal>
+  </div>
+
+
+  <div class="wrapper">
+    <h3 class="title-barplot">By Dates:</h3>
+    <ngx-charts-bar-vertical-stacked
+    [view]="view"
+    [scheme]="colorSchemeDates"
+    [results]="byDates"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="false"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabelByDates"
+    [yAxixLabel]="yAxisLabelByDates"
+    [showDataLabel]="true"
+    (select)="onSelect($event)"
+  ></ngx-charts-bar-vertical-stacked>
+  </div>
+
+  <div class="wrapper">
+    <h3 class="title-barplot">Overall performance:</h3>
+  <ngx-charts-pie-grid
+    [view]="view"
+    [scheme]="colorSchemePerformance"
+    [results]="byPerformance"
+    [legend]="showLegend"
+    [explodeSlices]="explodeSlices"
+    [labels]="showLabels"
+    [doughnut]="doughnut"
+    [gradient]="gradient"
+    (select)="onSelect($event)"
+  ></ngx-charts-pie-grid>
+  </div>
+</div>
+

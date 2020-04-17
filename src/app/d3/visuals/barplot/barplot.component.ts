@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import * as d3 from "d3";
-
+import {ISubject} from "../../../common/models/ISubject";
+import {IStudent} from "../../../common/models/IStudent";
 
 @Component({
   selector: "app-barplot",
@@ -12,29 +13,88 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
   @Input("data") public data: [];
   @Input("index") public index: number;
 
+  public colorSchemeSubjects: {domain: string[]} = {
+    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+  };
+  public colorSchemeDates: {domain: string[]} = {
+    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+  };
+  public colorSchemePerformance: {domain: string[]} = {
+    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+  };
+  public marks = [
+    {name: "John Dohn", value: "9.6"},
+    {name: "John Don", value: "6"},
+    {name: "Joe Dohn", value: "9"},
+    {name: "Jo Do", value: "9.1"},
+  ];
+
+  public view: [number, number] = [640, 340];
+  public showXAxis = true;
+  public showYAxis = true;
+  public gradient = false;
+  public showLegend = false;
+  public showXAxisLabel = true;
+  public xAxisLabel = "Marks";
+  public showYAxisLabel = true;
+  public yAxisLabel = "Students";
+
+  public byDates = [];
+  public xAxisLabelByDates = "Dates";
+  public yAxisLabelByDates = "Students";
+
+  public byPerformance: any[] = [];
+  public explodeSlices: boolean = false;
+  public doughnut: boolean = false;
+
   constructor() { }
 
   public ngOnInit(): void {
+    const [subject, marks, dates, students, selected] = this.data;
+    this.createAverageBars(subject, marks, dates, students, selected);
+    this.createByDates(subject, marks, dates, students, selected);
+  }
+
+  public createByDates = (
+    subject: [ISubject],
+    marks: {[string]: Mark[]},
+    dates: {[string]: [number, boolean, boolean]},
+    students: {[string]: IStudent},
+    selected: number[]
+    ): void => {
+    const subjId: string = subject[0].id;
+    //
+    const map: any = dates[subjId].reduce((acc, [timestamp, checked, expanded]) => {
+      if (checked) {
+        const dateForView: string = (new Date(timestamp)).toDateString();
+        acc[dateForView] = marks[subjId].filter(mark => mark.time === timestamp).map(mark => {
+          const student: string = students[mark.student].name + " " + students[mark.student].surname;
+          return {name: student, value: mark.value};
+        });
+      }
+      return acc;
+      },                                  {});
+    this.byDates = Object.keys(map).reduce((acc, dateKey) => {
+        acc = [...acc, {name: dateKey, series: map[dateKey]}];
+        return acc;
+      },                                   []).map(value => {
+        value.series = value.series.sort((a, b) => b.value - a.value);
+        return value;
+      });
+  };
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    const [subject, marks, dates, students, selected] = changes.data.currentValue;
+    this.createAverageBars(subject, marks, dates, students, selected);
+    this.createByDates(subject, marks, dates, students, selected);
   }
 
   public ngAfterViewInit(): void {
     const [subject, marks, dates, students, selected] = this.data;
-    if (!Array.isArray(subject[0])) {
-      this.createAverageBars(subject, marks, dates, students, selected);
-    } else {
-      this.createMarksBar(subject, marks, dates, students, selected);
-    }
+    this.createAverageBars(subject, marks, dates, students, selected);
+    this.createByDates(subject, marks, dates, students, selected);
   }
-
-  public ngOnChanges(changes: SimpleChanges): void {
-    const [subject, marks, dates, students, selected] = changes.data.currentValue;
-    if (!Array.isArray(subject[0])) {
-      this.createAverageBars(subject, marks, dates, students, selected);
-    } else {
-      this.createMarksBar(subject, marks, dates, students, selected);
-    }
-
-  }
+  /*
 
   public createMarksBar = (subjects, marks, dates, students, selected) => {
     const dateRange = [selected[0], selected[selected.length - 1]];
@@ -53,17 +113,8 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
     const colormap = subjects.reduce((map, sub) => {
       map[sub[0].name] = getRandomColor();
       return map;
-    }, {});
+    },                               {});
 
-
-    function getRandomColor() {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    }
     Object.entries(marks).map(([subjectId, marksArr]) => {
       marksArr.forEach(mark => {
         if (map[mark.time] === undefined) {
@@ -92,14 +143,9 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
         const subjectsId = Object.keys(data).splice(1, Object.keys(data).length);
         const equalMarks = subjectsId.map(id => marks[id]).map(arr => arr.filter(mk => mk.time === day));
         return equalMarks.map(mks => [subjects.map(tup => tup[0]).filter(sub => sub.id === mks[0].subject)[0].name, mks.length]);
-
-
     };
 
-
-
     const selector: string = `.barplot${this.index}`;
-
 
     const x = d3.scaleLinear().domain([days[0], days[days.length - 1]]).range([0, 30]);
     const step = x(days[1]) - x(days[0]);
@@ -119,7 +165,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
       .style("align-items", "center")
       .style("display", "flex")
       .style("width", "100%")
-      //.style("padding", "0.2rem")
+      // .style("padding", "0.2rem")
       .style("position", "absolute")
       .style("top", (d) => x(d) + "rem")
       .style("height", step + "rem")
@@ -130,12 +176,9 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
       .style("font-size", "0.5rem")
       .text((d, i) => {
       if (i === 0 || i === days.length - 1) {
-        return (new Date(d)).toDateString()
+        return (new Date(d)).toDateString();
       }
       });
-
-
-
 
       // .append("div")
         // .style("display", "flex")
@@ -152,11 +195,10 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
       .style("left", 40 + "%")
       .style("display", "flex")
       .style("left", 40 + "%")
-      .style("position", "absolute")
+      .style("position", "absolute");
     legendsValue.map(entry => {
       d3.select(".legend").append("div").text(entry[0]).style("background", entry[1]).style("padding", "0.3rem");
-    })
-
+    });
 
     days.forEach(day => {
       if (barData[day]) {
@@ -181,58 +223,90 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
               .style("background", d => colormap[d[0]])
               .style("display", "flex")
               .style("width", d => d[1] + "rem").enter();
-          })
+          });
         }
       }
     });
 
+  }
+  */
 
-
+  public generateColorScheme = (n: number) => {
+    function getRandomColor(): string {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+    const scheme: string[] = (new Array(n)).fill("").map(color => getRandomColor());
+    return scheme;
   };
 
-
-  public createAverageBars = (subject, marks, dates, students, selected): void => {
-    const map = marks[subject[0].id].reduce((dictionary, mark) => {
-      const id: string = mark.student;
-      const value: number = mark.value;
-      dictionary[id] = dictionary[id] !== undefined ? [...dictionary[id], value] : [value];
-      return dictionary;
-    }, {});
-    const average = Object.entries(map).map(entry => {
-      entry[1] = (entry[1].reduce((acc, curr) => acc + curr) / entry[1].length).toFixed(2);
-      return entry;
-    }).sort((a, b) => b[1] - a[1]);
-    const divider: Function = ([, mark]): string => {
-      if (mark <= 4 ) {
-        return "blue";
-      } else if (mark <= 6) {
-        return "#69b3a2";
-      } else if (mark <= 8) {
-        return "green";
+  public createAverageBars = (
+    subject: [ISubject],
+    marks: {[string]: Mark[]},
+    dates: {[string]: [number, boolean, boolean]},
+    students: {[string]: IStudent}
+    ): void => {
+    const averageMarks: {[string]: number[]} = marks[subject[0].id].reduce((acc, mark) => {
+      const student: string = students[mark.student].name + " " + students[mark.student].surname;
+      if (acc[student] === undefined) {
+        acc[student] = [mark.value];
       } else {
-        return "yellowgreen";
+        acc[student] = [...acc[student], mark.value];
       }
-    };
-    const toName: Function = ([id, value]) => students[id].name + " " + students[id].surname + ": " + value;
-    const selector: string = `.barplot${this.index}`;
-    d3.select("app-barplot " + selector)
-      .style("height", "20rem")
-      .style("width", "30rem")
-      .style("display", "flex")
-      .style("align-items", "flex-start")
-      .style("flex-direction", "column")
-      .selectAll("div")
-      .data(average)
-      .enter()
-      .append("div")
-      .style("display", "flex")
-      .style("background", divider)
-      .style("width", (([, mark]) => mark * 10 + "%"))
-      .style("height", "2rem")
-      .append("span")
-      .text(toName)
-      .style("display", "flex")
-      .style("transform", "scale(0.8)")
+      return acc;
+    },                                                                     {});
+    Object.keys(averageMarks).forEach(key => {
+      averageMarks[key] = Math.ceil((
+        averageMarks[key].reduce(
+          (acc, curr) => acc + curr
+        ) / averageMarks[key].length
+      ).toFixed(2));
+    });
+    this.marks = Object.entries(averageMarks)
+      .sort((a, b) => +b[1] - +a[1])
+      .reduce((acc: {name: string, value: string}, current: [string, string]) => {
+        acc = [...acc, {name: current[0], value: current[1]}];
+        return acc;
+      },      []);
+    this.colorSchemeDates = { domain: this.generateColorScheme(this.marks.length) }
+    const performance = this.marks.reduce((acc, current) => {
+      if (current.value <= 4) {
+        acc.underperforming++;
+      } else if (current.value <= 6) {
+        acc.passed++;
+      } else if (current.value <= 8) {
+        acc.decent++;
+      } else {
+        acc["excellent student"]++;
+      }
+      return acc;
+    },                                    {
+      ["excellent student"]: 0,
+      decent: 0,
+      passed: 0,
+      underperforming: 0
+    });
+    const parsed = Object.keys(performance).reduce((acc, key) => {
+      acc = [...acc, {name: key, value: performance[key]}];
+      return acc;
+    },                                             []);
+    parsed.push({name: "unattested", value: Object.keys(students).length - (
+      performance.underperforming +
+      performance.passed +
+      performance.decent +
+      performance["excellent student"]
+    )});
+    this.byPerformance = parsed;
+    const domain = this.generateColorScheme(5);
+    console.log(domain)
+    this.colorSchemePerformance = {domain};
   }
 
+  public onSelect = ($event: Event): void => {
+    console.log($event);
+  }
 }

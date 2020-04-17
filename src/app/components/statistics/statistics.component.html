@@ -165,11 +165,13 @@
           </div>
           -->
         <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
+          <!--
           <app-barplot
             class="statistic__barplot statistic__barplot--all"
             [data]="[subjects, marks, dates, students, selected]"
             [index]="combined"
           ></app-barplot>
+          -->
           <ul class="statistics__visuals-list">
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
               <h3>{{barplot[0].name}}</h3>

@@ -51,6 +51,8 @@ import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
 import {D3Directive} from "../d3/d3.directive";
 import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
 import {BarComponent} from "../d3/visuals/bar/bar.component";
+import {NgxChartsModule} from "@swimlane/ngx-charts";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -112,7 +114,9 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
         useFactory: (createTranslateLoader),
         deps: [HttpClient]
       },
-    })
+    }),
+    NgxChartsModule,
+    BrowserAnimationsModule
   ],
   providers: [
     ExitFormGuard,

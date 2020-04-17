@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~9.1.0",
+    "@angular/cdk": "^9.2.1",
     "@angular/common": "~9.1.0",
     "@angular/compiler": "~9.1.0",
     "@angular/core": "~9.1.0",
@@ -26,6 +27,7 @@
     "@ngx-translate/core": "^12.1.2",
     "@ngx-translate/http-loader": "^4.0.0",
     "@ngxs/store": "^3.6.2",
+    "@swimlane/ngx-charts": "^13.0.3",
     "d3": "^5.15.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
