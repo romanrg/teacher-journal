@@ -37,6 +37,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoChe
   public yAxisLabel = "Students";
 
   public byDates = [];
+  public heatMap = [];
   public xAxisLabelByDates = "Dates";
   public yAxisLabelByDates = "Students";
 
@@ -58,7 +59,7 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoChe
     selected: number[]
     ): void => {
     const subjId: string = subject[0].id;
-    this.byDates = Object.keys(students).reduce((acc, studentId) => {
+    const data = Object.keys(students).reduce((acc, studentId) => {
       const student = students[studentId];
       const key: string = student.name + " " + student.surname;
       const studentsMarks: Mark[] = marks[subjId].filter(m => m.student === student.id);
@@ -83,6 +84,32 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoChe
       acc = [...acc, {name: key, series}];
       return acc;
     }, []);
+    this.heatMap = [...data].sort((a, b) => b.series.length - a.series.length);
+    const uniqueDates = data.reduce((acc, curr) => {
+      curr.series.map(({name, value}) => {
+        acc[name] = [];
+      });
+      return acc;
+    }, {});
+    Object.keys(uniqueDates).map(key => {
+      data.map(({series}) => {
+        series.map(({name, value}) => {
+          if (key === name) {
+            uniqueDates[key] = [...uniqueDates[key], ...value];
+          }
+        });
+      })
+    });
+    Object.keys(uniqueDates).map(key => {
+      uniqueDates[key] = (uniqueDates[key].reduce((acc, curr) => acc + curr, 0) / uniqueDates[key].length).toFixed(2);
+    });
+    const tendency = Object.keys(uniqueDates).reduce((acc, key) => {
+      acc = [...acc, {name: key, value: uniqueDates[key]}];
+      return acc;
+    }, []);
+    data.push({name: "Class tendency", series: tendency})
+    this.byDates = data;
+
   };
 
   public ngOnChanges(changes: SimpleChanges): void {

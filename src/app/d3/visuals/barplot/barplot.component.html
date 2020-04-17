@@ -32,7 +32,7 @@
       [barPadding]="0"
       [view]="view"
       [scheme]="{ domain: ['yellowgreen'] }"
-      [results]="byDates"
+      [results]="heatMap"
       [gradient]="false"
       [xAxis]="showXAxis"
       [yAxis]="true"
@@ -45,29 +45,31 @@
       [showGridLines]="false"
       (select)="onSelect($event)"
     ></ngx-charts-heat-map>
+    <ngx-charts-line-chart
+      [view]="view"
+      [showGridLines]="false"
+      [scheme]="colorSchemeDates"
+      [results]="byDates"
+      [gradient]="false"
+      [xAxis]="showXAxis"
+      [yAxis]="true"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="xAxisLabelByDates"
+      [legend]="true"
+      [yScaleMin]="0"
+      [yScaleMax]="10"
+      [activeEntries]="[byDates[byDates.length - 1]]"
+      (select)="onSelect($event)"
+    ></ngx-charts-line-chart>
+    <!--
     <ul class="barplot__individual-list">
       <li *ngFor="let student of byDates" >
         <div *ngIf="student.series.length >= 2" class="barplot__individual-item">
           <h4 class="title-barplot">{{getStudentTitle(student)}}</h4>
-          <ngx-charts-line-chart
-            [schemeType]="'linear'"
-            [view]="view"
-            [showGridLines]="false"
-            [scheme]="colorSchemeDates"
-            [results]="[student]"
-            [gradient]="gradient"
-            [xAxis]="showXAxis"
-            [yAxis]="true"
-            [title]=""
-            [showXAxisLabel]="false"
-            [showYAxisLabel]="true"
-            [xAxisLabel]="xAxisLabelByDates"
-            [yAxixLabel]="getStudentTitle(student)"
-            [yScaleMin]="0"
-            [yScaleMax]="10"
-            (select)="onSelect($event)"
-          ></ngx-charts-line-chart>
+          [yAxixLabel]="getStudentTitle(student)"
         </div>
+        -->
         <!--
         <ng-template #charts>
           <ngx-charts-bar-vertical
@@ -85,9 +87,11 @@
             (select)="onSelect($event)"
           ></ngx-charts-bar-vertical>
         </ng-template>
+        </li>
+        </ul>
         -->
-      </li>
-    </ul>
+
+
 
   </div>
 
