@@ -133,6 +133,7 @@
       </ul>
       -->
       <div class="statistics__visuals-wrapper">
+        <!--
 
           <select (change)="changeSelectionType($event.target.value)">
             <option
@@ -141,6 +142,7 @@
               value="{{option}}"
             >{{option}}</option>
           </select>
+
           <div>
             <form [formGroup]="dateSelector" (ngSubmit)="showChanges(dateSelector.value)">
               <label>From: <input

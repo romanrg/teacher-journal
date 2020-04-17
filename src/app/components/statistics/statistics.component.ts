@@ -117,7 +117,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
       if (date[1]) {
 
-        this.selected = this.selectDate(this.selected, date[0]);
+        this.selected = [...this.selectDate(this.selected, date[0])];
         this.checkOne(tuple);
 
 
@@ -175,7 +175,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         this.dates[tuple[0].id].map(dateTuple => {
 
           this.checkOne(dateTuple);
-          this.selectDate(this.selected, dateTuple[0]);
+          this.selected = [...this.selectDate(this.selected, dateTuple[0])]
 
         });
 

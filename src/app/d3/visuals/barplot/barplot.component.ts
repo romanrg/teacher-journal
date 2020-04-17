@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, Component, DoCheck, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import * as d3 from "d3";
 import {ISubject} from "../../../common/models/ISubject";
 import {IStudent} from "../../../common/models/IStudent";
@@ -6,21 +6,21 @@ import {IStudent} from "../../../common/models/IStudent";
 @Component({
   selector: "app-barplot",
   templateUrl: "./barplot.component.html",
-  styleUrls: ["./barplot.component.sass"]
+  styleUrls: ["./barplot.component.sass"],
 })
-export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
+export class BarplotComponent implements OnInit, OnChanges, AfterViewInit, DoCheck {
 
   @Input("data") public data: [];
   @Input("index") public index: number;
 
   public colorSchemeSubjects: {domain: string[]} = {
-    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+    domain: []
   };
   public colorSchemeDates: {domain: string[]} = {
-    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+    domain: []
   };
   public colorSchemePerformance: {domain: string[]} = {
-    domain: ["#9370DB", "#87CEFA", "#FA8072", "#FF7F50", "#90EE90", "#9370DB"]
+    domain: []
   };
   public marks = [
     {name: "John Dohn", value: "9.6"},
@@ -54,6 +54,14 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);
   }
+  /*
+  public ngDoCheck(): void {
+      const [subject, marks, dates, students, selected] = this.data;
+      this.createAverageBars(subject, marks, dates, students, selected);
+      this.createByDates(subject, marks, dates, students, selected);
+  }
+  */
+
 
   public createByDates = (
     subject: [ISubject],
@@ -87,12 +95,15 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
     const [subject, marks, dates, students, selected] = changes.data.currentValue;
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);
+
   }
 
   public ngAfterViewInit(): void {
+    /*
     const [subject, marks, dates, students, selected] = this.data;
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);
+    */
   }
   /*
 
@@ -272,7 +283,10 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
         acc = [...acc, {name: current[0], value: current[1]}];
         return acc;
       },      []);
-    this.colorSchemeDates = { domain: this.generateColorScheme(this.marks.length) }
+    if (!this.colorSchemeDates.domain.length) {
+      this.colorSchemeDates = { domain: this.generateColorScheme(this.marks.length) }
+    }
+
     const performance = this.marks.reduce((acc, current) => {
       if (current.value <= 4) {
         acc.underperforming++;
@@ -301,9 +315,11 @@ export class BarplotComponent implements OnInit, OnChanges, AfterViewInit {
       performance["excellent student"]
     )});
     this.byPerformance = parsed;
-    const domain = this.generateColorScheme(5);
-    console.log(domain)
-    this.colorSchemePerformance = {domain};
+    if (!this.colorSchemePerformance.domain.length) {
+      const domain = this.generateColorScheme(5);
+      this.colorSchemePerformance = {domain};
+    }
+
   }
 
   public onSelect = ($event: Event): void => {
