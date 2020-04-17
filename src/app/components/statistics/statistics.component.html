@@ -1,86 +1,96 @@
 <section class="statistic">
   <h2 class="statistic__title">Statistic</h2>
   <div class="wrapper">
-    <div class="statistic__dropdown dropdown">
-      <button class="dropdown__select-btn"
-              (click)="isHidden = !isHidden"
-      >
-        Selected dates:<span *ngIf="selected.length === 0"> V </span>
-        <br>
-        <span *ngIf="selected[0]"> {{selected[0] | date:"dd/MM/yy"}}</span>
-        <span *ngIf="selected.length > 1">
+    <div class=" wrapper-controller">
+      <form [formGroup]="statSelector" class="statistic__form--stats" (change)="changeStatistics($event)">
+        <label>Average marks:
+          <input formControlName="average" type="checkbox" [checked]="selectedStatistics.average"></label>
+        <label>Information by dates:
+          <input type="checkbox" formControlName="dates" [checked]="selectedStatistics.dates"></label>
+        <label>Academic performance:
+          <input type="checkbox" formControlName="performance" [checked]="selectedStatistics.performance"></label>
+      </form>
+      <div class="statistic__dropdown dropdown">
+        <button class="dropdown__select-btn"
+                (click)="isHidden = !isHidden"
+        >
+          Selected dates:<span *ngIf="selected.length === 0"> V </span>
+          <br>
+          <span *ngIf="selected[0]"> {{selected[0] | date:"dd/MM/yy"}}</span>
+          <span *ngIf="selected.length > 1">
         <span>{{selected.length === 2 ? " and " : " ... "}}</span>
         {{selected[selected.length - 1] | date:"dd/MM/yy"}}</span>
-      </button>
-      <form
-        #form="ngForm"
-        class="dropdown__content"
-        [class.dropdown__content--hidden]="isHidden"
-        [class.dropdown__content--visible]="!isHidden"
-      >
-        <div class="dropdown__controller">
-          <div class="dropdown__controller-wrapper">
-            <button class="dropdown__btn" (click)="checkAll()">Check All</button>
-            <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
-          </div>
-          <div class="dropdown__controller-wrapper">
-            <button
-              class="dropdown__btn"
-              (click)="expandAll()"
-              [disabled]="dateSelector.value.from || dateSelector.value.to">Expand All</button>
-            <button
-              class="dropdown__btn"
-              (click)="collapseAll()"
-              [disabled]="dateSelector.value.from || dateSelector.value.to">Collapse All</button>
-          </div>
-        </div>
-        <ul class="dropdown__list">
-          <li class="dropdown__item" *ngFor="let subject of subjects">
-            <div class="dropdown__item-wrapper">
-              <ng-container *ngIf="!subject[2]; else close">
-                <button
-                  class="dropdown__expand"
-                  (click)="expandOne(subject)"
-                  [disabled]="dateSelector.value.from || dateSelector.value.to"
-                >▼</button>
-              </ng-container>
-              <ng-template #close>
-                <button
-                  class="dropdown__expand"
-                  (click)="collapseOne(subject)">▲</button>
-              </ng-template>
-
-              <app-dropdown
-                [(ngModel)]="subject[1]"
-                name="{{subject[0].name}}"
-                [label]="subject[0].name"
-                [checked]="subject[1]"
-                (change)="changeCheck(subject)"
-              ></app-dropdown>
+        </button>
+        <form
+          #form="ngForm"
+          class="dropdown__content"
+          [class.dropdown__content--hidden]="isHidden"
+          [class.dropdown__content--visible]="!isHidden"
+        >
+          <div class="dropdown__controller">
+            <div class="dropdown__controller-wrapper">
+              <button class="dropdown__btn" (click)="checkAll()">Check All</button>
+              <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
             </div>
+            <div class="dropdown__controller-wrapper">
+              <button
+                class="dropdown__btn"
+                (click)="expandAll()"
+                [disabled]="dateSelector.value.from || dateSelector.value.to">Expand All</button>
+              <button
+                class="dropdown__btn"
+                (click)="collapseAll()"
+                [disabled]="dateSelector.value.from || dateSelector.value.to">Collapse All</button>
+            </div>
+          </div>
+          <ul class="dropdown__list">
+            <li class="dropdown__item" *ngFor="let subject of subjects">
+              <div class="dropdown__item-wrapper">
+                <ng-container *ngIf="!subject[2]; else close">
+                  <button
+                    class="dropdown__expand"
+                    (click)="expandOne(subject)"
+                    [disabled]="dateSelector.value.from || dateSelector.value.to"
+                  >▼</button>
+                </ng-container>
+                <ng-template #close>
+                  <button
+                    class="dropdown__expand"
+                    (click)="collapseOne(subject)">▲</button>
+                </ng-template>
+
+                <app-dropdown
+                  [(ngModel)]="subject[1]"
+                  name="{{subject[0].name}}"
+                  [label]="subject[0].name"
+                  [checked]="subject[1]"
+                  (change)="changeCheck(subject)"
+                ></app-dropdown>
+              </div>
 
 
-            <form class="dropdown__dates"
-                  #formDate="ngForm"
-                  [class.dropdown__dates--hidden]="!subject[2]"
-                  [class.dropdown__dates--visible]="subject[2]"
-            >
-              <ul class="dropdown__list dropdown__list--child">
-                <li class="dropdown__item dropdown__item--scale" *ngFor="let data of dates[subject[0].id]">
+              <form class="dropdown__dates"
+                    #formDate="ngForm"
+                    [class.dropdown__dates--hidden]="!subject[2]"
+                    [class.dropdown__dates--visible]="subject[2]"
+              >
+                <ul class="dropdown__list dropdown__list--child">
+                  <li class="dropdown__item dropdown__item--scale" *ngFor="let data of dates[subject[0].id]">
 
-                  <app-dropdown
-                    [(ngModel)]="data[1]"
-                    name="{{data[0]}}"
-                    [label]="data[0] | date:'MMM d, y'"
-                    [checked]="data[1]"
-                    (change)="changeCheck(subject, data)"
-                  ></app-dropdown>
-                </li>
-              </ul>
-            </form>
-          </li>
-        </ul>
-      </form>
+                    <app-dropdown
+                      [(ngModel)]="data[1]"
+                      name="{{data[0]}}"
+                      [label]="data[0] | date:'MMM d, y'"
+                      [checked]="data[1]"
+                      (change)="changeCheck(subject, data)"
+                    ></app-dropdown>
+                  </li>
+                </ul>
+              </form>
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
     <div class="statistic__students">
       <!--
@@ -178,6 +188,7 @@
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
               <h3>{{barplot[0].name}}</h3>
               <app-barplot
+                [show]="selectedStatistics"
                 class="statistic__barplot"
                 [data]="[barplot, marks, dates, students, selected]"
                 [index]="i"

@@ -120,12 +120,12 @@ export class DatePicker extends Generator {
         this.generateElement.bind(this, "input"),
         () => uniqueDates.sort((a, b) => b - a)[0]
       );
+
       const transformedMinDate: string = pipe.transform((minDate + this.ONE_DAY_CONSTANT), "yyyy-MM-dd");
       const [form, submitBtn] = _chain(
         this.generateForm.bind(this),
         this.generateSubmitBtn.bind(this),
         this.removeChild.bind(this, container, element),
-        this.renderer.addClass.bind(this, dateInput, "date-input"),
         _if(
             !uniqueDates.length,
             this.generateAttributes.bind(this, dateInput, this.emptyAttrubutes),
@@ -137,6 +137,7 @@ export class DatePicker extends Generator {
         this.appendChild.bind(this, form, dateInput),
         this.appendChild.bind(this, form, submitBtn),
       );
+      this.renderer.addClass(dateInput, "date-input")
       this.renderer.listen(form, "submit", (e) => {
         e.preventDefault();
         onsubmitAction(e.target[FormControlType.date].value, e.target);
@@ -175,12 +176,12 @@ export class NumberPicker extends Generator {
 
     _chain(
       this.removeChild.bind(this, container, element),
-      this.renderer.addClass.bind(this, numberInput, "number-input"),
       this.generateAttributes.bind(this, numberInput, this.numberAttributes),
       this.appendChild.bind(this, container, form),
       this.appendChild.bind(this, form, numberInput),
       this.appendChild.bind(this, form, submitBtn)
     );
+    this.renderer.addClass.bind(this, numberInput, "number-input"),
     this.renderer.listen(form, "submit", (e) => {
       e.preventDefault();
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);

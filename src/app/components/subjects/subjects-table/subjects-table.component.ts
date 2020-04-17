@@ -203,6 +203,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     if (this.dateGenerator.shouldAddDateInput(target, this.tableBodyConfigData)) {
 
+      console.log(timestamps);
+
       this.dateGenerator.generateDatePicker(target, timestamps, this.datePipe, dispatchNewDate);
 
     } else if (this.numberGenerator.shouldAddNumberInput(target, this.tableBodyConfigData, targetCellIndex)) {

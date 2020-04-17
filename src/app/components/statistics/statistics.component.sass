@@ -32,6 +32,8 @@
   justify-content: center
   min-width: 60rem
   align-self: center
+.wrapper-controller
+  flex-direction: column
 .statistic__dropdown
   width: 20rem
 
@@ -223,7 +225,7 @@
   padding: 0
   margin: 0
   overflow-y: scroll
-  max-height: 30rem
+  // max-height: 30rem
   @include scroll
 .statistic__barplot
   flex-grow: 1
@@ -237,3 +239,7 @@
   padding: 3rem
 .statistic__barplot--all
   transform: rotate(-90deg) translate(1rem, -20%)
+.statistic__form--stats
+  display: flex
+  flex-direction: column
+  margin: 3rem

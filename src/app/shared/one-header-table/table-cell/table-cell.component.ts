@@ -44,9 +44,6 @@ export class TableCellComponent implements OnInit {
       $event.target.textContent.includes("Select date") ||
       $event.target.textContent.includes("Выберите дату")
     );
-    console.log(
-      sortingCheck === true,
-    );
     if (sortingCheck) {
       this.sortEmitter.emit();
       this.sortCount++;

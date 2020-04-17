@@ -2,7 +2,7 @@
 <div [class]="'barplot' + index" class="barplot"></div>
 -->
 <div class="wrapper">
-  <div class="wrapper">
+  <div class="wrapper" *ngIf="whatToShow.average">
     <h3 class="title-barplot">Average:</h3>
     <ngx-charts-bar-horizontal
       [view]="view"
@@ -16,43 +16,108 @@
       [showYAxisLabel]="showYAxisLabel"
       [xAxisLabel]="xAxisLabel"
       [yAxixLabel]="yAxisLabel"
+      [xScaleMin]="0"
+      [xScaleMax]="10"
       (select)="onSelect($event)"
     ></ngx-charts-bar-horizontal>
   </div>
 
 
-  <div class="wrapper">
-    <h3 class="title-barplot">By Dates:</h3>
-    <ngx-charts-bar-vertical-stacked
-    [view]="view"
-    [scheme]="colorSchemeDates"
-    [results]="byDates"
-    [gradient]="gradient"
-    [xAxis]="showXAxis"
-    [yAxis]="false"
-    [legend]="showLegend"
-    [showXAxisLabel]="showXAxisLabel"
-    [showYAxisLabel]="showYAxisLabel"
-    [xAxisLabel]="xAxisLabelByDates"
-    [yAxixLabel]="yAxisLabelByDates"
-    [showDataLabel]="true"
-    (select)="onSelect($event)"
-  ></ngx-charts-bar-vertical-stacked>
+  <div class="wrapper" *ngIf="whatToShow.dates">
+    <h3 class="title-barplot">Students performance over time:</h3>
+    <!--
+      [legend]="true"-->
+    <ngx-charts-line-chart
+      [view]="view"
+      [scheme]="colorSchemeDates"
+      [results]="byDates"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="true"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabelByDates"
+      [yAxixLabel]="yAxisLabelByDates"
+      [yScaleMin]="1"
+      [yScaleMax]="10"
+      [showGridLines]="false"
+      (select)="onSelect($event)"
+    ></ngx-charts-line-chart>
+    <ul class="barplot__individual-list">
+      <li *ngFor="let student of byDates" >
+        <div *ngIf="student.series.length >= 2" class="barplot__individual-item">
+          <h4 class="title-barplot">{{getStudentTitle(student)}}</h4>
+          <ngx-charts-line-chart
+            [schemeType]="'linear'"
+            [view]="view"
+            [showGridLines]="false"
+            [scheme]="colorSchemeDates"
+            [results]="[student]"
+            [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxis]="true"
+            [title]=""
+            [showXAxisLabel]="false"
+            [showYAxisLabel]="true"
+            [xAxisLabel]="xAxisLabelByDates"
+            [yAxixLabel]="getStudentTitle(student)"
+            [yScaleMin]="0"
+            [yScaleMax]="10"
+            (select)="onSelect($event)"
+          ></ngx-charts-line-chart>
+        </div>
+        <!--
+        <ng-template #charts>
+          <ngx-charts-bar-vertical
+            [view]="view"
+            [scheme]="colorSchemeDates"
+            [results]="[student]"
+            [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxis]="true"
+            [legend]="showLegend"
+            [showXAxisLabel]="false"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxisLabel]="xAxisLabelByDates"
+            [yAxixLabel]="yAxisLabelByDates"
+            (select)="onSelect($event)"
+          ></ngx-charts-bar-vertical>
+        </ng-template>
+        -->
+      </li>
+    </ul>
+
   </div>
 
-  <div class="wrapper">
+  <div class="wrapper" *ngIf="whatToShow.performance">
     <h3 class="title-barplot">Overall performance:</h3>
-  <ngx-charts-pie-grid
-    [view]="view"
-    [scheme]="colorSchemePerformance"
-    [results]="byPerformance"
-    [legend]="showLegend"
-    [explodeSlices]="explodeSlices"
-    [labels]="showLabels"
-    [doughnut]="doughnut"
-    [gradient]="gradient"
-    (select)="onSelect($event)"
-  ></ngx-charts-pie-grid>
+    <ngx-charts-bar-vertical
+      [view]="view"
+      [scheme]="colorSchemeDates"
+      [results]="byPerformance"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="false"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [yAxixLabel]="yAxisLabelByDates"
+      [showDataLabel]="true"
+      (select)="onSelect($event)">
+    </ngx-charts-bar-vertical>
+    <!--<ngx-charts-pie-grid
+      [view]="view"
+      [scheme]="colorSchemePerformance"
+      [results]="byPerformance"
+      [legend]="showLegend"
+      [explodeSlices]="explodeSlices"
+      [labels]="showLabels"
+      [doughnut]="doughnut"
+      [gradient]="gradient"
+      (select)="onSelect($event)"
+    ></ngx-charts-pie-grid>-->
+
+
   </div>
 </div>
 

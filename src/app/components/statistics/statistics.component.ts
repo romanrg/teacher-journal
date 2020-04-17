@@ -42,6 +42,14 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public selected: [number, number] = [];
   public isHidden: boolean = true;
   public dateSelector: FormGroup;
+  public statSelector: FormGroup;
+
+  // stats
+  public selectedStatistics = {
+    average: true,
+    dates: false,
+    performance: true
+  };
 
   constructor(
     private store: Ngxs.Store
@@ -63,6 +71,12 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     this.dateSelector = new FormGroup({
       from: new FormControl(""),
       to: new FormControl("")
+    });
+
+    this.statSelector = new FormGroup({
+      average: new FormControl(this.selectedStatistics.average),
+      dates: new FormControl(this.selectedStatistics.dates),
+      performance: new FormControl(this.selectedStatistics.performance)
     });
   }
 
@@ -282,5 +296,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     this.selected = [start, end];
 
+  }
+
+  public changeStatistics($event: Event): void {
+    this.selectedStatistics = {...this.statSelector.value};
   }
 }
