@@ -15,7 +15,13 @@ export const _if: Function = (
 ) => predicate ? leftBranch : rightBranch;
 export const _pluck: Function = (property: string, source: object) => source[property];
 export const _reverseArguments: Function = (fn) => (...args) => fn(args.reverse());
-
+export const _range: Function = (start: number, stop: number, step: number): number[] => {
+  let a = [start], b = start;
+  while (b <= stop) {
+    a.push(b += step || 1);
+  }
+  return a;
+};
 
 
 

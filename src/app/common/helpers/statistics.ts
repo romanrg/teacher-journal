@@ -7,6 +7,10 @@ export class StatisticResearcher {
     return this.values.reduce((acc, val) => acc + val.value, 0) / this.values.length;
   }
 
+  public static getAverageInArray = (arr: number[], fixed: number = 2) => {
+    return (arr.reduce((acc, val) => acc + val, 0) / arr.length).toFixed(fixed);
+  };
+
   public get academicPerformance(): number {
     return this.values.filter(val => val.value >= 4).length / this.values.length;
   }

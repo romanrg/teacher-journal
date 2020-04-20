@@ -53,6 +53,7 @@ import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
 import {BarComponent} from "../d3/visuals/bar/bar.component";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BarplotDateRangeComponent} from "../d3/visuals/barplot-date-range/barplot-date-range.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -91,7 +92,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     DropdownComponent,
     D3Directive,
     BarplotComponent,
-    BarComponent
+    BarplotDateRangeComponent
   ],
   imports: [
     BrowserModule,

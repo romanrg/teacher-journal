@@ -2,14 +2,6 @@
   <h2 class="statistic__title">Statistic</h2>
   <div class="wrapper">
     <div class=" wrapper-controller">
-      <form [formGroup]="statSelector" class="statistic__form--stats" (change)="changeStatistics($event)">
-        <label>Average marks:
-          <input formControlName="average" type="checkbox" [checked]="selectedStatistics.average"></label>
-        <label>Information by dates:
-          <input type="checkbox" formControlName="dates" [checked]="selectedStatistics.dates"></label>
-        <label>Academic performance:
-          <input type="checkbox" formControlName="performance" [checked]="selectedStatistics.performance"></label>
-      </form>
       <div class="statistic__dropdown dropdown">
         <button class="dropdown__select-btn"
                 (click)="isHidden = !isHidden"
@@ -143,7 +135,7 @@
       </ul>
       -->
       <div class="statistics__visuals-wrapper">
-        <!--
+
 
           <select (change)="changeSelectionType($event.target.value)">
             <option
@@ -169,32 +161,23 @@
               <button type="submit">search</button>
             </form>
           </div>
-          <!--
-          <div>
-
-            <input type="week">
-            <input type="date">
-          </div>
-          -->
         <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
-          <!--
-          <app-barplot
-            class="statistic__barplot statistic__barplot--all"
+          <app-barplot-date-range
             [data]="[subjects, marks, dates, students, selected]"
-            [index]="combined"
-          ></app-barplot>
-          -->
+            [renderType]="selectorType"
+          ></app-barplot-date-range>
+          <!--
           <ul class="statistics__visuals-list">
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
               <h3>{{barplot[0].name}}</h3>
               <app-barplot
-                [show]="selectedStatistics"
                 class="statistic__barplot"
                 [data]="[barplot, marks, dates, students, selected]"
                 [index]="i"
               ></app-barplot>
             </li>
           </ul>
+          -->
         </ng-container>
       </div>
     </div>

@@ -104,4 +104,21 @@ export class StatisticMapper {
       dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
       dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
   };
+
+  public getAverageMarksObject = (
+    marks: {[string]: Mark[]},
+    subjectId: string,
+    students: {[string]: IStudent}
+    ): {[string]: number[]} => {
+    return  marks[subjectId].reduce((acc, mark) => {
+      const student: string = this.fromStudentToName(students[mark.student]);
+      if (acc[student] === undefined) {
+        acc[student] = [mark.value];
+      } else {
+        acc[student] = [...acc[student], mark.value];
+      }
+      return acc;
+    }, {});
+  }
+
 }

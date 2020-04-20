@@ -297,8 +297,4 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     this.selected = [start, end];
 
   }
-
-  public changeStatistics($event: Event): void {
-    this.selectedStatistics = {...this.statSelector.value};
-  }
 }

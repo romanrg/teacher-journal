@@ -1,8 +1,6 @@
-<!--
-<div [class]="'barplot' + index" class="barplot"></div>
--->
+
 <div class="wrapper">
-  <div class="wrapper" *ngIf="true">
+  <div class="wrapper">
     <h3 class="title-barplot">Average:</h3>
     <ngx-charts-bar-horizontal
       [view]="view"
@@ -18,15 +16,12 @@
       [yAxixLabel]="yAxisLabel"
       [xScaleMin]="0"
       [xScaleMax]="10"
-      (select)="onSelect($event)"
     ></ngx-charts-bar-horizontal>
   </div>
 
 
-  <div class="wrapper" *ngIf="true">
+  <div class="wrapper">
     <h3 class="title-barplot">Students performance over time:</h3>
-    <!--
-      [legend]="true"-->
     <ngx-charts-heat-map
       [groupPadding]="10"
       [barPadding]="0"
@@ -43,7 +38,6 @@
       [yScaleMin]="1"
       [yScaleMax]="10"
       [showGridLines]="false"
-      (select)="onSelect($event)"
     ></ngx-charts-heat-map>
     <ngx-charts-line-chart
       [view]="view"
@@ -60,42 +54,10 @@
       [yScaleMin]="0"
       [yScaleMax]="10"
       [activeEntries]="[byDates[byDates.length - 1]]"
-      (select)="onSelect($event)"
     ></ngx-charts-line-chart>
-    <!--
-    <ul class="barplot__individual-list">
-      <li *ngFor="let student of byDates" >
-        <div *ngIf="student.series.length >= 2" class="barplot__individual-item">
-          <h4 class="title-barplot">{{getStudentTitle(student)}}</h4>
-          [yAxixLabel]="getStudentTitle(student)"
-        </div>
-        -->
-        <!--
-        <ng-template #charts>
-          <ngx-charts-bar-vertical
-            [view]="view"
-            [scheme]="colorSchemeDates"
-            [results]="[student]"
-            [gradient]="gradient"
-            [xAxis]="showXAxis"
-            [yAxis]="true"
-            [legend]="showLegend"
-            [showXAxisLabel]="false"
-            [showYAxisLabel]="showYAxisLabel"
-            [xAxisLabel]="xAxisLabelByDates"
-            [yAxixLabel]="yAxisLabelByDates"
-            (select)="onSelect($event)"
-          ></ngx-charts-bar-vertical>
-        </ng-template>
-        </li>
-        </ul>
-        -->
-
-
-
   </div>
 
-  <div class="wrapper" *ngIf="true">
+  <div class="wrapper">
     <h3 class="title-barplot">Overall performance:</h3>
     <ngx-charts-bar-vertical
       [view]="view"
@@ -108,22 +70,8 @@
       [showXAxisLabel]="showXAxisLabel"
       [showYAxisLabel]="showYAxisLabel"
       [yAxixLabel]="yAxisLabelByDates"
-      [showDataLabel]="true"
-      (select)="onSelect($event)">
+      [showDataLabel]="true">
     </ngx-charts-bar-vertical>
-    <!--<ngx-charts-pie-grid
-      [view]="view"
-      [scheme]="colorSchemePerformance"
-      [results]="byPerformance"
-      [legend]="showLegend"
-      [explodeSlices]="explodeSlices"
-      [labels]="showLabels"
-      [doughnut]="doughnut"
-      [gradient]="gradient"
-      (select)="onSelect($event)"
-    ></ngx-charts-pie-grid>-->
-
-
   </div>
 </div>
 
