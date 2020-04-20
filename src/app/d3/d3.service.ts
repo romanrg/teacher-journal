@@ -22,8 +22,6 @@ export class D3Service {
 
   constructor() {}
 
-  public getBarplot(): void {}
-
   public getColorScheme = (n: number): {domain: string[]} => ({ domain: (new Array(n)).fill("").map(color => this.getRandomColor()) });
 
   public getRandomColor = (): string  => {
@@ -193,9 +191,10 @@ export class D3Service {
           .filter(day => day[1].length)
           .reduce((acc, entry) => {
             const tuple: string = subject.find(sub => sub[0].id === entry[0]);
-            if (tuple[1]) {
+            if (tuple) {
               acc = [...acc, {name: tuple[0].name, value: entry[1].length}];
             }
+
 
 
             return acc;
@@ -206,9 +205,9 @@ export class D3Service {
           name = (new Date(date)).toLocaleString("default", {month: "long"});
         } else {
           name = `${
-            (new Date(date)).toLocaleString("default", {day: "numeric", month: "numeric"})
-            } ... ${
-            (new Date(scale[index + 1])).toLocaleString("default", {day: "numeric", month: "numeric"})
+            (new Date(date)).toLocaleString("default", {day: "numeric", month: "short"})
+            } — ${
+            (new Date(scale[index + 1])).toLocaleString("default", {day: "numeric", month: "short"})
             }`;
         }
         if (scale[index + 1]) {
@@ -216,8 +215,11 @@ export class D3Service {
             .map(filterFn(date, scale[index + 1]))
             .filter(day => day[1].length)
             .reduce((acc, entry) => {
-              const name: string = subject.find(sub => sub[0].id === entry[0])[0].name;
-              acc = [...acc, {name, value: entry[1].length}];
+
+              const tuple: string = subject.find(sub => sub[0].id === entry[0]);
+              if (tuple) {
+                acc = [...acc, {name: tuple[0].name, value: entry[1].length}];
+              }
               return acc;
             }, [])}];
         }

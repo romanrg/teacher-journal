@@ -10,7 +10,7 @@ import {ISubject} from "../../common/models/ISubject";
 import {_take, copyByJSON} from "../../common/helpers/lib";
 import {IStudent} from "../../common/models/IStudent";
 import {Mark} from "../../common/models/IMark";
-import {ControlValueAccessor, FormControl, FormGroup} from "@angular/forms";
+import {ControlValueAccessor, FormControl, FormGroup, Validators} from "@angular/forms";
 import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
 import {Select} from "@ngxs/store";
@@ -40,6 +40,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   // form
   public selected: [number, number] = [];
+  public range: [number, number] = [];
   public isHidden: boolean = true;
   public dateSelector: FormGroup;
   public statSelector: FormGroup;
@@ -69,8 +70,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     });
 
     this.dateSelector = new FormGroup({
-      from: new FormControl(""),
-      to: new FormControl("")
+      from: new FormControl("", [Validators.required]),
+      to: new FormControl("", [Validators.required]),
+      selector: new FormControl("date")
     });
 
     this.statSelector = new FormGroup({
@@ -78,6 +80,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
       dates: new FormControl(this.selectedStatistics.dates),
       performance: new FormControl(this.selectedStatistics.performance)
     });
+
   }
 
   public checkOne = (tuple: [any, boolean, boolean]): void => tuple[1] = true;
@@ -184,26 +187,32 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (!date) {
 
+
       if (tuple[1]) {
 
-        this.dates[tuple[0].id].map(dateTuple => {
+        this.dates[tuple[0].id] =  this.dates[tuple[0].id].map(dateTuple => {
 
           this.checkOne(dateTuple);
           this.selected = [...this.selectDate(this.selected, dateTuple[0])]
-
+          return dateTuple;
         });
 
         this.render = this.generateStatisticViewForSubject(
           tuple, this.render, this.dates, this.marks, this.students
         );
 
+        this.dates = {...this.dates};
+
       } else {
 
 
-        this.dates[tuple[0].id].map(dateTuple => {
+        this.dates[tuple[0].id] = this.dates[tuple[0].id].map(dateTuple => {
           this.uncheckOne(dateTuple);
           this.selected = this.unSelectDate(this.selected, dateTuple[0]);
+          return dateTuple
         });
+
+        this.dates = {...this.dates};
 
         this.render = this.removeSubjectStatisticFromView(tuple, this.render);
 
@@ -257,7 +266,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     tableConfig[index].headers = headers;
   };
 
-
+  public getSelected = (subjects: [ISubject, boolean, boolean][]) => subjects.filter(tuple => tuple[1]);
 
   public selectDate = (holder: [], date: number): void => {
     if (!holder.includes(date)) {
@@ -270,13 +279,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public unSelectDate = (holder: [], date: number): void => holder.filter(time => time !== date);
 
-  public getSelected = (subjects: [ISubject, Boolean, Boolean][]): void => subjects.filter(tuple => tuple[1]);
-
-  public changeSelectionType(value: string): void {
-      this.store.dispatch(new Statistics.ChangeSelector(value));
-  }
-
-  public showChanges(value: any): void {
+  public showChanges($event: event): void {
+    $event.preventDefault();
+    const value = this.dateSelector.value;
     function getDateOfWeek(y: string, w: string): Date {
       let date: Date = new Date(y, 0, (1 + (w - 1) * 7));
       date.setDate(date.getDate() + (1 - date.getDay()));
@@ -285,7 +290,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     const parseWeek: Function = (weekString: string): [string, string] => weekString.split("-W");
 
     let start: number, end: number;
-    if (this.selectorType === "week") {
+    if (value.selector === "week") {
       start = getDateOfWeek(...parseWeek(value.from)).getTime();
       end = getDateOfWeek(...parseWeek(value.to)).getTime();
     } else {
@@ -294,7 +299,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     }
 
 
-    this.selected = [start, end];
+    this.range = [start, end];
 
   }
 }

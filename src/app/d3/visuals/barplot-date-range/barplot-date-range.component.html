@@ -1,4 +1,7 @@
 <div class="contaner">
+  <h2 class="title">
+    Statistics by: {{data[data.length - 1][0] | date}} — {{data[data.length - 1][1] | date}}
+  </h2>
   <ngx-charts-bar-vertical-stacked
     [view]="view"
     [scheme]="colorSchemeDates"
@@ -7,7 +10,7 @@
     [xAxis]="showXAxis"
     [yAxis]="showYAxis"
     [legend]="showLegend"
-    [showXAxisLabel]="showXAxisLabel"
+    [showXAxisLabel]="false"
     [showYAxisLabel]="showYAxisLabel"
     [xAxisLabel]="xAxisLabel"
     [yAxixLabel]="yAxisLabel"

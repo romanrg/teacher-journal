@@ -136,38 +136,46 @@
       -->
       <div class="statistics__visuals-wrapper">
 
-
-          <select (change)="changeSelectionType($event.target.value)">
-            <option
-              *ngFor="let option of ['date', 'week', 'month']"
-              [selected]="selectorType === option"
-              value="{{option}}"
-            >{{option}}</option>
-          </select>
-
-          <div>
-            <form [formGroup]="dateSelector" (ngSubmit)="showChanges(dateSelector.value)">
-              <label>From: <input
-                formControlName="from"
-                type="{{selectorType}}"
-                [max]="dateSelector.value.to"
-              ></label>
-              <label>To:
-                <input
-                  formControlName="to" type="{{selectorType}}"
-                  [min]="dateSelector.value.from"
+          <div class="statistic__selector-wrapper">
+              <form class="date-form"  [formGroup]="dateSelector" (ngSubmit)="showChanges($event)">
+                <select
+                  class="statistic__selector"
+                  formControlName="selector"
                 >
-              </label>
-              <button type="submit">search</button>
-            </form>
+                  <option
+                    *ngFor="let option of ['date', 'week', 'month']"
+                    [selected]="selectorType === option"
+                    value="{{option}}"
+                  >{{option}}</option>
+                </select>
+                <div class="date-form__wrapper">
+                  <label>From: <input
+                    [placeholder]="range[0]"
+                    class="date-input"
+                    formControlName="from"
+                    type="{{dateSelector.controls.selector.value}}"
+                    [max]="dateSelector.value.to"
+                  ></label>
+                  <label>To:
+                    <input
+                      [placeholder]="range[1]"
+                      class="date-input"
+                      formControlName="to" type="{{dateSelector.controls.selector.value}}"
+                      [min]="dateSelector.value.from"
+                    >
+                  </label>
+                </div>
+                <app-button [textContent]="'Submit'" [screenReader]="'Submit form'"></app-button>
+              </form>
           </div>
-        <ng-container *ngIf="subjects.length && marks && students && selected.length && dates">
+        <!-- dateSelector.valid && range.length -->
+        <ng-container>
           <app-barplot-date-range
-            [data]="[subjects, marks, dates, students, selected]"
-            [renderType]="selectorType"
+            class="date-range__visuals"
+            [data]="[subjects, marks, dates, students, range]"
+            [renderType]="dateSelector.controls.selector.value"
           ></app-barplot-date-range>
-          <!--
-          <ul class="statistics__visuals-list">
+          <ul class="statistics__visuals-list"  *ngIf="!dateSelector.touched">
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
               <h3>{{barplot[0].name}}</h3>
               <app-barplot
@@ -177,7 +185,7 @@
               ></app-barplot>
             </li>
           </ul>
-          -->
+
         </ng-container>
       </div>
     </div>

@@ -1,5 +1,6 @@
-import {Component, Input, OnChanges, OnInit} from "@angular/core";
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
 import {D3Service} from "../../d3.service";
+import {ISubject} from "../../../common/models/ISubject";
 
 @Component({
   selector: "app-barplot-date-range",
@@ -18,7 +19,6 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
   public showYAxis: boolean = true;
   public gradient: boolean = false;
   public showLegend: boolean = true;
-  public showXAxisLabel: boolean = true;
   public xAxisLabel: boolean = "Marks";
   public showYAxisLabel: boolean = true;
   public yAxisLabel: boolean = "Students";
@@ -30,12 +30,25 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
 
   public ngOnInit(): void {
     const [subject, marks, dates, students, selected] = this.data;
-    this.generateInRangeChart(subject, marks, dates, students, selected);
+
+    const subjects: [ISubject, boolean, boolean][] = subject.filter(tuple => tuple[1]);
+    if (subjects.length) {
+      this.generateInRangeChart(subjects, marks, dates, students, selected);
+    } else {
+      this.generateInRangeChart(subject, marks, dates, students, selected);
+    }
   }
 
   public ngOnChanges (changes: SimpleChanges): void {
     const [subject, marks, dates, students, selected] = changes.data.currentValue;
-    this.generateInRangeChart(subject, marks, dates, students, selected);
+    const subjects: [ISubject, boolean, boolean][] = subject.filter(tuple => tuple[1]);
+    console.log(subjects, this.data[0].filter(tuple => tuple[1]));
+    if (subjects.length) {
+      this.generateInRangeChart(subjects, marks, dates, students, selected);
+    } else {
+      this.generateInRangeChart(subject, marks, dates, students, selected);
+    }
+
 
   }
 
