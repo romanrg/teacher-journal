@@ -87,12 +87,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
       this.selected = this.selectDate(this.selected, tuple[0]);
     }));
     this.selected.sort((a, b) => a - b);
-    this.render.length = 0;
-    this.render = this.subjects
-      .map(tuple => this.generateStatisticViewForSubject(
-        tuple, this.render, this.dates, this.marks, this.students
-      ))
-      .flat(1);
     this.subjects = [...this.subjects];
   };
 
@@ -100,7 +94,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     this.subjects.map(this.uncheckOne);
     Object.values(this.dates).forEach(dates => dates.map(this.uncheckOne));
     this.selected.length = 0;
-    this.render.length = 0;
     this.subjects = [...this.subjects];
   };
 
@@ -116,37 +109,12 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
     if (date) {
 
-
-
-
-      const index: number = this.render.findIndex(config => config.caption.includes(tuple[0].name));
-
       if (date[1]) {
 
         this.selected = [...this.selectDate(this.selected, date[0])];
         this.checkOne(tuple);
 
 
-        if (this.render.some(config => config.caption.includes(tuple[0].name))) {
-
-          this.replaceAtIndex(
-            this.render,
-            index,
-            this.mapper.statisticForTable(
-              tuple, this.dates, this.marks, this.students, this.selected
-            ),
-            this.mapper.getHeaders(
-              this.dates, tuple, this.selected
-            )
-          );
-
-        } else {
-
-          this.render = this.generateStatisticViewForSubject(
-            tuple, this.render, this.dates, this.marks, this.students, this.mapper.statisticForTable, this.selected
-          );
-
-        }
       } else {
 
         this.selected = this.unSelectDate(this.selected, date[0]);
@@ -154,20 +122,8 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         if (!this.dates[tuple[0].id].some(dateTuple => dateTuple[1])) {
 
           this.uncheckOne(tuple);
-          this.render = this.removeSubjectStatisticFromView(tuple, this.render);
 
         } else {
-
-          this.replaceAtIndex(
-            this.render,
-            index,
-            this.mapper.statisticForTable(
-              tuple, this.dates, this.marks, this.students, this.selected
-            ),
-            this.mapper.getHeaders(
-              this.dates, tuple, this.selected
-            )
-          );
 
         }
       }
@@ -179,80 +135,23 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
       if (tuple[1]) {
 
-        this.dates[tuple[0].id] =  this.dates[tuple[0].id].map(dateTuple => {
+        this.dates[tuple[0].id].map(dateTuple => {
 
           this.checkOne(dateTuple);
           this.selected = [...this.selectDate(this.selected, dateTuple[0])]
-          return dateTuple;
         });
-
-        this.render = this.generateStatisticViewForSubject(
-          tuple, this.render, this.dates, this.marks, this.students
-        );
-
-        this.dates = {...this.dates};
 
       } else {
 
-
-        this.dates[tuple[0].id] = this.dates[tuple[0].id].map(dateTuple => {
+        this.dates[tuple[0].id].map(dateTuple => {
           this.uncheckOne(dateTuple);
           this.selected = this.unSelectDate(this.selected, dateTuple[0]);
-          return dateTuple
         });
 
-        this.dates = {...this.dates};
-
-        this.render = this.removeSubjectStatisticFromView(tuple, this.render);
-
       }
-
     }
-  };
 
-  public generateStatisticViewForSubject = (
-    subjectTuple: [ISubject, boolean, boolean],
-    tableConfigArray: ITableConfig[],
-    dates: {[string]: [number, boolean, boolean][]},
-    marks: {[string]: Mark[]},
-    students: {[string]: IStudent},
-    statisticGenerator: () => string[] = this.mapper.statisticForTable,
-    selectedDatesArray?: number[]
-  ): ITableConfig[] => {
-    const headers: number[] = this.mapper.getHeaders(dates, subjectTuple, selectedDatesArray);
-
-
-
-
-
-
-
-
-    return [...tableConfigArray, {
-      caption: `Statistic for ${subjectTuple[0].name}:`,
-      body: statisticGenerator(subjectTuple, dates, marks, students, selectedDatesArray),
-      headers
-    }];
-  };
-
-  public removeSubjectStatisticFromView = (
-    subjectTuple: [ISubject, boolean, boolean],
-    tableConfigArray: ITableConfig[]
-  ) => {
-    const copy: ITableConfig[] = copyByJSON(tableConfigArray);
-    const beginFrom: number = copy.findIndex(config => config.caption.includes(subjectTuple[0].name));
-    copy.splice(beginFrom, 1);
-    return copy;
-  };
-
-  public replaceAtIndex = (
-    tableConfig: ITableConfig[],
-    index: number,
-    body: ITableConfig,
-    headers: string[],
-  ): ITableConfig[] => {
-    tableConfig[index].body = body;
-    tableConfig[index].headers = headers;
+    this.subjects = [...this.subjects];
   };
 
   public getSelected = (subjects: [ISubject, boolean, boolean][]) => subjects.filter(tuple => tuple[1]);
@@ -295,8 +194,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public mapTimestamp = (timestamp: number) => {
     if (timestamp) {
-
-      console.log(timestamp);
 
       if (this.dateSelector.get("selector").value === "date") {
         return this.datePipe.transform(timestamp, "yyyy-MM-dd");

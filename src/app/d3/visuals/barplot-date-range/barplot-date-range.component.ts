@@ -43,6 +43,7 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
     if (changes.data !== undefined) {
       const [subject, marks, dates, students, selected] = changes.data.currentValue;
       const subjects: [ISubject, boolean, boolean][] = subject.filter(tuple => tuple[1]);
+      console.log(subjects, subject);
       if (subjects.length) {
         this.generateInRangeChart(subjects, marks, dates, students, selected);
       } else {
