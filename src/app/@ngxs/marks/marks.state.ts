@@ -106,6 +106,7 @@ export class NgxsMarksState {
   }
   @Action (Marks.AddToTheHashTable)
   public addToTheHash(ctx, {payload}: Mark): void {
+    console.log("Add to memory now:", payload);
     return this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)
@@ -124,6 +125,7 @@ export class NgxsMarksState {
       loading: true,
       loaded: false
     }));
+    console.log("Memory now:", this.marksService.getMemory());
     return this.marksService.submitMark(this.marksService.getMemory()).pipe(
       tap(this.marksService.clearMemory),
       tap((apiResponse: Mark[]) => {

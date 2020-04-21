@@ -201,7 +201,7 @@ export class D3Service {
       } else {
         let name: string;
         if (step === "month") {
-          name = (new Date(date)).toLocaleString("default", {month: "long"});
+          name = (new Date(date)).toLocaleString("default", {month: "long", year: "numeric"});
         } else {
           name = `${
             (new Date(date)).toLocaleString("default", {day: "numeric", month: "short"})
