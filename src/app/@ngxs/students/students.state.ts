@@ -144,7 +144,7 @@ export class NgxsStudentsState {
       catchError(error => of(dispatch(new Students.SearchError(error))))
     );
     */
-  };
+  }
 
   @Action(Students.SearchError)
   public searchStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {

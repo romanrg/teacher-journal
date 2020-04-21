@@ -221,7 +221,11 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     } else if (this.dateGenerator.isDeleteDateButton(target)) {
 
-      _compose(dispatchDelete, updateStamps(timestamp), copyByJSON)(this.subject);
+      console.log(this.dateGenerator.isDeleteDateButton(target));
+
+      this.store.dispatch(new Subjects.DeleteDate(_compose(updateStamps(timestamp), copyByJSON)(this.subject)));
+
+
 
     }
   }

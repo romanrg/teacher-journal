@@ -75,10 +75,12 @@ export class NgxsMarksState {
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
     console.log(payload);
+
     setState(patch({
         data: removeItem(mark => mark.id === payload.id)
     }));
     dispatch(new Marks.RemoveFromTheHashTable(payload));
+
 
   }
   @Action(Marks.Patch)
@@ -106,7 +108,6 @@ export class NgxsMarksState {
   }
   @Action (Marks.AddToTheHashTable)
   public addToTheHash(ctx, {payload}: Mark): void {
-    console.log("Add to memory now:", payload);
     return this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)

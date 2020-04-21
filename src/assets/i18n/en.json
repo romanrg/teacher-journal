@@ -77,6 +77,17 @@
           "TEACHER": {}
         }
       }
+    },
+    "STATISTICS": {
+      "HEADER": "Statistics",
+      "SELECT": "Select subjects",
+      "CHECK_ALL": "Check All",
+      "UNCHECK_ALL": "Uncheck All",
+      "EXPAND_ALL": "Expand All",
+      "COLLAPSE_ALL": "Collapse All",
+      "FROM": "From",
+      "TO": "To",
+      "SELECTION": ["date", "week", "month"]
     }
   },
   "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",

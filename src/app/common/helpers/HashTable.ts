@@ -1,57 +1,57 @@
 export class HashTable {
-  #table: Array<any> = [];
-  #hashFunction: Function;
+  _table: Array<any> = [];
+  _hashFunction: Function;
   constructor(hashFunction: HashFunctions) {
-    this.#hashFunction = hashFunction;
+    this._hashFunction = hashFunction;
   }
   get data() {
-    return this.#table.filter(item => item !== undefined);
+    return this._table.filter(item => item !== undefined);
   }
-  public hashCode = (key: string): number => this.#hashFunction(key)
-  public put = (key: string, value: any): void => this.#table[this.hashCode(key)] = value;
-  public remove = (key: string): boolean => this.#table[this.hashCode(key)] = undefined;
-  public value = (key: string): any => this.#table[this.hashCode(key)];
-  public print = () => console.log(this.#table.filter(item => item !== undefined))
-  public clear = (): void => this.#table.length = 0;
+  public hashCode = (key: string): number => this._hashFunction(key)
+  public put = (key: string, value: any): void => this._table[this.hashCode(key)] = value;
+  public remove = (key: string): boolean => this._table[this.hashCode(key)] = undefined;
+  public value = (key: string): any => this._table[this.hashCode(key)];
+  public print = () => console.log(this._table.filter(item => item !== undefined))
+  public clear = (): void => this._table.length = 0;
 }
 
 export class HashTableWithLinearCollision extends HashTable {
-
-  #table: Array<any> = [];
-  #hashFunction: Function;
   constructor(hashFunction: HashFunctions) {
     super(hashFunction);
   }
 
   get data() {
-    return this.#table.filter(item => item !== undefined).map(({value}) => value);
+    return this._table.filter(item => item !== undefined).map(({value}) => value);
   }
+
+  public hashCode = (key: string): number => this._hashFunction(key)
 
   public put = (key: string, value: any): void => {
     const position: number = this.hashCode(key);
-    if (this.#table[position] === undefined) {
-      this.#table[position] = {key, value};
+    if (this._table[position] === undefined) {
+      this._table[position] = {key, value};
     } else {
       let index: number = position + 1;
-      while (this.#table[index] !== undefined) {
+      while (this._table[index] !== undefined) {
         index++;
       }
-      this.#table[index] = {key, value};
+      this._table[index] = {key, value};
     }
   };
 
   public value = (key: string): any|undefined => {
     const position: number = this.hashCode(key);
-    if (this.#table[position] !== undefined) {
-      if (this.#table[position].key === key) {
-        return this.this.#table[position].value;
+    console.log(this._table);
+    if (this._table[position] !== undefined) {
+      if (this._table[position].key === key) {
+        return this.this._table[position].value;
       } else {
         let index: number = position + 1;
-        while (this.#table[position] === undefined || this.#table[position].key !== key) {
+        while (this._table[position] === undefined || this._table[position].key !== key) {
           index = index + 1;
         }
-        if (this.#table[position].key === key) {
-          return this.#table[position].value
+        if (this._table[position].key === key) {
+          return this._table[position].value
         }
       }
     }
@@ -60,21 +60,23 @@ export class HashTableWithLinearCollision extends HashTable {
 
   public remove = (key: string): undefined => {
     const position: number = this.hashCode(key);
-    if (this.#table[position] !== undefined) {
-      if (this.#table[position].key === key) {
-        this.#table[position] = undefined;
+    if (this._table[position] !== undefined) {
+      if (this._table[position].key === key) {
+        this._table[position] = undefined;
       } else {
         let index: number = position + 1;
-        while (this.#table[position] === undefined || this.#table[position].key !== key ) {
+        while (this._table[position] === undefined || this._table[position].key !== key ) {
           index = index + 1;
         }
-        if (this.#table[position].key === key) {
-          this.#table[position] = undefined;
+        if (this._table[position].key === key) {
+          this._table[position] = undefined;
         }
       }
     }
     return undefined;
   }
+
+  public clear = (): void => this._table.length = 0;
 }
 
 export class HashFunctions {

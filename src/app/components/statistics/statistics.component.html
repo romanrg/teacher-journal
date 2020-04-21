@@ -1,20 +1,12 @@
 <section class="statistic">
-  <h2 class="statistic__title">Statistic</h2>
+  <h2 class="statistic__title">{{'COMPONENTS.STATISTICS.HEADER' | translate}}</h2>
   <div class="wrapper">
     <div class=" wrapper-controller">
       <div class="statistic__dropdown dropdown">
         <button class="dropdown__select-btn"
                 (click)="isHidden = !isHidden"
         >
-          <!--
-          Selected dates:<span *ngIf="selected.length === 0"> V </span>
-          <br>
-          <span *ngIf="selected[0]"> {{selected[0] | date:"dd/MM/yy"}}</span>
-          <span *ngIf="selected.length > 1">
-        <span>{{selected.length === 2 ? " and " : " ... "}}</span>
-        {{selected[selected.length - 1] | date:"dd/MM/yy"}}</span>
-        -->
-          Select subjects:
+          {{'COMPONENTS.STATISTICS.SELECT' | translate}}:
         </button>
         <form
           #form="ngForm"
@@ -24,18 +16,18 @@
         >
           <div class="dropdown__controller">
             <div class="dropdown__controller-wrapper">
-              <button class="dropdown__btn" (click)="checkAll()">Check All</button>
-              <button class="dropdown__btn" (click)="unCheckAll()">Uncheck All</button>
+              <button class="dropdown__btn" (click)="checkAll()">{{'COMPONENTS.STATISTICS.CHECK_ALL' | translate}}</button>
+              <button class="dropdown__btn" (click)="unCheckAll()">{{'COMPONENTS.STATISTICS.UNCHECK_ALL' | translate}}</button>
             </div>
             <div class="dropdown__controller-wrapper">
               <button
                 class="dropdown__btn"
                 (click)="expandAll()"
-                *ngIf="!(range[0] && range[1])">Expand All</button>
+                *ngIf="!(range[0] && range[1])">{{'COMPONENTS.STATISTICS.EXPAND_ALL' | translate}}</button>
               <button
                 *ngIf="!(range[0] && range[1])"
                 class="dropdown__btn"
-                (click)="collapseAll()">Collapse All</button>
+                (click)="collapseAll()">{{'COMPONENTS.STATISTICS.COLLAPSE_ALL' | translate}}</button>
             </div>
           </div>
           <ul class="dropdown__list">
@@ -97,20 +89,20 @@
                   formControlName="selector"
                 >
                   <option
-                    *ngFor="let option of ['date', 'week', 'month']"
+                    *ngFor="let option of ('COMPONENTS.STATISTICS.SELECTION' | translate); let i = index"
                     [selected]="selectorType === option"
-                    value="{{option}}"
+                    value="{{['date', 'week', 'month'][i]}}"
                   >{{option}}</option>
                 </select>
                 <div class="date-form__wrapper">
-                  <label>From: <input
+                  <label>{{'COMPONENTS.STATISTICS.FROM' | translate}}: <input
                     class="date-input"
                     formControlName="from"
                     type="{{dateSelector.controls.selector.value}}"
                     [value]="mapTimestamp(range[0])"
                     [max]="dateSelector.value.to"
                   ></label>
-                  <label>To:
+                  <label>{{'COMPONENTS.STATISTICS.TO' | translate}}:
                     <input
                       [value]="mapTimestamp(range[1])"
                       class="date-input"
@@ -121,13 +113,12 @@
                 </div>
                 <app-button
                   [isDisabled]="!dateSelector.valid"
-                  [textContent]="'Submit'"
+                  textContent="{{'BUTTON_TYPE.SUBMIT' | translate}}"
                   [screenReader]="'Submit form'"
                   class="date-form__btn--submit"
                 ></app-button>
               </form>
           </div>
-        <!-- dateSelector.valid && range.length -->
         <ng-container >
           <app-barplot-date-range
             *ngIf="range.length"

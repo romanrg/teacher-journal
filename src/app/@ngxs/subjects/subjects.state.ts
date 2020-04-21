@@ -171,9 +171,10 @@ export class NgxsSubjectsState implements NgxsOnChanges{
   @Action(Subjects.DeleteDate)
   public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject}: ISubject): void {
 
-    dispatch(new Subjects.Update(subject.subject));
+    const [marks, sub] = subject;
+    dispatch(new Subjects.Update(sub));
 
-    subject.marks.forEach(mark => dispatch(new Marks.Delete(mark)));
+    marks.forEach(mark => dispatch(new Marks.Delete(mark)));
 
   }
   @Action(Subjects.Patch)
@@ -235,6 +236,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     setState(patch({
       data: updateItem(subj => subj.id === payload.id, payload)
     }));
+
 
   }
 

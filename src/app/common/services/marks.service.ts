@@ -15,7 +15,7 @@ export class MarksServiceService {
   private filteredProperties: [string, string] = ["id", "value"];
   #hash = HashFunctions.djb2HashCode;
   constructor(private http: HttpClient) {
-    this.memory = new HashTableWithLinearCollision(this.#hash);
+    this.memory = new HashTable(this.#hash);
   }
   public submitMark = (mark: Mark): Observable<Mark[]> => {
     return this.http.post(this.URL, mark);
@@ -44,7 +44,7 @@ export class MarksServiceService {
     const shallowCopy: Mark = {...item};
     shallowCopy._deletedAt = Date.now();
     this.memory.remove(key);
-    this.memory.put(key, shallowCopy);
+    this.memory.put(this._key(item), shallowCopy);
   }
 
   public replaceHash(item: Mark): void {

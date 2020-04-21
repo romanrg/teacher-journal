@@ -296,6 +296,8 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public mapTimestamp = (timestamp: number) => {
     if (timestamp) {
 
+      console.log(timestamp);
+
       if (this.dateSelector.get("selector").value === "date") {
         return this.datePipe.transform(timestamp, "yyyy-MM-dd");
       }
