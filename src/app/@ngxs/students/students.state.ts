@@ -120,6 +120,19 @@ export class NgxsStudentsState {
 
   @Action(Students.Search)
   public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): Observable<IStudent[]> {
+    const filterFn = (student: IStudent) =>
+      student.name.toLowerCase().includes(payload.toLowerCase()) ||
+      student.surname.toLowerCase().includes(payload.toLowerCase()) ||
+      student.address.toLowerCase().includes(payload.toLowerCase()) ||
+      student.description.toLowerCase().includes(payload.toLowerCase());
+    const filtered: IStudent[] = getState().data.filter(filterFn);
+    setState({
+      ...getState(),
+      searchedStudents: [...filtered],
+      searchBarInputValue: payload,
+      currentPage: 1,
+    });
+    /*
     return this.studentsService.searchStudent(payload).pipe(
       tap(apiResponse =>  setState({
         ...getState(),
@@ -130,7 +143,8 @@ export class NgxsStudentsState {
       retry(3),
       catchError(error => of(dispatch(new Students.SearchError(error))))
     );
-  }
+    */
+  };
 
   @Action(Students.SearchError)
   public searchStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
