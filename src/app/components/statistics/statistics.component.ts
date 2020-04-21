@@ -17,6 +17,7 @@ import {Select} from "@ngxs/store";
 import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
 import {Statistics} from "../../@ngxs/statistics/statistics.actions";
 import {startWith} from "rxjs/internal/operators";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: "app-statistics",
@@ -53,7 +54,8 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   };
 
   constructor(
-    private store: Ngxs.Store
+    private store: Ngxs.Store,
+    private datePipe: DatePipe
   ) {
     this.mapper = new StatisticMapper(this.store);
     this.tableBody = new TableBody(TableRow);
@@ -70,7 +72,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     });
 
     this.dateSelector = new FormGroup({
-      from: new FormControl("", [Validators.required]),
+      from: new FormControl("2017-06", [Validators.required]),
       to: new FormControl("", [Validators.required]),
       selector: new FormControl("date")
     });
@@ -279,27 +281,47 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
   public unSelectDate = (holder: [], date: number): void => holder.filter(time => time !== date);
 
-  public showChanges($event: event): void {
+  public showChanges = ($event: event): void => {
     $event.preventDefault();
-    const value = this.dateSelector.value;
-    function getDateOfWeek(y: string, w: string): Date {
+    const value: any = this.dateSelector.value;
+    this.range = [this.handleTimeString(value.from), this.handleTimeString(value.to)];
+  };
+
+  public handleTimeString = (time: string) => {
+    const splited: string[] = time.split("-");
+
+    const getDateOfWeek: Function = (y: string, w: string): Date => {
       let date: Date = new Date(y, 0, (1 + (w - 1) * 7));
       date.setDate(date.getDate() + (1 - date.getDay()));
       return date;
-    }
+    };
     const parseWeek: Function = (weekString: string): [string, string] => weekString.split("-W");
 
-    let start: number, end: number;
-    if (value.selector === "week") {
-      start = getDateOfWeek(...parseWeek(value.from)).getTime();
-      end = getDateOfWeek(...parseWeek(value.to)).getTime();
-    } else {
-      start = (new Date(value.from)).getTime();
-      end = (new Date(value.to)).getTime();
+    if (splited.length === 2 && splited[1].includes("W")) {
+      return getDateOfWeek(...parseWeek(time)).getTime();
     }
 
+    return (new Date(time)).getTime();
 
-    this.range = [start, end];
+  };
 
+  public mapTimestamp = (timestamp: number) => {
+    if (timestamp) {
+
+      if (this.dateSelector.get("selector").value === "date") {
+        return this.datePipe.transform(timestamp, "yyyy-MM-dd");
+      }
+
+      if (this.dateSelector.get("selector").value === "week") {
+        const splited: string[] = this.datePipe.transform(timestamp, "yyyy-ww").split("-");
+        splited.splice(1, 0, "-W");
+        return splited.join("");
+      }
+
+      if (this.dateSelector.get("selector").value === "month") {
+        return this.datePipe.transform(timestamp, "yyyy-MM");
+      }
+
+    }
   }
 }

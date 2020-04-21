@@ -150,15 +150,15 @@
                 </select>
                 <div class="date-form__wrapper">
                   <label>From: <input
-                    [placeholder]="range[0]"
                     class="date-input"
                     formControlName="from"
                     type="{{dateSelector.controls.selector.value}}"
+                    [value]="mapTimestamp(range[0])"
                     [max]="dateSelector.value.to"
                   ></label>
                   <label>To:
                     <input
-                      [placeholder]="range[1]"
+                      [value]="mapTimestamp(range[1])"
                       class="date-input"
                       formControlName="to" type="{{dateSelector.controls.selector.value}}"
                       [min]="dateSelector.value.from"

@@ -78,7 +78,6 @@ export class D3Service {
   public getEntries = (obj: {}) => [Object.entries(obj)];
 
   public getPerformanceData = (marks: {name: string, value: string}[], studentsLength: number) => {
-    console.log(marks);
     const performance: Performance = this.getPerformanceObject(marks);
     const parsed: {[string]: number}[] = this.getDataForBarFromEntries(Object.entries(performance));
     parsed.unshift({name: "unattested", value: studentsLength - (
