@@ -41,9 +41,20 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
 
   public ngOnChanges (changes: SimpleChanges): void {
     if (changes.data !== undefined) {
-      const [subject, marks, dates, students, selected] = changes.data.currentValue;
+      this.data = changes.data.currentValue
+      const [subject, marks, dates, students, selected] = this.data;
       const subjects: [ISubject, boolean, boolean][] = subject.filter(tuple => tuple[1]);
-      console.log(subjects, subject);
+      if (subjects.length) {
+        this.generateInRangeChart(subjects, marks, dates, students, selected);
+      } else {
+        this.generateInRangeChart(subject, marks, dates, students, selected);
+      }
+    }
+
+    if (changes.step !== undefined) {
+      const [subject, marks, dates, students, selected] = this.data;
+      this.step = changes.step.currentValue;
+      const subjects: [ISubject, boolean, boolean][] = subject.filter(tuple => tuple[1]);
       if (subjects.length) {
         this.generateInRangeChart(subjects, marks, dates, students, selected);
       } else {
