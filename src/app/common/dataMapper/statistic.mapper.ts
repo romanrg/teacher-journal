@@ -86,7 +86,9 @@ export class StatisticMapper {
       `Degree of learning: ${(degree * 100).toFixed(2) }%`;
   };
 
-  public fromStudentToName = (student: IStudent): string => `${student.name} ${student.surname}`;
+  public fromStudentToName = (student: IStudent): string => {
+    return `${student.name} ${student.surname}`
+  };
 
   public fromMarksToRow = (marks: Mark[], students: {[string]: IStudent}) => {
       return marks.reduce((acc, mark) => {
@@ -111,12 +113,16 @@ export class StatisticMapper {
     students: {[string]: IStudent}
     ): {[string]: number[]} => {
     return  marks[subjectId].reduce((acc, mark) => {
-      const student: string = this.fromStudentToName(students[mark.student]);
-      if (acc[student] === undefined) {
-        acc[student] = [mark.value];
-      } else {
-        acc[student] = [...acc[student], mark.value];
+
+      if (students[mark.student]) {
+        const student: string = this.fromStudentToName(students[mark.student]);
+        if (acc[student] === undefined) {
+          acc[student] = [mark.value];
+        } else {
+          acc[student] = [...acc[student], mark.value];
+        }
       }
+
       return acc;
     }, {});
   }

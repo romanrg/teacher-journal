@@ -38,11 +38,13 @@ export class D3Service {
     subjectId: string,
     students: {[key]: IStudent}
   ): {[key]: number} => {
+
     const marksArray: {[string]: number[]} = (new StatisticMapper()).getAverageMarksObject(marks, subjectId, students);
 
     Object.keys(marksArray).forEach(key => {
       marksArray[key] = Math.ceil(StatisticResearcher.getAverageInArray(marksArray[key]));
     });
+
 
     return marksArray;
   }
