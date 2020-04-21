@@ -6,12 +6,15 @@
         <button class="dropdown__select-btn"
                 (click)="isHidden = !isHidden"
         >
+          <!--
           Selected dates:<span *ngIf="selected.length === 0"> V </span>
           <br>
           <span *ngIf="selected[0]"> {{selected[0] | date:"dd/MM/yy"}}</span>
           <span *ngIf="selected.length > 1">
         <span>{{selected.length === 2 ? " and " : " ... "}}</span>
         {{selected[selected.length - 1] | date:"dd/MM/yy"}}</span>
+        -->
+          Select subjects:
         </button>
         <form
           #form="ngForm"
@@ -28,11 +31,11 @@
               <button
                 class="dropdown__btn"
                 (click)="expandAll()"
-                [disabled]="dateSelector.value.from || dateSelector.value.to">Expand All</button>
+                *ngIf="!(range[0] && range[1])">Expand All</button>
               <button
+                *ngIf="!(range[0] && range[1])"
                 class="dropdown__btn"
-                (click)="collapseAll()"
-                [disabled]="dateSelector.value.from || dateSelector.value.to">Collapse All</button>
+                (click)="collapseAll()">Collapse All</button>
             </div>
           </div>
           <ul class="dropdown__list">
@@ -42,7 +45,7 @@
                   <button
                     class="dropdown__expand"
                     (click)="expandOne(subject)"
-                    [disabled]="dateSelector.value.from || dateSelector.value.to"
+                    [disabled]="range[0] && range[1]"
                   >▼</button>
                 </ng-container>
                 <ng-template #close>
@@ -85,55 +88,6 @@
       </div>
     </div>
     <div class="statistic__students">
-      <!--
-      <ul class="statistic__data-list">
-        <li
-          *ngFor="let microTable of render; let i = index"
-          class="statistic__data-item"
-        >
-          <table class="statistic__data-table">
-            <caption
-              class="statistic__data-caption"
-            >{{microTable.caption}}</caption>
-            <div class="scroll">
-              <thead class="statistic__data-head">
-              <tr class="statistic__data-header-row">
-                <th
-                  class="statistic__data-body-cell"
-                  *ngFor="let header of microTable.headers"
-
-                >
-                  {{header | date:"yyyy/MM/dd"}}
-                </th>
-              </tr>
-              </thead>
-              <tbody class="statistic__data-body">
-              <tr class="statistic__data-body-row">
-                <td
-                  *ngFor="let cell of microTable.body"
-                  class="statistic__data-body-cell"
-
-                >
-                  <ul class="statistic__data-body-list">
-                    <li
-                      *ngFor="let stat of cell; let i = index"
-                      class="statistic__data-body-item"
-                    >
-                      <span *ngIf="i !== cell.length - 1">{{stat}}</span>
-                      <span
-                        *ngIf="i === cell.length - 1"
-                        class="statistic__data-item--average"
-                      ><pre>{{stat}}</pre></span>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              </tbody>
-            </div>
-          </table>
-        </li>
-      </ul>
-      -->
       <div class="statistics__visuals-wrapper">
 
           <div class="statistic__selector-wrapper">
@@ -165,17 +119,23 @@
                     >
                   </label>
                 </div>
-                <app-button [textContent]="'Submit'" [screenReader]="'Submit form'"></app-button>
+                <app-button
+                  [isDisabled]="!dateSelector.valid"
+                  [textContent]="'Submit'"
+                  [screenReader]="'Submit form'"
+                  class="date-form__btn--submit"
+                ></app-button>
               </form>
           </div>
         <!-- dateSelector.valid && range.length -->
-        <ng-container>
+        <ng-container >
           <app-barplot-date-range
+            *ngIf="range.length"
             class="date-range__visuals"
             [data]="[subjects, marks, dates, students, range]"
             [renderType]="dateSelector.controls.selector.value"
           ></app-barplot-date-range>
-          <ul class="statistics__visuals-list"  *ngIf="!dateSelector.touched">
+          <ul class="statistics__visuals-list"  *ngIf="!(range[0] && range[1])">
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
               <h3>{{barplot[0].name}}</h3>
               <app-barplot

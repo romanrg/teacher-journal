@@ -92,10 +92,12 @@ export class BarplotComponent implements OnInit, OnChanges {
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);
   }
+
   public ngOnChanges (changes: SimpleChanges): void {
     const [subject, marks, dates, students, selected] = changes.data.currentValue;
     this.createAverageBars(subject, marks, dates, students, selected);
     this.createByDates(subject, marks, dates, students, selected);
 
   }
+
 }

@@ -9,6 +9,7 @@ export class ButtonComponent implements OnInit {
   @Input("screenReader") public screenReaderMessage: string;
   @Input("textContent") public textContent: string;
   @Input("action") public action: Function;
+  @Input("isDisabled") public isDisabled: boolean;
   @Output() public emitter: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }

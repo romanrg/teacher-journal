@@ -206,7 +206,7 @@ export class D3Service {
           name = `${
             (new Date(date)).toLocaleString("default", {day: "numeric", month: "short"})
             } — ${
-            (new Date(scale[index + 1])).toLocaleString("default", {day: "numeric", month: "short"})
+            (new Date(scale[index + 1] - 1000 * 24 * 60 * 60)).toLocaleString("default", {day: "numeric", month: "short"})
             }`;
         }
         if (scale[index + 1]) {

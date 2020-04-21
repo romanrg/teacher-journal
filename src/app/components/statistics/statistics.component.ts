@@ -15,8 +15,6 @@ import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import {ITableConfig, TableBody, TableRow} from "../../common/models/ITableConfig";
 import {Select} from "@ngxs/store";
 import {NgxsStatisticsState, StatisticsStateModel} from "../../@ngxs/statistics/statistics.state";
-import {Statistics} from "../../@ngxs/statistics/statistics.actions";
-import {startWith} from "rxjs/internal/operators";
 import {DatePipe} from "@angular/common";
 
 @Component({
@@ -46,13 +44,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
   public dateSelector: FormGroup;
   public statSelector: FormGroup;
 
-  // stats
-  public selectedStatistics = {
-    average: true,
-    dates: false,
-    performance: true
-  };
-
   constructor(
     private store: Ngxs.Store,
     private datePipe: DatePipe
@@ -72,15 +63,9 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     });
 
     this.dateSelector = new FormGroup({
-      from: new FormControl("2017-06", [Validators.required]),
+      from: new FormControl("", [Validators.required]),
       to: new FormControl("", [Validators.required]),
       selector: new FormControl("date")
-    });
-
-    this.statSelector = new FormGroup({
-      average: new FormControl(this.selectedStatistics.average),
-      dates: new FormControl(this.selectedStatistics.dates),
-      performance: new FormControl(this.selectedStatistics.performance)
     });
 
   }
@@ -108,6 +93,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
         tuple, this.render, this.dates, this.marks, this.students
       ))
       .flat(1);
+    this.subjects = [...this.subjects];
   };
 
   public unCheckAll = (): void => {
@@ -115,6 +101,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
     Object.values(this.dates).forEach(dates => dates.map(this.uncheckOne));
     this.selected.length = 0;
     this.render.length = 0;
+    this.subjects = [...this.subjects];
   };
 
   public expandAll = (): void => {
@@ -295,6 +282,7 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
       date.setDate(date.getDate() + (1 - date.getDay()));
       return date;
     };
+
     const parseWeek: Function = (weekString: string): [string, string] => weekString.split("-W");
 
     if (splited.length === 2 && splited[1].includes("W")) {
