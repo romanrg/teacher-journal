@@ -132,18 +132,6 @@ export class NgxsStudentsState {
       searchBarInputValue: payload,
       currentPage: 1,
     });
-    /*
-    return this.studentsService.searchStudent(payload).pipe(
-      tap(apiResponse =>  setState({
-        ...getState(),
-        searchedStudents: [...apiResponse],
-        searchBarInputValue: payload,
-        currentPage: 1,
-      })),
-      retry(3),
-      catchError(error => of(dispatch(new Students.SearchError(error))))
-    );
-    */
   }
 
   @Action(Students.SearchError)

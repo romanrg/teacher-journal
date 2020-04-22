@@ -181,7 +181,7 @@ export class NumberPicker extends Generator {
       this.appendChild.bind(this, form, numberInput),
       this.appendChild.bind(this, form, submitBtn)
     );
-    this.renderer.addClass.bind(this, numberInput, "number-input"),
+    this.renderer.addClass(numberInput, "number-input"),
     this.renderer.listen(form, "submit", (e) => {
       e.preventDefault();
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);

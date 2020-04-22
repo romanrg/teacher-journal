@@ -48,7 +48,6 @@ import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {DropdownComponent} from "../shared/dropdown/dropdown.component";
 import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
-import {D3Directive} from "../d3/d3.directive";
 import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
 import {BarComponent} from "../d3/visuals/bar/bar.component";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
@@ -90,7 +89,6 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     ErrorMessageDisplayComponent,
     LoadingComponent,
     DropdownComponent,
-    D3Directive,
     BarplotComponent,
     BarplotDateRangeComponent
   ],

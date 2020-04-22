@@ -10,14 +10,6 @@ export class StatisticMapper {
     this.store = store;
   }
 
-  public fromState = () => {
-    return this.store.select(state => _chain(
-      () => _compose(_partial(_pluck, "data"), _partial(_pluck, "subjects"))(state),
-      () => _compose(_partial(_pluck, "data"), _partial(_pluck, "students"))(state),
-      () => _compose(_partial(_pluck, "data"), _partial(_pluck, "marks"))(state)
-    ));
-  };
-
   public subjectsFromState = (subjects: ISubject[]): [ISubject, boolean, boolean] => {
     return __filter(({uniqueDates}) => uniqueDates.length > 0)(subjects).reduce((acc, subject) => {
       acc = [...acc, [subject, false, false]];
@@ -58,53 +50,8 @@ export class StatisticMapper {
     }, []);
   };
 
-  public statisticForTable = (
-    tuple: [ISubject, boolean, boolean],
-    dates: {[string]: [number, boolean, boolean][]},
-    marks: {[string]: Mark[]},
-    students: {[string]: IStudent},
-    selectedDatesArray?: number[],
-  ): string[] => {
-    return dates[tuple[0].id].reduce((col, dateTuple) => {
-      if (!selectedDatesArray || selectedDatesArray.includes(dateTuple[0])) {
-        const thatDateMarks: Mark[] = __filter((mark) => mark.time === dateTuple[0])(marks[tuple[0].id]);
-        const statistics: StatisticResearcher = new StatisticResearcher(thatDateMarks);
-        const report: string = this.fromReportToString(
-          statistics.getReport("average", "quality", "degree", "academicPerformance")
-        );
-        col = [...col, this.fromMarksToRow(thatDateMarks, students).concat(report)];
-        return col;
-      }
-      return col;
-    }, []);
-  };
-
-  public fromReportToString = ({average, academicPerformance, quality, degree}: {[string]: number}): string => {
-      return `Average: ${(average).toFixed(2)}\n` +
-      `Academic performance: ${(academicPerformance * 100).toFixed(2)}%\n` +
-      `Quality of education: ${(quality * 100).toFixed(2) }%\n` +
-      `Degree of learning: ${(degree * 100).toFixed(2) }%`;
-  };
-
   public fromStudentToName = (student: IStudent): string => {
     return `${student.name} ${student.surname}`
-  };
-
-  public fromMarksToRow = (marks: Mark[], students: {[string]: IStudent}) => {
-      return marks.reduce((acc, mark) => {
-        acc = [...acc, `${this.fromStudentToName(students[mark.student])}: ${mark.value}`];
-        return acc;
-      },[]);
-  }
-
-  public getHeaders = (
-    dates: {[string]: [number, boolean, boolean][]},
-    subjectTuple: [ISubject, boolean, boolean],
-    selectedDatesArray?: number[]
-  ): string[] => {
-    return !selectedDatesArray ?
-      dates[subjectTuple[0].id].map(dateTuple => dateTuple[0]) :
-      dates[subjectTuple[0].id].filter(dateTuple => selectedDatesArray.includes(dateTuple[0])).map(dateTuple => dateTuple[0]);
   };
 
   public getAverageMarksObject = (

@@ -346,13 +346,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
-    /*
-    if (this.marks) {
-
-      this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
-
-    }
-    */
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }
