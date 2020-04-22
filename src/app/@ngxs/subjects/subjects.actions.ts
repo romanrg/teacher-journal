@@ -64,4 +64,12 @@ export namespace Subjects {
     public static readonly type = "[Subject Table] Submit Subject Changes";
   }
 
+  export class PopUpCancelList {
+    public static readonly type = "[Subjects List] Cancel Pop Up";
+  }
+
+  export class PopUpCancelTable {
+    public static readonly type = "[Subjects Table] Cancel Pop Up";
+  }
+
 }

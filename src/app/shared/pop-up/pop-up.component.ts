@@ -12,10 +12,11 @@ import {AdDirective} from "../../common/directives/ad-directive.directive";
 export class PopUpComponent implements OnInit, OnDestroy {
 
   @Input() public items: [];
-  @ViewChild(AdDirective, {static: true}) public adHost: AdDirective;
-  public componentRef: ComponentRef;
   public display: string = "none";
   @Output() public confirmationResult: EventEmitter<boolean> = new EventEmitter();
+  @ViewChild(AdDirective, {static: true}) public adHost: AdDirective;
+  public componentRef: ComponentRef;
+
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,

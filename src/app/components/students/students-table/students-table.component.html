@@ -1,6 +1,12 @@
 <ng-container *ngIf="pops">
   <app-pop-up (confirmationResult)="confirmPopUp($event)" [items]="pops"></app-pop-up>
 </ng-container>
+<ng-container *ngIf="popUpComponent">
+  <app-pop-up-action
+    (close)="closePopUp()"
+    [data]="sendComponent(popUpComponent)"
+  ></app-pop-up-action>
+</ng-container>
 <ng-container *ngIf="(studentsState$ | async).loading">
   <app-loading></app-loading>
 </ng-container>

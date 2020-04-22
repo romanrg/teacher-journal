@@ -7,6 +7,7 @@ import {Select} from "@ngxs/store";
 import {NgxsSubjectsState, SubjectsStateModel} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {AdService} from "../../../common/services/ad.service";
+import {Students} from "../../../@ngxs/students/students.actions";
 
 
 @Component({
@@ -16,6 +17,7 @@ import {AdService} from "../../../common/services/ad.service";
 })
 export class SubjectsListComponent implements OnInit, OnDestroy {
   @Select(NgxsSubjectsState.Subjects) public subjects$: Observable<SubjectsStateModel>;
+  public popUp: null|string = null;
   public isLoad$: Observable<boolean> = store
     .select(state => Object.keys(state)
       .map(key => state[key].loading)
@@ -26,11 +28,25 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
     private store: Ngxs.Store,
     private adService: AdService
     ) {
-    // this.pops = this.adService.getErrorPop("Just kidding");
   }
   public deleteSubject($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");
     this.store.dispatch(new Subjects.Delete(subjName));
   }
-  public ngOnInit(): void {}
+  public ngOnInit(): void {
+    this.subjects$.subscribe(state => {
+      this.popUp = state.popups.list;
+    })
+  }
+
+  public closePopUp(): void {
+    this.store.dispatch(new Subjects.PopUpCancelList());
+  };
+  public sendComponent(popUpComponent: []): any {
+    setTimeout(() => {
+      this.closePopUp()
+    }, 5000);
+    return this.adService.getSuccessPop(popUpComponent.value);
+  }
+
 }

@@ -6,6 +6,7 @@ import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
 import {Statistics} from "../statistics/statistics.actions";
+import {AdService} from "../../common/services/ad.service";
 
 export class StudentsStateModel {
   public data: IStudent[];
@@ -16,6 +17,8 @@ export class StudentsStateModel {
   public paginationConstant: number;
   public currentPage: number;
   public error: (string| Error)|null;
+  public popUpMessage: string|null;
+  public popUpComponent: [];
 }
 
 @State<StudentsStateModel>({
@@ -29,6 +32,8 @@ export class StudentsStateModel {
     paginationConstant: 5,
     currentPage: 1,
     error: null,
+    popUpMessage: null,
+    popUpComponent: null,
   }
 })
 @Injectable({
@@ -37,7 +42,8 @@ export class StudentsStateModel {
 export class NgxsStudentsState {
 
   constructor(
-    private studentsService: StudentsServiceService
+    private studentsService: StudentsServiceService,
+    private adService: AdService,
   ) {}
 
   @Selector()
@@ -79,6 +85,7 @@ export class NgxsStudentsState {
         apiResponse.id = apiResponse._id;
         patchState({
           data: [...state.data].concat(apiResponse),
+          popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} added`},
           loading: false,
           loaded: true
         });
@@ -104,6 +111,7 @@ export class NgxsStudentsState {
           setState({
             ...getState(),
             data: getState().data.filter(student => student.id !== payload.id),
+            popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} deleted`},
             loading: false,
             loaded: true
           });
@@ -146,6 +154,11 @@ export class NgxsStudentsState {
   @Action(Students.ChangePagination)
   public changePagination({setState}: StateContext<StudentsStateModel>, {payload}: number): void {
     setState(state => ({...state, paginationConstant: payload}));
+  }
+
+  @Action(Students.PopUpCancel)
+  public cancelPopUp({setState}: StateContext<StudentsStateModel>): void {
+    setState(state => ({...state, popUpComponent: null}));
   }
 }
 

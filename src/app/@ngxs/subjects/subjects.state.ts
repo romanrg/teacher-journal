@@ -21,6 +21,7 @@ export class SubjectsStateModel {
   public paginationConstant: number;
   public currentPage: number;
   public error: string|Error;
+  public popups: {list: {}|null, table: {}|null};
 }
 
 export class SubjectTableState implements SubjectsStateModel{
@@ -40,7 +41,8 @@ export class SubjectTableState implements SubjectsStateModel{
     currentPage: 1,
     sortedColumn: null,
     renderMap: null,
-    error: null
+    error: null,
+    popups: {list: null, table: null}
   }
 })
 @Injectable({
@@ -96,6 +98,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
         apiResponse.id = apiResponse._id;
         return setState(
           patch({
+            popups: {list: {type: "success", value: `${apiResponse.name} added successfully.`}, table: getState().popups.table},
             data: append([apiResponse]),
             loading: false, loaded: true
           })
@@ -126,6 +129,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     return this.subjectsService.deleteSubject(deletedSubject.id).pipe(
       tap(deleteResponse => {
           setState(patch({
+            popups: {list: {type: "success", value: `${deletedSubject.name} deleted successfully.`}, table: getState().popups.table},
             data: removeItem(subj => subj.name === payload),
             loading: false, loaded: false
           }));
@@ -252,6 +256,19 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     }
 
     dispatch(new Marks.Submit());
+
+  }
+
+  @Action(Subjects.PopUpCancelList)
+  public cancelListPopUp({setState, getState}: StateContext<SubjectsStateModel>): void {
+
+    return setState(state => ({...state, popups: {list: null, table: getState().popups.table}}));
+
+  }
+
+  @Action(Subjects.PopUpCancelTable)
+  public cancelTablePopUp({setState, getState}: StateContext<SubjectsStateModel>): void {
+    return setState(state => ({...state, popups: {list: getState().popups.list, table: null}}));
 
   }
 

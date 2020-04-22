@@ -57,6 +57,7 @@ import {PopUpComponent} from "../shared/pop-up/pop-up.component";
 import {AdDirective} from "../common/directives/ad-directive.directive";
 import {SuccessUpComponent} from "../shared/success-up/success-up.component";
 import {ErrorUpComponent} from "../shared/error-up/error-up.component";
+import {PopUpActionComponent} from "../shared/pop-up-action/pop-up-action.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -96,7 +97,8 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     BarplotComponent,
     BarplotDateRangeComponent,
     PopUpComponent,
-    AdDirective
+    AdDirective,
+    PopUpActionComponent
   ],
   imports: [
     BrowserModule,

@@ -12,10 +12,9 @@ import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/stu
 import {Students} from "../../../@ngxs/students/students.actions";
 import {TranslateService} from "@ngx-translate/core";
 import {map, pluck} from "rxjs/internal/operators";
-import {__filter, _chain, _compose, _curry, _dispatcherNgxs, _partial, NodeCrawler, _allPass} from "../../../common/helpers/lib";
+import {__filter, _chain, _compose, _curry, _partial, NodeCrawler, _allPass} from "../../../common/helpers/lib";
 import {Equalities} from "../../../common/models/filters";
 import {AdService} from "../../../common/services/ad.service";
-import {DatePicker} from "../../../common/helpers/Generator";
 
 @Component({
   selector: "app-students-table",
@@ -27,6 +26,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
 
   private manager: SubscriptionManager = new SubscriptionManager();
   public pops: [];
+  public popUpComponent: [];
   public tableConfig: ITableConfig;
   public page: number;
   public itemsPerPage: number;
@@ -108,8 +108,6 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       );
 
       this.store.dispatch(new Students.Delete(student));
-
-      // confirm(`${this.confirmation.START} ${name} ${surname} ${this.confirmation.END}`);
     }
 
   }
@@ -132,6 +130,8 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.confirmation = translations.STUDENTS.DELETE_CONFIRMATION;
 
       this.successfullMessage = translations.STUDENTS.SUCCESSFULL;
+
+      this.popUpComponent = students.popUpComponent;
 
       this.errorMessage = translations.STUDENTS.NOT_SUCCESSFULL;
 
@@ -156,6 +156,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     });
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
+
 
   public confirmPopUp($event: Event): boolean {
     if ($event) {
@@ -187,5 +188,16 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.delStudent = $event;
     }
 
+  }
+
+  public closePopUp(): void {
+      this.store.dispatch(new Students.PopUpCancel())
+  };
+
+  public sendComponent(popUpComponent: []): any {
+    setTimeout(() => {
+      this.closePopUp()
+    }, 5000);
+    return this.adService.getSuccessPop(popUpComponent.value);
   }
 }

@@ -1,5 +1,5 @@
-<ng-container *ngIf="pops">
-  <app-pop-up [items]="pops"></app-pop-up>
+<ng-container *ngIf="popUp">
+  <app-pop-up-action [data]="sendComponent(popUp)" (close)="closePopUp()"></app-pop-up-action>
 </ng-container>
 <ng-container>
     <nav class="subjects__nav">

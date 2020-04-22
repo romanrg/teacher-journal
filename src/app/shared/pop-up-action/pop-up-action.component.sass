@@ -1,0 +1,35 @@
+@import "src/styles/variables.sass"
+.pop-up-action
+  display: flex
+  align-items: center
+  justify-content: space-between
+  border: 0.05rem solid $active-color
+  padding: 0 2rem
+  position: fixed
+  bottom: 10%
+  z-index: 1000
+  background: $bg-color
+  transform: scale(0.7)
+  animation: move-in 5s
+  left: -100%
+  user-select: none
+
+.pop-up-action__title
+  color: $color
+.pop-up-action__btn
+  color: $active-color
+  font-size: 2rem
+  font-weight: bold
+  &:hover
+    cursor: pointer
+
+
+@keyframes move-in
+  0%
+    left: -100%
+  20%
+    left: 0
+  80%
+    left: 0
+  100%
+    left: -100%
