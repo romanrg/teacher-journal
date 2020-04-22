@@ -203,8 +203,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     if (this.dateGenerator.shouldAddDateInput(target, this.tableBodyConfigData)) {
 
-      console.log(timestamps);
-
       this.dateGenerator.generateDatePicker(target, timestamps, this.datePipe, dispatchNewDate);
 
     } else if (this.numberGenerator.shouldAddNumberInput(target, this.tableBodyConfigData, targetCellIndex)) {
@@ -221,7 +219,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     } else if (this.dateGenerator.isDeleteDateButton(target)) {
 
-      console.log(this.dateGenerator.isDeleteDateButton(target));
 
       this.store.dispatch(new Subjects.DeleteDate(_compose(updateStamps(timestamp), copyByJSON)(this.subject)));
 
@@ -349,11 +346,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
+    /*
     if (this.marks) {
 
       this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
 
     }
+    */
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }

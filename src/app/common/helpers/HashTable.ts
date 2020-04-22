@@ -20,11 +20,11 @@ export class HashTableWithLinearCollision extends HashTable {
     super(hashFunction);
   }
 
-  get data() {
+  get data(): any {
     return this._table.filter(item => item !== undefined).map(({value}) => value);
   }
 
-  public hashCode = (key: string): number => this._hashFunction(key)
+  public hashCode = (key: string): number => this._hashFunction(key);
 
   public put = (key: string, value: any): void => {
     const position: number = this.hashCode(key);
@@ -51,7 +51,7 @@ export class HashTableWithLinearCollision extends HashTable {
           index = index + 1;
         }
         if (this._table[position].key === key) {
-          return this._table[position].value
+          return this._table[position].value;
         }
       }
     }
@@ -99,3 +99,4 @@ export class HashFunctions {
 
   public static knuthMultiplicative = (key: string): number => HashFunctions.loseHash(key) * (2 ^ 32);
 }
+

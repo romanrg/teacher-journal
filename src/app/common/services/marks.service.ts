@@ -13,9 +13,10 @@ export class MarksServiceService {
   private URL: string = `${API}${MARKS_ROUTE}`;
   private memory: HashTable;
   private filteredProperties: [string, string] = ["id", "value"];
-  #hash = HashFunctions.djb2HashCode;
+  private hash = HashFunctions.djb2HashCode;
+  private container: {[string]: Mark} = {};
   constructor(private http: HttpClient) {
-    this.memory = new HashTable(this.#hash);
+    this.memory = new HashTableWithLinearCollision(this.hash);
   }
   public submitMark = (mark: Mark): Observable<Mark[]> => {
     return this.http.post(this.URL, mark);
@@ -29,29 +30,33 @@ export class MarksServiceService {
     }
   }
 
-  public getMemory = (): string  => this.memory.data;
+  public getMemory = (): {[string]: Mark}  => /*this.memory.data;*/ this.container;
 
-  public clearMemory = (): void => this.memory.clear();
+  public clearMemory = (): void => /*this.memory.clear();*/ this.container = {};
 
   public deleteMarks = (id: string): Observable<Mark[]> => this.http.delete(`${this.URL}/${id}`);
 
   public addHash = (item: Mark): void => {
-    this.memory.put(this._key(item), item);
+    this.container[this._key(item)] = item;
+    console.log("Add:", this.container);
   };
 
   public removeHash(item: Mark): boolean {
     const key: string = this._key(item);
     const shallowCopy: Mark = {...item};
     shallowCopy._deletedAt = Date.now();
-    this.memory.remove(key);
-    this.memory.put(this._key(item), shallowCopy);
+    this.container[key] = shallowCopy;
+    console.log("Remove:", this.container);
+    // this.memory.remove(key);
+    // this.memory.put(this._key(item), shallowCopy);
   }
 
   public replaceHash(item: Mark): void {
     const key: string = this._key(item);
-    this.memory.remove(key);
-    this.memory.put(key, item);
-    this.memory.print();
+    this.container[key] = item;
+    console.log("Replace: ", this.container);
+    //this.memory.remove(key);
+    //this.memory.put(key, item);
   }
 
   public keyGenerator(mark: Mark, filteredProps: string[]): string {

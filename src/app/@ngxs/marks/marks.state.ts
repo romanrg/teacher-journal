@@ -74,7 +74,7 @@ export class NgxsMarksState {
   }
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
-    console.log(payload);
+    // console.log(payload);
 
     setState(patch({
         data: removeItem(mark => mark.id === payload.id)
@@ -126,8 +126,9 @@ export class NgxsMarksState {
       loading: true,
       loaded: false
     }));
-    console.log("Memory now:", this.marksService.getMemory());
-    return this.marksService.submitMark(this.marksService.getMemory()).pipe(
+    console.log("Memory now:", Object.values(this.marksService.getMemory()));
+    // console.log(getState().data)
+    return this.marksService.submitMark(Object.values(this.marksService.getMemory())).pipe(
       tap(this.marksService.clearMemory),
       tap((apiResponse: Mark[]) => {
         apiResponse.map(mark => mark.id = mark._id);

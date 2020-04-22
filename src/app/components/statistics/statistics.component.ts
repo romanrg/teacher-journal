@@ -123,8 +123,6 @@ export class StatisticsComponent implements OnInit, ControlValueAccessor {
 
           this.uncheckOne(tuple);
 
-        } else {
-
         }
       }
 
