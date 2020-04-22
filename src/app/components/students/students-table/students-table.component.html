@@ -1,4 +1,6 @@
-
+<ng-container *ngIf="pops">
+  <app-pop-up (confirmationResult)="confirmPopUp($event)" [items]="pops"></app-pop-up>
+</ng-container>
 <ng-container *ngIf="(studentsState$ | async).loading">
   <app-loading></app-loading>
 </ng-container>
@@ -9,10 +11,11 @@
     [barValue]="searchPlaceholder"
   ></app-search-bar>
   <ng-container *ngIf="tableConfig">
+    <!--(click)="deleteStudent($event)"-->
     <app-one-header-table
       [displayDelete]="true"
       [config]="tableConfig"
-      (click)="deleteStudent($event)"
+      (click)="showPopUp($event)"
       [paginationConstant]="itemsPerPage"
       [currentPagination]="page"
       (emitPagination)="dispatchPaginationState($event)"

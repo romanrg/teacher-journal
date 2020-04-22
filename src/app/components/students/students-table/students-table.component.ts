@@ -12,8 +12,10 @@ import {NgxsStudentsState, StudentsStateModel} from "../../../@ngxs/students/stu
 import {Students} from "../../../@ngxs/students/students.actions";
 import {TranslateService} from "@ngx-translate/core";
 import {map, pluck} from "rxjs/internal/operators";
-import {__filter, _chain, _compose, _curry, _dispatcherNgxs, _partial, NodeCrawler} from "../../../common/helpers/lib";
+import {__filter, _chain, _compose, _curry, _dispatcherNgxs, _partial, NodeCrawler, _allPass} from "../../../common/helpers/lib";
 import {Equalities} from "../../../common/models/filters";
+import {AdService} from "../../../common/services/ad.service";
+import {DatePicker} from "../../../common/helpers/Generator";
 
 @Component({
   selector: "app-students-table",
@@ -22,18 +24,24 @@ import {Equalities} from "../../../common/models/filters";
 })
 
 export class StudentsTableComponent implements OnInit, OnDestroy {
+
   private manager: SubscriptionManager = new SubscriptionManager();
+  public pops: [];
   public tableConfig: ITableConfig;
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
+  public delStudent: IStudent;
   public tableBody: TableBody = new TableBody(TableRow);
   public readonly confirmation: string;
+  public readonly successfullMessage: string;
+  public readonly errorMessage: string;
   public readonly tableBodyRowConfig: string[] = ["id", "name", "surname", "address", "description"];
   @Select(NgxsStudentsState.Students) public studentsState$: Observable<StudentsStateModel>;
   constructor(
     private store: Ngxs.Store,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private adService: AdService
   ) {}
 
   public createStudentsTableConfig = (
@@ -95,10 +103,13 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
         .subscribe(removedStudent => student = removedStudent)
         .unsubscribe();
 
-      confirm(`${this.confirmation.START} ${name} ${surname} ${this.confirmation.END}`);
+      this.pops = this.adService.getSuccessPop(
+        `${this.confirmation.START} ${name} ${surname} ${this.confirmation.END}`
+      );
 
       this.store.dispatch(new Students.Delete(student));
 
+      // confirm(`${this.confirmation.START} ${name} ${surname} ${this.confirmation.END}`);
     }
 
   }
@@ -119,6 +130,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.itemsPerPage = students.paginationConstant;
 
       this.confirmation = translations.STUDENTS.DELETE_CONFIRMATION;
+
+      this.successfullMessage = translations.STUDENTS.SUCCESSFULL;
+
+      this.errorMessage = translations.STUDENTS.NOT_SUCCESSFULL;
 
       const _createStudentsTableConfig: Function = _partial(
         this.createStudentsTableConfig,
@@ -141,4 +156,36 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     });
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
+
+  public confirmPopUp($event: Event): boolean {
+    if ($event) {
+
+      this.deleteStudent(this.delStudent);
+      this.pops = null;
+
+    } else {
+
+      this.pops = null;
+
+    }
+
+    this.delStudent = null;
+  }
+
+  public showPopUp($event: Event): void {
+
+    const crawler: NodeCrawler = new NodeCrawler($event.target);
+    const _isDeleteButton: Function = _allPass(
+      crawler.simpleCheck(({tagName}) => tagName.toLowerCase() === "button"),
+      crawler.simpleCheck(({children}) => children[0]?.textContent === "Delete"),
+    );
+
+    if (_isDeleteButton()) {
+      this.pops = this.adService.getSuccessPop(
+        `${this.confirmation.START} ${this.confirmation.END}`
+      );
+      this.delStudent = $event;
+    }
+
+  }
 }

@@ -1,8 +1,6 @@
-<!--
-<ng-container *ngIf="isLoad$ | async">
-  <app-loading></app-loading>
+<ng-container *ngIf="pops">
+  <app-pop-up [items]="pops"></app-pop-up>
 </ng-container>
--->
 <ng-container>
     <nav class="subjects__nav">
       <ng-container *ngIf="(subjects$ | async).data.length; else empty">

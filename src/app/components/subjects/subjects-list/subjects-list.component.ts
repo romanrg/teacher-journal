@@ -6,6 +6,7 @@ import * as Ngxs from "@ngxs/store";
 import {Select} from "@ngxs/store";
 import {NgxsSubjectsState, SubjectsStateModel} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
+import {AdService} from "../../../common/services/ad.service";
 
 
 @Component({
@@ -20,7 +21,13 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
       .map(key => state[key].loading)
       .some(load => load)
     );
-  constructor(private store: Ngxs.Store) {}
+  public pops: [];
+  constructor(
+    private store: Ngxs.Store,
+    private adService: AdService
+    ) {
+    // this.pops = this.adService.getErrorPop("Just kidding");
+  }
   public deleteSubject($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");
     this.store.dispatch(new Subjects.Delete(subjName));

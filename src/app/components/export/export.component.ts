@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AdService} from "../../common/services/ad.service";
 
 @Component({
   selector: 'app-export',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ExportComponent implements OnInit {
 
-  constructor() { }
+  public pops: [];
 
-  ngOnInit(): void {
+  constructor(
+    private adService: AdService
+  ) { }
+
+  public ngOnInit(): void {
   }
 
   public exportAsExcel(): void {

@@ -57,6 +57,11 @@
       "DELETE_CONFIRMATION": {
         "START": "Do you want to delete",
         "END": "from journal?"
+      },
+      "SUCCESSFULL": " was successful.",
+      "NOT_SUCCESSFULL": {
+        "WHILE": "While",
+        "ERROR": " something goes wrong"
       }
     },
     "SUBJECTS": {

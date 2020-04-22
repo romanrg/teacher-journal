@@ -1,0 +1,35 @@
+@import "src/styles/variables.sass"
+.pop-up
+  height: 20rem
+  width: 20rem
+  position: absolute
+  color: $color
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  padding: 3rem
+  z-index: 1000
+  background: $bg-color
+  top: calc(50% - 10rem)
+  left: calc(50% - 10rem)
+  flex-direction: column
+.pop-up__btn
+  color: $color
+  border-bottom: 0.05rem solid $active-color
+  padding: 0.5rem
+  display: flex
+  margin-top: 1rem
+  text-transform: uppercase
+  transition: all 0.3s
+  &:hover
+    cursor: pointer
+    color: $active-color
+.pop-up__controller
+  display: flex
+  justify-content: space-between
+.pop-up__msg
+  flex-grow: 1
+  display: flex
+  align-items: center
+  justify-content: center
+.pop-up__btn--cancel
+  color: $error

@@ -1,0 +1,19 @@
+<section class="pop-up"
+  [ngStyle]="{'display': display}"
+>
+  <div class="pop-up__msg">
+    <ng-template ad-host></ng-template>
+  </div>
+  <div class="pop-up__controller">
+    <app-button
+      class="pop-up__btn"
+      [textContent]="'ok'"
+      (click)="accept()"
+    ></app-button>
+    <app-button
+      class="pop-up__btn pop-up__btn--cancel"
+      [textContent]="'cancel'"
+      (click)="decline()"
+    ></app-button>
+  </div>
+</section>

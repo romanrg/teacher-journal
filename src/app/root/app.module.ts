@@ -53,6 +53,10 @@ import {BarComponent} from "../d3/visuals/bar/bar.component";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BarplotDateRangeComponent} from "../d3/visuals/barplot-date-range/barplot-date-range.component";
+import {PopUpComponent} from "../shared/pop-up/pop-up.component";
+import {AdDirective} from "../common/directives/ad-directive.directive";
+import {SuccessUpComponent} from "../shared/success-up/success-up.component";
+import {ErrorUpComponent} from "../shared/error-up/error-up.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -90,7 +94,9 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     LoadingComponent,
     DropdownComponent,
     BarplotComponent,
-    BarplotDateRangeComponent
+    BarplotDateRangeComponent,
+    PopUpComponent,
+    AdDirective
   ],
   imports: [
     BrowserModule,
@@ -124,6 +130,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     DatePipe,
     modifyHeadersProvider
   ],
+  entryComponents: [SuccessUpComponent, ErrorUpComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
