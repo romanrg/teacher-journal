@@ -77,6 +77,17 @@
           "TEACHER": {}
         }
       }
+    },
+    "STATISTICS": {
+      "HEADER": "Statistics",
+      "SELECT": "Select subjects",
+      "CHECK_ALL": "Check All",
+      "UNCHECK_ALL": "Uncheck All",
+      "EXPAND_ALL": "Expand All",
+      "COLLAPSE_ALL": "Collapse All",
+      "FROM": "From",
+      "TO": "To",
+      "SELECTION": ["date", "week", "month"]
     }
   },
   "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",
@@ -125,7 +136,10 @@
       "DESCRIPTION": "full name:"
     },
     "ERRORS": {
-      "REQUIRED": "This field is required"
+      "REQUIRED": "This field is required",
+      "MAX_LENGTH_50": "No longer than 50 characters",
+      "ONLY_LETTERS": "Only letters",
+      "MAX_LENGTH_200": "No longer than 200 characters"
     }
   }
 }

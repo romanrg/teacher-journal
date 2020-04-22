@@ -5,6 +5,7 @@ import {StudentsServiceService} from "../../common/services/students.service";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
+import {Statistics} from "../statistics/statistics.actions";
 
 export class StudentsStateModel {
   public data: IStudent[];
@@ -51,7 +52,11 @@ export class NgxsStudentsState {
       loaded: false,
     });
     return this.studentsService.fetchStudents().pipe(
-      tap(studentsResponse => setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})),
+      tap(studentsResponse => {
+        studentsResponse.forEach(student => student.id = student._id);
+        dispatch(new Statistics.SetStudents(studentsResponse));
+        return setState({...getState(), data: [...studentsResponse], loading: false, loaded: true})
+      }),
       retry(3),
       catchError(error => of(dispatch(new Students.GetError(error))))
     );
@@ -71,6 +76,7 @@ export class NgxsStudentsState {
     const state: StudentsStateModel = getState();
     return this.studentsService.addStudent(payload).pipe(
       tap(apiResponse => {
+        apiResponse.id = apiResponse._id;
         patchState({
           data: [...state.data].concat(apiResponse),
           loading: false,
@@ -114,16 +120,18 @@ export class NgxsStudentsState {
 
   @Action(Students.Search)
   public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): Observable<IStudent[]> {
-    return this.studentsService.searchStudent(payload).pipe(
-      tap(apiResponse =>  setState({
-        ...getState(),
-        searchedStudents: [...apiResponse],
-        searchBarInputValue: payload,
-        currentPage: 1,
-      })),
-      retry(3),
-      catchError(error => of(dispatch(new Students.SearchError(error))))
-    );
+    const filterFn = (student: IStudent) =>
+      student.name.toLowerCase().includes(payload.toLowerCase()) ||
+      student.surname.toLowerCase().includes(payload.toLowerCase()) ||
+      student.address.toLowerCase().includes(payload.toLowerCase()) ||
+      student.description.toLowerCase().includes(payload.toLowerCase());
+    const filtered: IStudent[] = getState().data.filter(filterFn);
+    setState({
+      ...getState(),
+      searchedStudents: [...filtered],
+      searchBarInputValue: payload,
+      currentPage: 1,
+    });
   }
 
   @Action(Students.SearchError)

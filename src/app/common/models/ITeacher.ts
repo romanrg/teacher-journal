@@ -4,7 +4,7 @@ import {FormControlType, IFormConfig} from "./IFormConfig";
 import {ISubject} from "./ISubject";
 import {TranslateService} from "@ngx-translate/core";
 
-export class Teacher implements IPerson {
+export class Teacher {
   #config: IFormConfig;
   constructor(subject: ISubject, translate: TranslateService) {
     this.translate = translate;

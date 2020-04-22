@@ -12,6 +12,7 @@ import {append, iif, patch, removeItem, updateItem} from "@ngxs/store/operators"
 import {Marks} from "../marks/marks.actions";
 import {Students} from "../students/students.actions";
 import {MarksServiceService} from "../../common/services/marks.service";
+import {Statistics} from "../statistics/statistics.actions";
 
 export class SubjectsStateModel {
   public data: ISubject[];
@@ -64,7 +65,11 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     });
 
     return this.subjectsService.fetchSubjects().pipe(
-      tap(apiResponse => setState({...getState(),   data: [...apiResponse], loading: false, loaded: true})),
+      tap(apiResponse => {
+        apiResponse.forEach(subject => subject.id = subject._id);
+        dispatch(new Statistics.SetSubjects(apiResponse));
+        return setState({...getState(),   data: [...apiResponse], loading: false, loaded: true})
+      }),
       retry(3),
       catchError(error => of(dispatch(new Subjects.GetError(error))))
     );
@@ -88,6 +93,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
     return this.subjectsService.addSubject(payload).pipe(
       tap(apiResponse => {
+        apiResponse.id = apiResponse._id;
         return setState(
           patch({
             data: append([apiResponse]),
@@ -165,9 +171,10 @@ export class NgxsSubjectsState implements NgxsOnChanges{
   @Action(Subjects.DeleteDate)
   public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject}: ISubject): void {
 
-    dispatch(new Subjects.Update(subject.subject));
+    const [marks, sub] = subject;
+    dispatch(new Subjects.Update(sub));
 
-    subject.marks.forEach(mark => dispatch(new Marks.Delete(mark)));
+    marks.forEach(mark => dispatch(new Marks.Delete(mark)));
 
   }
   @Action(Subjects.Patch)
@@ -229,6 +236,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     setState(patch({
       data: updateItem(subj => subj.id === payload.id, payload)
     }));
+
 
   }
 

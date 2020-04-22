@@ -21,7 +21,10 @@ export class SubjectsService {
 
   public patchSubject = (subject: ISubject): Observable<ISubject> => this.http.patch(`${this.URL}/${subject.id}`, subject);
 
-  public deleteSubject = (id: string): Observable<ISubject[]> => this.http.delete(`${this.URL}/${id}`);
+  public deleteSubject = (id: string): Observable<ISubject[]> => {
+    console.log(id);
+    return this.http.delete(`${this.URL}/${id}`)
+  };
 
   public updateSubjectState = (state: ISubject): void => this.subjectUpToDateState = state;
 }

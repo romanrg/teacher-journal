@@ -1,0 +1,305 @@
+@import "src/styles/variables.sass"
+
+@mixin scroll
+  &::-webkit-scrollbar
+    background: transparent
+    max-height: 0.5rem
+    max-width: 0.5rem
+  &::-webkit-scrollbar-thumb
+    background-color: $active-color
+    max-width: 0.3rem
+  &::-webkit-scrollbar-corner
+    display: none
+
+
+.statistic
+  display: flex
+  justify-content: center
+  font: inherit
+  color: $color
+  flex-direction: column
+
+.statistic__title
+  color: $active-color
+  display: flex
+  align-self: center
+  text-transform: uppercase
+  user-select: none
+  z-index: 4
+
+.wrapper
+  display: flex
+  flex-grow: 1
+  justify-content: center
+  min-width: 60rem
+  align-self: center
+.wrapper-controller
+  flex-direction: column
+.statistic__dropdown
+  width: 20rem
+
+.dropdown
+  display: flex
+  flex-direction: column
+  position: relative
+.dropdown__select-btn
+  border: none
+  background: $bg-color
+  font: inherit
+  color: inherit
+  width: 100%
+  padding: 2rem 1rem
+  z-index: 10
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.dropdown__content
+  flex-direction: column
+  position: absolute
+  opacity: 0
+  transition: all 0.2s
+  animation: disappear linear 0.2s
+  animation-fill-mode: forwards
+  width: 100%
+  padding: 0 0 2rem
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  max-height: 25rem
+  overflow-y: scroll
+  &::-webkit-scrollbar
+    background: transparent
+    max-height: 0.5rem
+    max-width: 0.5rem
+  &::-webkit-scrollbar-thumb
+    background-color: $active-color
+    max-width: 0.3rem
+  &::-webkit-scrollbar-corner
+    display: none
+.dropdown__controller
+  padding-top: 2rem
+  padding-bottom: 2rem
+  display: flex
+  justify-content: space-around
+  align-items: center
+  z-index: 1
+  position: sticky
+  top: 0
+  background: $bg-color
+  flex-wrap: wrap
+  border-bottom: 0.05rem solid $active-color
+.dropdown__controller-wrapper
+  display: flex
+  flex-wrap: nowrap
+.dropdown__content--visible
+  display: flex
+  animation: appear linear 0.2s
+  animation-fill-mode: forwards
+.dropdown__btn
+  background: transparent
+  color: $color
+  border: none
+  font-size: 0.7rem
+.dropdown__list
+  list-style: none
+  padding: 0
+  margin: 0
+.dropdown__list--child
+  width: 10rem
+  overflow-y: auto
+.dropdown__expand
+  background: transparent
+  color: $active-color
+  border: none
+  align-self: flex-start
+.dropdown__item
+  padding: 1rem
+  cursor: pointer
+  text-transform: capitalize
+  display: flex
+  color: $color
+  flex-direction: column
+
+.dropdown__item-wrapper
+  display: flex
+.dropdown__dates
+  transition: all 0.2s
+.dropdown__dates--hidden
+  transform: scale(0)
+  height: 0
+.dropdown__dates--visible
+  transform: scale(0.8)
+  height: 80%
+.dropdown__expand-wrapper
+  display: none
+
+@keyframes appear
+  from
+    transform: translateY(0)
+  to
+    display: flex
+    opacity: 1
+    transform: translateY(7rem)
+
+@keyframes disappear
+  from
+    display: flex
+    transform: translateY(4rem)
+  to
+    transform: translateY(0)
+
+.statistic__students
+  flex-grow: 1
+  margin-left: 3rem
+  display: flex
+.statistic__data-list,
+.statistic__data-body-list
+  display: flex
+  flex-direction: column
+  list-style: none
+  padding: 0
+.statistic__data-list
+  margin-left: 3rem
+.statistic__data-item
+  margin-top: 2rem
+  padding: 2rem
+  display: flex
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+.statistic__data-table
+  flex-grow: 1
+  display: flex
+  flex-direction: column
+.statistic__data-caption
+  font: inherit
+  text-transform: uppercase
+  display: flex
+  align-self: flex-start
+  padding: 1rem
+  position: sticky
+  left: 0
+.statistic__data-head
+  display: flex
+  flex-wrap: nowrap
+.statistic__data-header-row
+  display: flex
+  flex-grow: 1
+  align-items: center
+  justify-content: space-around
+
+.statistic__data-body
+  display: flex
+  flex-wrap: nowrap
+.statistic__data-body-row
+  flex-grow: 1
+  display: flex
+  justify-content: center
+.statistic__data-body-cell
+  box-sizing: border-box
+  padding: 0.5rem 1.5rem
+  flex-grow: 1
+  display: flex
+  width: 17rem
+  &:not(:last-child)
+    border-right: 0.05rem solid $active-color
+  & ul
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+.statistic__data-body-item
+  padding-bottom: 0.5rem
+  background-color: $bg-color
+  flex-grow: 1
+  align-self: flex-start
+  display: flex
+.statistic__data-item--average
+  color: $active-color
+  align-self: flex-end
+.scroll
+  width: 18rem
+  overflow-x: scroll
+.statistics__visuals-wrapper
+  display: flex
+  flex-direction: column
+  flex-grow: 1
+
+.statistics__visuals-list
+  list-style: none
+  padding: 0
+  margin: 0
+  overflow-y: scroll
+  // max-height: 30rem
+  @include scroll
+.statistic__barplot
+  flex-grow: 1
+  display: flex
+  align-items: flex-end
+  margin-top: 1rem
+.statistics__barplot-container
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  margin: 2rem
+  padding: 3rem
+.statistic__barplot--all
+  transform: rotate(-90deg) translate(1rem, -20%)
+.statistic__form--stats
+  display: flex
+  flex-direction: column
+  margin: 3rem
+
+
+.statistic__selector
+  background: transparent
+  border: 0
+  color: $active-color
+  padding: 1rem
+  text-transform: capitalize
+  border-bottom: 0.05rem solid $active-color
+.statistic__selector-wrapper
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 3rem
+  border-radius: 25px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
+  padding: 1rem
+
+.date-form
+  display: flex
+  flex-grow: 1
+  padding-left: 2rem
+.date-input
+  background: transparent
+  z-index: 1
+  order: -1
+  border: 0
+  font: inherit
+  box-sizing: border-box
+  padding: 0.5rem
+  color: $active-color
+  text-transform: none
+  &::after
+    content: ""
+    width: 1rem
+    height: 1rem
+    left: -13%
+    position: relative
+    z-index: -1
+    mask: url("src/assets/icon-calender.svg")
+    mask-size: 100%
+    mask-repeat: no-repeat
+    background: orange
+    margin-right: -1rem
+  &::-webkit-inner-spin-button
+    display: none
+  &::-webkit-calendar-picker-indicator
+    opacity: 0
+    cursor: pointer
+.date-form__wrapper
+  display: flex
+  flex-direction: column
+  flex-grow: 1
+  justify-content: center
+  align-items: center
+.date-range__visuals
+  background: $color
+.date-form__btn--submit
+  color: $active-color

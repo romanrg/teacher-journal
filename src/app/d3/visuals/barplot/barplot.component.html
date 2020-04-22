@@ -1,0 +1,76 @@
+<div class="wrapper">
+  <div class="wrapper">
+    <h3 class="title-barplot">Average:</h3>
+    <ngx-charts-bar-horizontal
+      [view]="view"
+      [scheme]="colorSchemeDates"
+      [results]="marks"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxixLabel]="yAxisLabel"
+      [xScaleMin]="0"
+      [xScaleMax]="10"
+    ></ngx-charts-bar-horizontal>
+  </div>
+
+
+  <div class="wrapper">
+    <h3 class="title-barplot">Students performance over time:</h3>
+    <ngx-charts-heat-map
+      [groupPadding]="10"
+      [barPadding]="0"
+      [view]="view"
+      [scheme]="{ domain: ['yellowgreen'] }"
+      [results]="heatMap"
+      [gradient]="false"
+      [xAxis]="showXAxis"
+      [yAxis]="true"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabelByDates"
+      [yAxixLabel]="yAxisLabelByDates"
+      [yScaleMin]="1"
+      [yScaleMax]="10"
+      [showGridLines]="false"
+    ></ngx-charts-heat-map>
+    <ngx-charts-line-chart
+      [view]="view"
+      [showGridLines]="false"
+      [scheme]="colorSchemeDates"
+      [results]="byDates"
+      [gradient]="false"
+      [xAxis]="showXAxis"
+      [yAxis]="true"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="xAxisLabelByDates"
+      [legend]="true"
+      [yScaleMin]="0"
+      [yScaleMax]="10"
+      [activeEntries]="[byDates[byDates.length - 1]]"
+    ></ngx-charts-line-chart>
+  </div>
+
+  <div class="wrapper">
+    <h3 class="title-barplot">Overall performance:</h3>
+    <ngx-charts-bar-vertical
+      [view]="view"
+      [scheme]="colorSchemeDates"
+      [results]="byPerformance"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="false"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [yAxixLabel]="yAxisLabelByDates"
+      [showDataLabel]="true">
+    </ngx-charts-bar-vertical>
+  </div>
+</div>
+

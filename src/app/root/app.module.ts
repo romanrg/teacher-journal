@@ -46,6 +46,13 @@ import {NgxsSubjectsState} from "../@ngxs/subjects/subjects.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {NgxsMarksState} from "../@ngxs/marks/marks.state";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {DropdownComponent} from "../shared/dropdown/dropdown.component";
+import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
+import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
+import {BarComponent} from "../d3/visuals/bar/bar.component";
+import {NgxChartsModule} from "@swimlane/ngx-charts";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BarplotDateRangeComponent} from "../d3/visuals/barplot-date-range/barplot-date-range.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -80,7 +87,10 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     SearchBarComponent,
     EmptyDataComponent,
     ErrorMessageDisplayComponent,
-    LoadingComponent
+    LoadingComponent,
+    DropdownComponent,
+    BarplotComponent,
+    BarplotDateRangeComponent
   ],
   imports: [
     BrowserModule,
@@ -92,7 +102,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
-      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState],
+      [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState, NgxsStatisticsState],
       { developmentMode: !environment.production }
     ),
     NgxsReduxDevtoolsPluginModule.forRoot(),
@@ -103,14 +113,9 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
         useFactory: (createTranslateLoader),
         deps: [HttpClient]
       },
-      /*
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: MissingTranslationService
-      },
-      useDefaultLang: false
-      */
-    })
+    }),
+    NgxChartsModule,
+    BrowserAnimationsModule
   ],
   providers: [
     ExitFormGuard,

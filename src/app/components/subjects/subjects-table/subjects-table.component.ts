@@ -159,7 +159,13 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     const timestamp: number = this.subjectTableConfig.headers[targetCellIndex];
 
-    const predicateForNumberPicker: Function = (el) => el.classList.contains("table-row");
+    const predicateForNumberPicker: Function = (el) => {
+      try {
+        return el.classList.contains("table-row");
+      } catch {
+        return
+      }
+    };
 
     const [name, surname]: HTMLElement[] = _compose(crawler.getChildsArray, crawler.crawlUntilTrue)(predicateForNumberPicker);
 
@@ -213,7 +219,10 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     } else if (this.dateGenerator.isDeleteDateButton(target)) {
 
-      _compose(dispatchDelete, updateStamps(timestamp), copyByJSON)(this.subject);
+
+      this.store.dispatch(new Subjects.DeleteDate(_compose(updateStamps(timestamp), copyByJSON)(this.subject)));
+
+
 
     }
   }
@@ -337,11 +346,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.subjectTableConfig.body = this.tableBody.body;
       }
     }));
-    if (this.marks) {
-
-      this.marks.map(mark => this.store.dispatch(new Marks.AddToTheHashTable(mark)));
-
-    }
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }

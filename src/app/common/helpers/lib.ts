@@ -13,16 +13,29 @@ export const __filter: Function = (predicate: Function) => (source: Array) => so
 export const _if: Function = (
   predicate: boolean, leftBranch: Function, rightBranch: Function
 ) => predicate ? leftBranch : rightBranch;
+export const _pluck: Function = (property: string, source: object) => source[property];
+export const _reverseArguments: Function = (fn) => (...args) => fn(args.reverse());
+export const _range: Function = (start: number, stop: number, step: number): number[] => {
+  let a = [start], b = start;
+  while (b <= stop) {
+    a.push(b += step || 1);
+  }
+  return a;
+};
+
+
+
 export class NodeCrawler {
   constructor (node: HTMLElement) {
     this.node = node;
   }
 
   private runner: Function = (
-    predicate: Function
-  ): (boolean|HTMLElement) => (predicate(this.node) ? true : this.node.parentNode);
+    predicate: (elem: HTMLElement) => boolean
+  ): (boolean|HTMLElement) => (predicate(this.node) ? true : this.node.parentNode)
+
   public crawlUntilTrue = (
-    predicate: Function
+    predicate: (elem: HTMLElement) => boolean
   )  => {
     let step: (boolean|HTMLElement) = this.runner(predicate);
     while (step !== true) {
@@ -33,9 +46,7 @@ export class NodeCrawler {
   }
   public getChildsArray = (node: HTMLElement = this.node): HTMLElement[] => [...node.children];
   public executeDOMAttr = (attr: string, key: string, node?: HTMLElement = this.node) => node[attr](key);
-  public simpleCheck = (predicate: Function): boolean => {
-    return predicate(this.node);
-  };
+  public simpleCheck = (predicate: Function): boolean => predicate(this.node);
   get tagName(): string {
     return this.node.tagName.toLowerCase();
   }

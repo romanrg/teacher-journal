@@ -9,6 +9,8 @@ import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
 import {_allPass, _allTrue, _compose, copyByJSON} from "../../common/helpers/lib";
 import {Equalities} from "../../common/models/filters";
+import {Statistics} from "../statistics/statistics.actions";
+import {IStudent} from "../../common/models/IStudent";
 
 export class MarksStateModel {
   public data: Mark[];
@@ -49,7 +51,10 @@ export class NgxsMarksState {
     });
     return this.marksService.getMarks().pipe(
       tap(apiResponse => {
-        return setState({...getState(), data: [...apiResponse.flat(1)].filter(({subject}) => subject !== null), loading: false, loaded: true});
+        apiResponse.forEach(mark => mark.id = mark._id);
+        const marks: IStudent[] = [...apiResponse.flat(1)].filter(({subject}) => subject !== null);
+        dispatch(new Statistics.SetMarks(marks));
+        return setState({...getState(), data: marks, loading: false, loaded: true});
       }),
       retry(3),
       catchError(error => of(dispatch(new Marks.GetError(error))))
@@ -67,7 +72,6 @@ export class NgxsMarksState {
     }));
 
   }
-  @Action(Marks.CreateError)
   @Action(Marks.Delete)
   public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
 
@@ -75,6 +79,7 @@ export class NgxsMarksState {
         data: removeItem(mark => mark.id === payload.id)
     }));
     dispatch(new Marks.RemoveFromTheHashTable(payload));
+
 
   }
   @Action(Marks.Patch)
@@ -116,46 +121,24 @@ export class NgxsMarksState {
 
   @Action(Marks.Submit)
   public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
-    /*
-    const batchForPost: Mark[] = [];
-    const singularitiesForPut: Mark[] = [];
-    this.marksService.getMemory().forEach(mark => mark.id ? singularitiesForPut.push(mark) : batchForPost.push(mark));
-    return forkJoin([
-      batchForPost.length ? this.marksService.submitMark(batchForPost) : null,
-      singularitiesForPut.length ? this.marksService.patchMark(singularitiesForPut) : null
-    ]).pipe(
-      tap(response => console.log(response))
-    )*/
-
-    return forkJoin(this.marksService.getMemory().map(mark => {
-      setState(patch({
-        loading: true,
-        loaded: false
-      }));
-        if (mark.id) {
-          return this.marksService.patchMark(mark);
-        } else {
-          return this.marksService.submitMark(mark);
-        }
-      })).pipe(
-      tap(apiResponse => {
-        this.marksService.clearMemory();
-        if (getState().data.filter(mark => !mark.id).length !== 0) {
-          const newData: Mark[] = [
-            ...apiResponse.filter(mark => mark.subject !== null),
-            ...getState().data.filter(mark => mark.id)
-          ];
-          return setState(patch({
-            loading: false,
-            loaded: true,
-            data: newData,
-          }));
-        } else {
-          return setState(patch({
-            loading: false,
-            loaded: true,
-          }));
-        }
+    setState(patch({
+      loading: true,
+      loaded: false
+    }));
+    console.log("Memory now:", Object.values(this.marksService.getMemory()));
+    return this.marksService.submitMark(Object.values(this.marksService.getMemory())).pipe(
+      tap(this.marksService.clearMemory),
+      tap((apiResponse: Mark[]) => {
+        apiResponse.map(mark => mark.id = mark._id);
+        const newData: Mark[] = [
+          ...apiResponse.filter(mark => mark.subject !== null),
+          ...getState().data.filter(mark => mark.id)
+        ];
+        return setState(patch({
+          loading: false,
+          loaded: true,
+          data: newData,
+        }));
       }),
       retry(3),
       catchError(error => dispatch(new Marks.SubmitError(error)))

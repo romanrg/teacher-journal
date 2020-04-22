@@ -9,8 +9,9 @@ import {Students} from "../@ngxs/students/students.actions";
 import {Subjects} from "../@ngxs/subjects/subjects.actions";
 import {AutoUnsubscribe} from "../common/helpers/SubscriptionManager";
 import {Marks} from "../@ngxs/marks/marks.actions";
-import {Observable} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
+import {Statistics} from "../@ngxs/statistics/statistics.actions";
 
 @Component({
   selector: "app-root",
@@ -32,9 +33,11 @@ export class AppComponent implements OnInit {
     private store: Ngxs.Store,
     private translateService: TranslateService
   ) {
-    this.store.dispatch([new Students.Get(), new Subjects.Get(), new Marks.Get()]);
+    this.store.dispatch([new Students.Get(), new Subjects.Get(), new Marks.Get(), new Statistics.Initialize()]);
     this.translateService.setDefaultLang(navigator.language);
     this.translateService.use(navigator.language);
+  }
+  public ngOnInit(): void {
   }
   public isAnyErrorOccur = (errors: (string|Error)[]): boolean => errors.some(err => err);
   public getDefaultLang = () => navigator.language;

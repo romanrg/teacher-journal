@@ -15,12 +15,23 @@
                     placeholder="{{input.placeholder}}"
                   >
       </label>
-      <span
-        class="form__span--error"
+      <ng-container
+
         *ngIf="isShowErrorMessage(getControlName(input.name))"
       >
-        {{input.errorMessages[0]}}
-      </span>
+        <span class="form__span--error"
+              *ngIf="getControlName(input.name).errors.required">
+          {{input.errorMessages[0]}}
+        </span>
+        <span class="form__span--error"
+              *ngIf="getControlName(input.name).errors.pattern">
+          {{input.errorMessages[2]}}
+        </span>
+        <span class="form__span--error"
+              *ngIf="getControlName(input.name).errors.maxlength">
+          {{input.errorMessages[1]}}
+        </span>
+      </ng-container>
     </ng-container>
     <ng-container *ngIf="input.type === 'textarea'">
       <label class="form__label">
@@ -31,6 +42,15 @@
           placeholder="{{input.placeholder}}"
         ></textarea>
       </label>
+      <ng-container
+
+        *ngIf="isShowErrorMessage(getControlName(input.name))"
+      >
+        <span class="form__span--error"
+              *ngIf="getControlName(input.name).errors.maxlength">
+          {{input.errorMessages[0]}}
+        </span>
+      </ng-container>
     </ng-container>
   </ng-container>
   <button

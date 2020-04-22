@@ -1,5 +1,5 @@
 <ng-container *ngIf="action">
-  <button class="btn" (click)="onActionTriggered()">
+  <button class="btn" (click)="onActionTriggered()" [disabled]="isDisabled">
     <span class="visually-hidden">{{screenReaderMessage}}</span>
     {{textContent}}
   </button>
@@ -7,7 +7,7 @@
 
 
 <ng-container *ngIf="!action">
-<button class="btn">
+<button class="btn" [disabled]="isDisabled">
   <span class="visually-hidden">{{screenReaderMessage}}</span>
   {{textContent}}
 </button>
