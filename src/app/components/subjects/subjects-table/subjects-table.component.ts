@@ -26,6 +26,7 @@ import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
 import {Equalities} from "../../../common/models/filters";
+import {AdService} from "../../../common/services/ad.service";
 
 @Component({
   selector: "app-subjects-table",
@@ -52,6 +53,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public stateChangesForBtnComplete$: Observable<Action>;
   public stateChangesLoad$: Observable<Action>;
   public confirm: boolean = false;
+  public popUp: null|string = null;
 
   // renderer related
   public generator: Generator;
@@ -68,7 +70,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private route: ActivatedRoute,
     private sortPipe: SortByPipe,
     private actions$: Actions,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private adService: AdService
   ) {
     this.manager = new SubscriptionManager();
     this.generator = new Generator(this.renderer, this.translate);
@@ -288,6 +291,16 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
   public canDeactivate = (): boolean | Observable<boolean> => this.confirm ? confirm(CONFIRMATION_MESSAGE) : true;
 
+  public closePopUp(): void {
+    this.store.dispatch(new Subjects.PopUpCancelTable());
+  };
+  public sendComponent(popUpComponent: []): any {
+    setTimeout(() => {
+      this.closePopUp()
+    }, 5000);
+    return this.adService.getSuccessPop(popUpComponent.value);
+  }
+
   // life cycle
   public ngOnInit(): void {
 
@@ -344,6 +357,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         }
 
         this.subjectTableConfig.body = this.tableBody.body;
+
+        this.popUp = state.popups.table;
       }
     }));
   }

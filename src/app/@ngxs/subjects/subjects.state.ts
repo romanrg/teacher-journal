@@ -193,7 +193,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     const patchTapCb: Function = patchedSubject => setState(
       patch(
         {
-          loading: false, loaded: true
+          loading: false, loaded: true,
         }
       )
     );
@@ -245,7 +245,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
   }
 
   @Action(Subjects.Submit)
-  public submitChanges({dispatch}: StateContext<SubjectsStateModel>): void {
+  public submitChanges({dispatch, setState, getState}: StateContext<SubjectsStateModel>): void {
 
     if (this.subjectsService.subjectToUpdate) {
 
@@ -256,7 +256,11 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     }
 
     dispatch(new Marks.Submit());
-
+    const state: SubjectsStateModel = getState();
+    setState({
+      ...state,
+      popups: {table: {type: "success", value: `Changed successfully.`}, list: state.popups.list},
+    });
   }
 
   @Action(Subjects.PopUpCancelList)

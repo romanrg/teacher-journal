@@ -1,3 +1,6 @@
+<ng-container *ngIf="popUp">
+  <app-pop-up-action [data]="sendComponent(popUp)" (close)="closePopUp()"></app-pop-up-action>
+</ng-container>
 <button
   (click)="applyChanges()"
   class="table__btn--save"
