@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, Renderer2} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ISubject} from "../../../common/models/ISubject";
 import {AutoUnsubscribe, SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
@@ -19,9 +19,9 @@ import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
-import {combineLatest, Observable} from "rxjs";
+import {combineLatest, from, Observable, of} from "rxjs";
 import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
-import {map, pluck} from "rxjs/internal/operators";
+import {first, map, pluck} from "rxjs/internal/operators";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
 import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
@@ -33,7 +33,7 @@ import {AdService} from "../../../common/services/ad.service";
   templateUrl: "./subjects-table.component.html",
   styleUrls: ["./subjects-table.component.sass"]
 })
-export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
+export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate, CanGo {
 
   // config related
   public subjectTableConfig: ITableConfig;
@@ -54,6 +54,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public stateChangesLoad$: Observable<Action>;
   public confirm: boolean = false;
   public popUp: null|string = null;
+  public pops: [];
+  // public canGo: boolean = false;
 
   // renderer related
   public generator: Generator;
@@ -68,6 +70,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private renderer: Renderer2,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
+    private router: Router,
     private sortPipe: SortByPipe,
     private actions$: Actions,
     private translate: TranslateService,
@@ -289,8 +292,24 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     }).unsubscribe();
   }
-  public canDeactivate = (): boolean | Observable<boolean> => this.confirm ? confirm(CONFIRMATION_MESSAGE) : true;
+  public canDeactivate = (): boolean | Observable<boolean> => {
 
+    this.pops = this.adService.getConfirmationPop();
+
+    if (this.confirm) {
+      return confirm("Sure?")
+    } else {
+      return false;
+    }
+  };
+
+  public confirmPopUp($event: Event): boolean {
+    if ($event) {
+      this.pops = null;
+    } else {
+      this.pops = null;
+    }
+  }
   public closePopUp(): void {
     this.store.dispatch(new Subjects.PopUpCancelTable());
   };
@@ -361,6 +380,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
         this.popUp = state.popups.table;
       }
     }));
+
   }
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 }
