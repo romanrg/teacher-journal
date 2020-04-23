@@ -1,5 +1,5 @@
-import {Component, DoCheck, OnChanges, OnDestroy, OnInit} from "@angular/core";
-import {FormControl, Validators} from "@angular/forms";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {FormControlType, IFormConfig} from "../../../common/models/IFormConfig";
 import {IStudent} from "../../../common/models/IStudent";
@@ -13,6 +13,7 @@ import {Students} from "../../../@ngxs/students/students.actions";
 import {StudentsStateModel} from "../../../@ngxs/students/students.state";
 import {TranslateService} from "@ngx-translate/core";
 import {switchMap, tap} from "rxjs/internal/operators";
+import {AdService} from "../../../common/services/ad.service";
 
 @Component({
   selector: "app-student-form",
@@ -25,10 +26,12 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   public isSaved: boolean = false;
   public translations: any;
   public confirm: string;
+  public pops: [];
   constructor(
     private router: Router,
     private store: Ngxs.Store<StudentsStateModel>,
     private translate: TranslateService,
+    private adService: AdService
   ) {
     this.manager.addSubscription(
       this.translate.stream("CONFIRMATION_MESSAGE").subscribe(translation => this.confirm = translation)
@@ -36,10 +39,22 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
-      return confirm(this.confirm);
+      this.pops = this.adService.getSuccessPop(this.confirm);
     } else {
       return true;
     }
+  }
+
+  public confirmPopUp($event: Event): boolean {
+    if ($event) {
+      this.pops = null;
+      this.isSaved = true;
+      this.router.navigate(["/students"]);
+    } else {
+      this.pops = null;
+    }
+
+    // this.delStudent = null;
   }
   public submit($event: IStudent): void {
     this.isSaved = true;
