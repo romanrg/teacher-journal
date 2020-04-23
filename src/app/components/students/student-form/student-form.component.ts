@@ -39,7 +39,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   }
   public canDeactivate(): boolean | Observable<boolean> {
     if (this.isSaved === false) {
-      this.pops = this.adService.getSuccessPop(this.confirm);
+      this.pops = this.adService.getConfirmationPop(this.confirm);
     } else {
       return true;
     }

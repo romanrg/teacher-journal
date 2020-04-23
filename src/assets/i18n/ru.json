@@ -1,4 +1,17 @@
 {
+  "POP_UP": {
+    "ADD": {
+      "SUCCESS": " {{data}} добавлен успешно."
+    },
+    "DELETE": {
+      "SUCCESS": " {{data}} удален успешно."
+    },
+    "CHANGE": {
+      "SUCCESS": " Изменено успешно."
+    },
+    "CONFIRM": "Вы уверены?"
+
+  },
   "LOGO": "Журнал",
   "NAVIGATION": {
     "HOME": "Главная",

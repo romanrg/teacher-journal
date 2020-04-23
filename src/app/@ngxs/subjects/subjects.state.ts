@@ -98,7 +98,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
         apiResponse.id = apiResponse._id;
         return setState(
           patch({
-            popups: {list: {type: "success", value: `${apiResponse.name} added successfully.`}, table: getState().popups.table},
+            popups: {list: {type: "success", value: `${apiResponse.name}`, action: "add"}, table: getState().popups.table},
             data: append([apiResponse]),
             loading: false, loaded: true
           })
@@ -129,7 +129,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     return this.subjectsService.deleteSubject(deletedSubject.id).pipe(
       tap(deleteResponse => {
           setState(patch({
-            popups: {list: {type: "success", value: `${deletedSubject.name} deleted successfully.`}, table: getState().popups.table},
+            popups: {list: {type: "success", value: `${deletedSubject.name}`, action: "delete"}, table: getState().popups.table},
             data: removeItem(subj => subj.name === payload),
             loading: false, loaded: false
           }));
@@ -259,7 +259,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     const state: SubjectsStateModel = getState();
     setState({
       ...state,
-      popups: {table: {type: "success", value: `Changed successfully.`}, list: state.popups.list},
+      popups: {table: {type: "success", value: ``, action: "change"}, list: state.popups.list},
     });
   }
 

@@ -146,5 +146,18 @@
       "ONLY_LETTERS": "Only letters",
       "MAX_LENGTH_200": "No longer than 200 characters"
     }
+  },
+  "POP_UP": {
+    "ADD": {
+      "SUCCESS": " {{data}} added successfully."
+    },
+    "DELETE": {
+      "SUCCESS": " {{data}} deleted successfully."
+    },
+    "CHANGE": {
+      "SUCCESS": " Changes was applied successfully."
+    },
+    "CONFIRM": "Are you sure?"
+
   }
 }

@@ -57,6 +57,7 @@ import {AdDirective} from "../common/directives/ad-directive.directive";
 import {SuccessUpComponent} from "../shared/success-up/success-up.component";
 import {ErrorUpComponent} from "../shared/error-up/error-up.component";
 import {PopUpActionComponent} from "../shared/pop-up-action/pop-up-action.component";
+import {ConfirmationPopUpComponent} from "../shared/confirmation-pop-up/confirmation-pop-up.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -131,7 +132,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     DatePipe,
     modifyHeadersProvider
   ],
-  entryComponents: [SuccessUpComponent, ErrorUpComponent],
+  entryComponents: [SuccessUpComponent, ErrorUpComponent, ConfirmationPopUpComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -48,7 +48,7 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
     }
   }
   public canDeactivate = (): boolean | Observable<boolean> => {
-    return this.isSaved ?  true : (this.pops = this.adService.getSuccessPop(this.confirm));
+    return this.isSaved ?  true : (this.pops = this.adService.getConfirmationPop(this.confirm));
   };
   public ngOnInit(): void {
     this.translate.stream("FORMS").subscribe(data => {

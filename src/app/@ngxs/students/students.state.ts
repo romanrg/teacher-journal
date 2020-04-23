@@ -85,7 +85,7 @@ export class NgxsStudentsState {
         apiResponse.id = apiResponse._id;
         patchState({
           data: [...state.data].concat(apiResponse),
-          popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} added`},
+          popUpComponent: {type: "success", value: `${payload.name} ${payload.surname}`, action: "add"},
           loading: false,
           loaded: true
         });
@@ -111,7 +111,7 @@ export class NgxsStudentsState {
           setState({
             ...getState(),
             data: getState().data.filter(student => student.id !== payload.id),
-            popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} deleted`},
+            popUpComponent: {type: "success", value: `${payload.name} ${payload.surname}`, action: "delete"},
             loading: false,
             loaded: true
           });

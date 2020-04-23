@@ -15,6 +15,7 @@ import {map, pluck} from "rxjs/internal/operators";
 import {__filter, _chain, _compose, _curry, _partial, NodeCrawler, _allPass} from "../../../common/helpers/lib";
 import {Equalities} from "../../../common/models/filters";
 import {AdService} from "../../../common/services/ad.service";
+import {type} from "os";
 
 @Component({
   selector: "app-students-table",
@@ -182,9 +183,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     );
 
     if (_isDeleteButton()) {
-      this.pops = this.adService.getSuccessPop(
-        `${this.confirmation.START} ${this.confirmation.END}`
-      );
+      this.pops = this.adService.getConfirmationPop();
       this.delStudent = $event;
     }
 
@@ -198,6 +197,10 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.closePopUp()
     }, 2000);
-    return this.adService.getSuccessPop(popUpComponent.value);
+    if (popUpComponent.type === "success") {
+      console.log(popUpComponent);
+      return this.adService.getSuccessPop(popUpComponent);
+    }
+
   }
 }

@@ -35,7 +35,7 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
   }
   public showConfirmation($event: Event): void {
     const subjName: string = $event.target.parentNode.getAttribute("subject");
-    this.pops = this.adService.getSuccessPop(`Do you want to delete ${subjName}?`);
+    this.pops = this.adService.getConfirmationPop();
     this.deletingSubject = subjName;
   }
   public ngOnInit(): void {
@@ -67,7 +67,7 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.closePopUp()
     }, 2000);
-    return this.adService.getSuccessPop(popUpComponent.value);
+    return this.adService.getSuccessPop(popUpComponent);
   }
 
 }

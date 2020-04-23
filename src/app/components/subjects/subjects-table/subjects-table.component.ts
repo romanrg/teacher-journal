@@ -298,7 +298,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     setTimeout(() => {
       this.closePopUp()
     }, 2000);
-    return this.adService.getSuccessPop(popUpComponent.value);
+    return this.adService.getSuccessPop(popUpComponent);
   }
 
   // life cycle
