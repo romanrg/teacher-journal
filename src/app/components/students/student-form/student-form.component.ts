@@ -53,8 +53,6 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
     } else {
       this.pops = null;
     }
-
-    // this.delStudent = null;
   }
   public submit($event: IStudent): void {
     this.isSaved = true;
