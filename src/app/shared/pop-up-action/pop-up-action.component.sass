@@ -3,19 +3,21 @@
   display: flex
   align-items: center
   justify-content: space-between
-  border: 0.05rem solid $active-color
   padding: 0 2rem
   position: fixed
   bottom: 10%
   z-index: 1000
   background: $bg-color
   transform: scale(0.7)
-  animation: move-in 5s
+  animation: move-in 2s
   left: -100%
   user-select: none
+  border-radius: 10px
+  box-shadow:  20px 20px 60px #272727, -20px -20px 60px #353535
 
 .pop-up-action__title
   color: $color
+  text-transform: capitalize
 .pop-up-action__btn
   color: $active-color
   font-size: 2rem
