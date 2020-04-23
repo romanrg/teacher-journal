@@ -34,8 +34,6 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
-import {RootStoreModule} from "../@ngrx/core-store.module";
-import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
@@ -106,8 +104,6 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    RootStoreModule,
-    EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
       [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState, NgxsStatisticsState],

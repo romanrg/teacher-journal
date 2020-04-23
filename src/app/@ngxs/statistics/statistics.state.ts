@@ -1,11 +1,12 @@
 import { State, Action, StateContext, Selector} from "@ngxs/store";
 import {IStudent} from "../../common/models/IStudent";
-import {Statistics, Students} from "./statistics.actions";
+import {Statistics} from "./statistics.actions";
 import {Injectable} from "@angular/core";
 import {ISubject} from "../../common/models/ISubject";
 import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import * as Ngxs from "@ngxs/store";
 import {patch} from "@ngxs/store/operators";
+import {Mark} from "../../common/models/IMark";
 
 enum selectorType {
   date = "date",
@@ -14,10 +15,10 @@ enum selectorType {
 }
 
 export class StatisticsStateModel {
-  public readonly students: {[string]: IStudent[]};
+  public readonly students: {[prop: string]: IStudent[]};
   public dates: [number, boolean, boolean][];
-  public readonly subjects: ISubject[];
-  public marks: {[string]: [number, boolean, boolean][]};
+  public subjects: [ISubject, boolean, boolean][];
+  public marks: {[prop: string]: Mark[]};
   public selectorType: selectorType;
 }
 
@@ -51,30 +52,30 @@ export class NgxsStatisticsState {
   }
 
   @Action(Statistics.SetSubjects)
-  public setSubjects({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: ISubject[]): void {
+  public setSubjects({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     setState(patch({subjects: mapper.subjectsFromState(payload)}));
   }
   @Action(Statistics.SetMarks)
-  public setMarks({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: ISubject[]): void {
+  public setMarks({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     setState(patch({marks: mapper.marksFromState(getState().subjects, payload)}));
     dispatch(new Statistics.SetDates({subjects: getState().subjects, marks: getState().marks}));
   }
   @Action(Statistics.SetStudents)
-  public setStudents({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: ISubject[]): void {
+  public setStudents({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     setState(patch({students: mapper.studentsFromState(payload)}));
   }
   @Action(Statistics.SetDates)
-  public setDates({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: ISubject[]): void {
+  public setDates({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     const {subjects, marks} = payload;
     setState(patch({dates: mapper.datesFromState(subjects, marks)}));
   }
 
   @Action(Statistics.ChangeSelector)
-  public changeSelector({getState, setState, dispatch}: StateContext<StateModel>, {payload}: string): void {
+  public changeSelector({getState, setState, dispatch}: StateContext<StateModel>, {payload}: any): void {
     setState(patch({selectorType: selectorType[payload]}));
   }
 

@@ -6,6 +6,7 @@ import {TranslateService} from "@ngx-translate/core";
 
 export class Teacher {
   #config: IFormConfig;
+  public translate: TranslateService
   constructor(subject: ISubject, translate: TranslateService) {
     this.translate = translate;
     this.translate.stream("FORMS").subscribe(data => {

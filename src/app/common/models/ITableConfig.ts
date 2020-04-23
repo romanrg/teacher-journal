@@ -4,7 +4,7 @@ import {IStudent} from "./IStudent";
 export interface ITableConfig {
   caption: string;
   headers: string[];
-  body: TableBody.body;
+  body: row[];
 }
 export type cell = (string|number|undefined);
 export type row = cell[];
@@ -21,12 +21,14 @@ export class TableRow {
     [...this.#config.values()].map(prop => result.push(this.#initial[prop]));
     return result;
   }
-  public changeValueAt = (bodyRow: row, index: number, value: cell): row => bodyRow[index] = value;
+  public changeValueAt = (
+    bodyRow: row, index: number, value: cell
+  ): string | number => bodyRow[index] = value
 }
 export class TableBody {
   #body: row[];
   #row: Function;
-  constructor(rowConstructor: TableRow) {
+  constructor(rowConstructor: new (consfig: string[], initial: any) => TableRow) {
     this.#row = (config: string[] = [], data: any = null) => new rowConstructor(config, data);
     this.#body = [];
   }
@@ -35,20 +37,20 @@ export class TableBody {
     return this.#body;
   }
 
-  set body(newBody: row[]): void  {
+  set body(newBody: row[]) {
     this.#body = newBody;
   }
 
-  get row(): TableRow {
+  get row(): Function {
     return this.#row;
   }
 
-  public clear = (): void =>  this.body.length = 0;
+  public clear = (): 0 =>  this.body.length = 0;
 
   public generateBodyFromDataAndConfig = (
     config: string[],
     data: Array<any>
-  ): void => data.map(value => this.generateRowByRow(value, config));
+  ): number[] => data.map(value => this.generateRowByRow(value, config));
 
   public changeAllValuesAtIndexWithArrayValues = (
     index: number,
@@ -59,11 +61,11 @@ export class TableBody {
     newValue: cell,
     bodyRowIndex: number,
     cellIndex: number
-  ): void => this.row().changeValueAt(this.body[bodyRowIndex], cellIndex, newValue);
+  ): string|number => this.row().changeValueAt(this.body[bodyRowIndex], cellIndex, newValue);
 
   public generateRowByRow = (
     dataPiece: any, config: string[]
-  ): void => this.body.push((this.row(config, dataPiece)).createRowFromObject());
+  ): number => this.body.push((this.row(config, dataPiece)).createRowFromObject());
 
   public generateIdArray = (n: number): number[] => Array.from(Array(n).keys()).map( i => i + 1);
 

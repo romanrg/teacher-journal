@@ -14,6 +14,7 @@ export interface IFormControlConfig {
   validators: ValidatorFn[];
   errorMessages: string[];
   placeholder?: string | Teacher;
+  description: string;
 }
 
 export interface IFormGroupName {
