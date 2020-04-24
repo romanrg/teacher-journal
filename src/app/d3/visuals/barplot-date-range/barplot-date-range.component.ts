@@ -9,7 +9,7 @@ import {ISubject} from "../../../common/models/ISubject";
 })
 export class BarplotDateRangeComponent implements OnInit, OnChanges {
 
-  @Input("data") public data: [];
+  @Input("data") public data: [any, any, any, any, any];
   @Input("renderType") public step: string;
 
   public colorSchemeDates: {domain: string[]} = this.barPlotService.getColorScheme(10);
@@ -19,9 +19,9 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
   public showYAxis: boolean = true;
   public gradient: boolean = false;
   public showLegend: boolean = true;
-  public xAxisLabel: boolean = "Marks";
+  public xAxisLabel: string = "Marks";
   public showYAxisLabel: boolean = true;
-  public yAxisLabel: boolean = "Students";
+  public yAxisLabel: string = "Students";
   public datesInRange: {name: string, series: {name: string, value: string|number}[]}[] = [];
 
   constructor(
@@ -60,6 +60,7 @@ export class BarplotDateRangeComponent implements OnInit, OnChanges {
       } else {
         this.generateInRangeChart(subject, marks, dates, students, selected);
       }
+
     }
 
 

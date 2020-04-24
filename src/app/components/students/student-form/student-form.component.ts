@@ -30,7 +30,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   constructor(
     private router: Router,
     private store: Ngxs.Store,
-    private translate: TranslateService,
+    public translate: TranslateService,
     private adService: AdService
   ) {
     this.manager.addSubscription(

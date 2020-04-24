@@ -11,11 +11,11 @@ import {AdDirective} from "../../common/directives/ad-directive.directive";
 })
 export class PopUpComponent implements OnInit, OnDestroy {
 
-  @Input() public items: [];
+  @Input() public items: [{data: any, component: any}];
   public display: string = "none";
   @Output() public confirmationResult: EventEmitter<boolean> = new EventEmitter();
   @ViewChild(AdDirective, {static: true}) public adHost: AdDirective;
-  public componentRef: ComponentRef;
+  public componentRef: ComponentRef<any>;
 
 
   constructor(
@@ -32,7 +32,7 @@ export class PopUpComponent implements OnInit, OnDestroy {
 
     this.display = "flex";
 
-    const factory: ComponentFactory =
+    const factory: ComponentFactory<any> =
       this.componentFactoryResolver.resolveComponentFactory(
         this.items[0].component
       );
@@ -42,10 +42,10 @@ export class PopUpComponent implements OnInit, OnDestroy {
 
     this.componentRef = viewContainerRef.createComponent(factory);
 
-    (<Component>this.componentRef.instance).data = this.items[0].data;
+    this.componentRef.instance.data = this.items[0].data;
   }
 
-  public decline = (): false => this.confirmationResult.emit(false);
+  public decline = (): void => this.confirmationResult.emit(false);
 
-  public accept = (): true => this.confirmationResult.emit(true);
+  public accept = (): void => this.confirmationResult.emit(true);
 }

@@ -52,8 +52,8 @@ export class MarksServiceService {
 
   public keyGenerator(mark: Mark, filteredProps: string[]): string {
     return JSON.stringify(
-      <Object>Object.fromEntries(
-        <Object>Object
+      <any>Object.fromEntries(
+        Object
           .entries(mark)
           .filter(([key, value]) => !filteredProps.includes(key)
           )

@@ -62,7 +62,7 @@ export class SubjectsListComponent implements OnInit {
   public closePopUp(): void {
     this.store.dispatch(new Subjects.PopUpCancelList());
   };
-  public sendComponent(popUpComponent: []): any {
+  public sendComponent(popUpComponent: {}): any {
     setTimeout(() => {
       this.closePopUp()
     }, 2000);

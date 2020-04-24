@@ -24,7 +24,7 @@ export class StatisticMapper {
     }, {});
   };
 
-  public marksFromState = (subjects: [ISubject, boolean, boolean], marks: Mark[]): {[prop: string]: Mark[]} => {
+  public marksFromState = (subjects: [ISubject, boolean, boolean][], marks: Mark[]): {[prop: string]: Mark[]} => {
     return subjects.reduce((acc, tuple) => {
       acc[tuple[0].id] = __filter(({subject}) => tuple[0].id === subject)(marks);
       return acc;

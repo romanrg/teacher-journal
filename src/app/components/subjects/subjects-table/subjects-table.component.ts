@@ -70,7 +70,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     private renderer: Renderer2,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
-    private router: Router,
     private sortPipe: SortByPipe,
     private actions$: Actions,
     private translate: TranslateService,
@@ -309,7 +308,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public closePopUp(): void {
     this.store.dispatch(new Subjects.PopUpCancelTable());
   };
-  public sendComponent(popUpComponent: []): any {
+  public sendComponent(popUpComponent: {}): any {
     setTimeout(() => {
       this.closePopUp()
     }, 2000);

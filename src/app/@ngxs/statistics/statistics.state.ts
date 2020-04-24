@@ -7,6 +7,7 @@ import {StatisticMapper} from "../../common/dataMapper/statistic.mapper";
 import * as Ngxs from "@ngxs/store";
 import {patch} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
+import {SubjectsStateModel} from "../subjects/subjects.state";
 
 enum selectorType {
   date = "date",
@@ -59,7 +60,8 @@ export class NgxsStatisticsState {
   @Action(Statistics.SetMarks)
   public setMarks({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
-    setState(patch({marks: mapper.marksFromState(getState().subjects, payload)}));
+    const state: StatisticsStateModel = getState();
+    setState(patch({marks: mapper.marksFromState([...state.subjects], payload)}));
     dispatch(new Statistics.SetDates({subjects: getState().subjects, marks: getState().marks}));
   }
   @Action(Statistics.SetStudents)

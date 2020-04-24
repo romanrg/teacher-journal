@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import {NgModule} from "@angular/core";
+import {NgModule, NO_ERRORS_SCHEMA} from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import {StudentsComponent} from "../components/students/students.component";
@@ -96,7 +96,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     BarplotDateRangeComponent,
     PopUpComponent,
     AdDirective,
-    PopUpActionComponent
+    PopUpActionComponent,
   ],
   imports: [
     BrowserModule,
@@ -129,6 +129,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     modifyHeadersProvider
   ],
   entryComponents: [SuccessUpComponent, ErrorUpComponent, ConfirmationPopUpComponent],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule { }

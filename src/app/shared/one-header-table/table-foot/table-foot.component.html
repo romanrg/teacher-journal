@@ -16,7 +16,6 @@
               class="table-foot__btn"
               [class.active]="page === currentPagination"
               [textContent]="page"
-              [translateParams]=""
               [screenReader]="'TABLE.PAGINATION.BUTTONS.CURRENT' | translate:{page: page}"
               (click)="setCurrentPagination(page)"
             ></app-button>
