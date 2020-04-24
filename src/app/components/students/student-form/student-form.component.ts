@@ -13,7 +13,7 @@ import {Students} from "../../../@ngxs/students/students.actions";
 import {StudentsStateModel} from "../../../@ngxs/students/students.state";
 import {TranslateService} from "@ngx-translate/core";
 import {switchMap, tap} from "rxjs/internal/operators";
-import {AdService} from "../../../common/services/ad.service";
+import {AdItem, AdService} from "../../../common/services/ad.service";
 
 @Component({
   selector: "app-student-form",
@@ -26,10 +26,10 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
   public isSaved: boolean = false;
   public translations: any;
   public confirm: string;
-  public pops: [];
+  public pops: [AdItem];
   constructor(
     private router: Router,
-    private store: Ngxs.Store<StudentsStateModel>,
+    private store: Ngxs.Store,
     private translate: TranslateService,
     private adService: AdService
   ) {
@@ -45,7 +45,7 @@ export class StudentFormComponent implements OnInit, ComponentCanDeactivate, OnD
     }
   }
 
-  public confirmPopUp($event: Event): boolean {
+  public confirmPopUp($event: Event): void {
     if ($event) {
       this.pops = null;
       this.isSaved = true;

@@ -8,7 +8,7 @@ import {TranslateService} from "@ngx-translate/core";
 })
 export class ErrorMessageDisplayComponent implements OnInit {
 
-  @Input() public error: string;
+  @Input() public error: any;
   public errorMessage: string;
   constructor(
   ) { }

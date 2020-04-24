@@ -5,6 +5,8 @@ export class Mark {
     public value: (number),
     public time: number,
     public id?: (string|number),
+    public _deletedAt?: number,
+    public _id?: string,
   ) {
     this.student = student;
     this.time = time;

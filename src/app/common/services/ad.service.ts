@@ -21,20 +21,20 @@ export class AdService {
     ];
   }
 
-  public getSuccessPop(popObject: {}): [] {
+  public getSuccessPop(popObject: {}): [AdItem] {
     console.log(popObject);
     return [
       new AdItem(SuccessUpComponent, popObject)
     ];
   }
 
-  public getConfirmationPop(confirmation: string): [] {
+  public getConfirmationPop(confirmation?: string): [AdItem] {
     return [
       new AdItem(ConfirmationPopUpComponent, confirmation)
     ]
   }
 
-  public getErrorPop(errorMessage: string): [] {
+  public getErrorPop(errorMessage: string): [AdItem] {
     return [
       new AdItem(ErrorUpComponent, errorMessage)
     ];

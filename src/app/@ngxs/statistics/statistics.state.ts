@@ -1,4 +1,4 @@
-import { State, Action, StateContext, Selector} from "@ngxs/store";
+import {State, Action, StateContext, Selector, StateOperator} from "@ngxs/store";
 import {IStudent} from "../../common/models/IStudent";
 import {Statistics} from "./statistics.actions";
 import {Injectable} from "@angular/core";
@@ -15,7 +15,7 @@ enum selectorType {
 }
 
 export class StatisticsStateModel {
-  public readonly students: {[prop: string]: IStudent[]};
+  public students: {[prop: string]: IStudent[]};
   public dates: [number, boolean, boolean][];
   public subjects: [ISubject, boolean, boolean][];
   public marks: {[prop: string]: Mark[]};
@@ -65,17 +65,17 @@ export class NgxsStatisticsState {
   @Action(Statistics.SetStudents)
   public setStudents({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
-    setState(patch({students: mapper.studentsFromState(payload)}));
+    setState(<StatisticsStateModel | StateOperator<StatisticsStateModel>>patch({students: mapper.studentsFromState(payload)}));
   }
   @Action(Statistics.SetDates)
   public setDates({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     const {subjects, marks} = payload;
-    setState(patch({dates: mapper.datesFromState(subjects, marks)}));
+    setState(<StatisticsStateModel | StateOperator<StatisticsStateModel>>patch({dates: mapper.datesFromState(subjects, marks)}));
   }
 
   @Action(Statistics.ChangeSelector)
-  public changeSelector({setState}: StateContext<StateModel>, {payload}: any): void {
+  public changeSelector({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     setState(patch({selectorType: selectorType[payload]}));
   }
 

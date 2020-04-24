@@ -12,13 +12,15 @@ export class StudentsServiceService {
   constructor(
     private http: HttpClient,
   ) { }
-  public searchStudent = (searchString: string): Observable<IStudent[]> => this.http.get(
+  /* deprecated because of client-side searching
+  public searchStudent = (searchString: string): Observable<IStudent[]> => <Observable<IStudent[]>>this.http.get(
     this.URL, {params: new HttpParams().set("q", searchString)}
   );
+  */
 
-  public addStudent = (student: IStudent): Observable<IStudent> => this.http.post(this.URL, student);
+  public addStudent = (student: IStudent): Observable<IStudent> => <Observable<IStudent>>this.http.post(this.URL, student);
 
-  public fetchStudents = (): Observable<IStudent[]> => this.http.get(this.URL);
+  public fetchStudents = (): Observable<IStudent[]> => <Observable<IStudent[]>>this.http.get(this.URL);
 
-  public removeStudent = (studentId: string): object => this.http.delete(`${this.URL}/${studentId}`);
+  public removeStudent = (studentId: string): Observable<Object> => <Observable<Object>>this.http.delete(`${this.URL}/${studentId}`);
 }

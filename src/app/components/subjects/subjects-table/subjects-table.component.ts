@@ -1,39 +1,39 @@
 import {Component, OnDestroy, OnInit, Renderer2} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ISubject} from "../../../common/models/ISubject";
-import {AutoUnsubscribe, SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
+import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
 import {DatePicker, Generator, NumberPicker} from "../../../common/helpers/Generator";
 import {DatePipe} from "@angular/common";
 import {IStudent} from "../../../common/models/IStudent";
-import {IMark, Mark} from "../../../common/models/IMark";
+import {Mark} from "../../../common/models/IMark";
 import {
-  _compose, _dispatcherNgxs, _partial, copyByJSON, nodeCrawler, NodeCrawler,
+  _compose, _dispatcherNgxs, _partial, copyByJSON, NodeCrawler,
   _take, __filter,
 } from "../../../common/helpers/lib";
 import {Teacher} from "../../../common/models/ITeacher";
 
 // ngxs
 import * as Ngxs from "@ngxs/store";
-import {SubjectTableState} from "../../../@ngxs/subjects/subjects.state";
+import {SubjectsStateModel} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {Marks} from "../../../@ngxs/marks/marks.actions";
 import {SortByPipe} from "../../../common/pipes/sort-by.pipe";
-import {combineLatest, from, Observable, of} from "rxjs";
-import {Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
-import {first, map, pluck} from "rxjs/internal/operators";
+import {combineLatest, Observable} from "rxjs";
+import {ActionCompletion, Actions, ofActionCompleted, ofActionDispatched} from "@ngxs/store";
+import {map, pluck} from "rxjs/internal/operators";
 import {ComponentCanDeactivate} from "../../../common/guards/exit-form.guard";
-import {CONFIRMATION_MESSAGE} from "../../../common/constants/CONFIRMATION_MESSAGE";
 import {TranslateService} from "@ngx-translate/core";
 import {Equalities} from "../../../common/models/filters";
-import {AdService} from "../../../common/services/ad.service";
+import {AdItem, AdService} from "../../../common/services/ad.service";
+import {Action} from "rxjs/internal/scheduler/Action";
 
 @Component({
   selector: "app-subjects-table",
   templateUrl: "./subjects-table.component.html",
   styleUrls: ["./subjects-table.component.sass"]
 })
-export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate, CanGo {
+export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
 
   // config related
   public subjectTableConfig: ITableConfig;
@@ -46,15 +46,15 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public subject: ISubject;
   public page: number;
   public itemsPerPage: number;
-  public state$: Observable<SubjectTableState>;
+  public state$: Observable<SubjectsStateModel>;
   public isLoad$: Observable<boolean>;
   public marks: Mark[];
-  public stateChangesForBtn$: Observable<Action>;
-  public stateChangesForBtnComplete$: Observable<Action>;
-  public stateChangesLoad$: Observable<Action>;
+  public stateChangesForBtn$: Observable<boolean>;
+  public stateChangesForBtnComplete$: Observable<ActionCompletion<any, Error>>;
+  public stateChangesLoad$: Observable<Action<any>>;
   public confirm: boolean = false;
-  public popUp: null|string = null;
-  public pops: [];
+  public popUp: {};
+  public pops: [AdItem];
   // public canGo: boolean = false;
 
   // renderer related
@@ -151,7 +151,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
 
   // add new date and mark
-  public handleClickEvents(target: EventTarget): void {
+  public handleClickEvents(target: HTMLElement): void {
 
     let student: IStudent;
 
@@ -163,7 +163,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     const timestamps: number[] = __filter(head => typeof head === "number")(this.subjectTableConfig.headers);
 
-    const timestamp: number = this.subjectTableConfig.headers[targetCellIndex];
+    const timestamp: string = this.subjectTableConfig.headers[targetCellIndex];
 
     const predicateForNumberPicker: Function = (el) => {
       try {
@@ -183,7 +183,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     const createMark: Function = (
       studentId: string
-    ) => new Mark(studentId, this.subject.id, null, this.subjectTableConfig.headers[targetCellIndex]);
+    ) => new Mark(studentId, this.subject.id, null, +this.subjectTableConfig.headers[targetCellIndex]);
 
     const dispatchNewDate: Function = this.submitDate(_dispatcherNgxs(this.store, Subjects.AddDate), this.subject);
 
@@ -191,11 +191,9 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
     const dispatchChangeMark: Function = (newMark: Mark): Function => this.submitMark(_dispatcherNgxs(this.store, Marks.Change), newMark);
 
-    const dispatchDelete: Function = (deletedMarks: Mark[], subject: ISubject) => _dispatcherNgxs(this.store, Subjects.DeleteDate)({subject: subject, marks: deletedMarks});
-
     const _generateNumberPicker: Function = _partial(this.numberGenerator.generateNumberPicker, target);
 
-    const updateStamps: Function = (stamp: number) => (patchedSubject: ISubject): ISubject => {
+    const updateStamps: Function = (stamp: number) => (patchedSubject: ISubject): [string[], ISubject] => {
 
       patchedSubject.uniqueDates = filterForTimestamps(stamp)(patchedSubject.uniqueDates);
 
@@ -223,17 +221,15 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
       !target.textContent ? _generateNumberPicker(dispatchNewMark(newMark)) :  _generateNumberPicker(dispatchChangeMark(newMark));
 
-    } else if (this.dateGenerator.isDeleteDateButton(target)) {
+    } else if (this.dateGenerator.isDeleteDateButton(<HTMLInputElement>target)) {
 
 
-      this.store.dispatch(new Subjects.DeleteDate(_compose(updateStamps(timestamp), copyByJSON)(this.subject)));
-
-
+      this.store.dispatch(new Subjects.DeleteDate(<[string[], ISubject]>_compose(updateStamps(timestamp), copyByJSON)(this.subject)));
 
     }
   }
 
-  public submitDate = (dispatch: Function, subject: ISubject): void => (value: string): void => {
+  public submitDate = (dispatch: Function, subject: ISubject): Function => (value: string): void => {
 
       const time: number = (new Date(value)).getTime();
 
@@ -244,7 +240,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
 
       _compose(dispatch, addTimeStamp(time), copyByJSON)(subject);
   };
-  public submitMark = (dispatch: Function, mark: Mark): void => (value: number): void => {
+  public submitMark = (dispatch: Function, mark: Mark): Function => (value: number): void => {
 
       const addValue: Function = (_value: string) => (copy: Mark) => {
         copy.value = +_value;
@@ -255,7 +251,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
       _compose(dispatch, addValue(value), copyByJSON)(mark);
   };
   // handle pagination
-  public dispatchPaginationState($event: Event): void {
+  public dispatchPaginationState($event: {paginationConstant: number, currentPage: number}): void {
 
     if ($event.paginationConstant) {
 
@@ -268,21 +264,21 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     }
   }
   // handle sorting
-  public setSortedColumnName = ($event: number): void => this.store.dispatch(new Subjects.SetSortedColumn($event));
+  public setSortedColumnName = ($event: number): Observable<any> => this.store.dispatch(new Subjects.SetSortedColumn($event));
   // merge all data for table;
-  public preRenderTable(state: SubjectTableState): void {
+  public preRenderTable(state: SubjectsStateModel): void {
 
     this.tableBody.clear();
 
-    const config: string|number[] = [...this.tableBodyConfigData, ...this.subject.uniqueDates];
+    const config: (string|number)[] = [...this.tableBodyConfigData, ...this.subject.uniqueDates];
 
     state.students.map((student, index) => {
-      this.tableBody.generateRowByRow(student, config);
+      this.tableBody.generateRowByRow(student, <string[]>config);
       this.tableBody.addStudentMark(state.marks, student, index, config);
     });
   }
   // apply data
-  public applyChanges = (): void => this.store.dispatch(new Subjects.Submit());
+  public applyChanges = (): Observable<any> => this.store.dispatch(new Subjects.Submit());
 
   public pushHeaders(): void {
 
@@ -303,7 +299,7 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
     }
   };
 
-  public confirmPopUp($event: Event): boolean {
+  public confirmPopUp($event: Event): void {
     if ($event) {
       this.pops = null;
     } else {
@@ -327,6 +323,8 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
       this.translate.stream("COMPONENTS"),
       this.state$
     ).subscribe(([componentTranslations, state]) => {
+
+      console.log(state);
 
       const translations: any = componentTranslations.SUBJECTS.TABLE;
 

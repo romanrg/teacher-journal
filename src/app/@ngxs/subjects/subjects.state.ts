@@ -1,7 +1,7 @@
-import {State, Action, StateContext, Selector, NgxsOnChanges, NgxsSimpleChange} from "@ngxs/store";
+import {State, Action, StateContext, Selector, NgxsOnChanges, NgxsSimpleChange, StateOperator} from "@ngxs/store";
 import {catchError, retry, tap} from "rxjs/internal/operators";
 import {Injectable} from "@angular/core";
-import {of} from "rxjs";
+import {Observable, of} from "rxjs";
 import {ISubject} from "../../common/models/ISubject";
 import {SubjectsService} from "../../common/services/subjects.service";
 import {Subjects} from "./subjects.actions";
@@ -22,18 +22,19 @@ export class SubjectsStateModel {
   public currentPage: number;
   public error: string|Error;
   public popups: {list: {}|null, table: {}|null};
-}
-
-export class SubjectTableState implements SubjectsStateModel{
   public students: IStudent[];
   public marks: Mark[];
   public sortedColumn: {col: number, times: number}|null;
+  public renderMap: null;
+  public current: ISubject;
 }
 
 
 @State<SubjectsStateModel>({
   name: "subjects",
   defaults: {
+    students: [],
+    marks: [],
     data: [],
     loading: true,
     loaded: false,
@@ -42,13 +43,14 @@ export class SubjectTableState implements SubjectsStateModel{
     sortedColumn: null,
     renderMap: null,
     error: null,
-    popups: {list: null, table: null}
+    popups: {list: null, table: null},
+    current: null,
   }
 })
 @Injectable({
   providedIn: "root"
 })
-export class NgxsSubjectsState implements NgxsOnChanges{
+export class NgxsSubjectsState {
 
   constructor(
     private subjectsService: SubjectsService,
@@ -58,7 +60,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
   public static Subjects (state: SubjectsStateModel): SubjectsStateModel { return state; }
 
   @Action(Subjects.Get)
-  public getSubjects({getState, setState, dispatch}: StateContext<SubjectsStateModel>): void {
+  public getSubjects({getState, setState, dispatch}: StateContext<SubjectsStateModel>): Observable<Observable<void> | ISubject[]> {
 
     setState({
       ...getState(),
@@ -78,14 +80,14 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
   }
   @Action(Subjects.GetError)
-  public subjectsGetError({patchState}: StateContext<SubjectsStateModel>, {payload}: (string|Error)): void {
+  public subjectsGetError({patchState}: StateContext<SubjectsStateModel>, {payload}: any): void {
 
     patchState({error: payload, loading: false, loaded: false});
 
   }
 
   @Action(Subjects.Create)
-  public createSubject({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public createSubject({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): Observable<Observable<void> | ISubject> {
 
     setState({
       ...getState(),
@@ -97,7 +99,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
       tap(apiResponse => {
         apiResponse.id = apiResponse._id;
         return setState(
-          patch({
+          <SubjectsStateModel | StateOperator<SubjectsStateModel>>patch({
             popups: {list: {type: "success", value: `${apiResponse.name}`, action: "add"}, table: getState().popups.table},
             data: append([apiResponse]),
             loading: false, loaded: true
@@ -109,14 +111,14 @@ export class NgxsSubjectsState implements NgxsOnChanges{
     );
   }
   @Action(Subjects.CreateError)
-  public createSubjectError({patchState}: StateContext<SubjectsStateModel>, {payload}: (string | Error)): void {
+  public createSubjectError({patchState}: StateContext<SubjectsStateModel>, {payload}: any): void {
 
     patchState({error: payload, loading: false, loaded: false});
 
   }
 
   @Action(Subjects.Delete)
-  public deleteSubject({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: string): void {
+  public deleteSubject({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): Observable<Object | Observable<void>> {
 
     setState({
       ...getState(),
@@ -128,9 +130,9 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
     return this.subjectsService.deleteSubject(deletedSubject.id).pipe(
       tap(deleteResponse => {
-          setState(patch({
+          setState(<SubjectsStateModel | StateOperator<SubjectsStateModel>>patch({
             popups: {list: {type: "success", value: `${deletedSubject.name}`, action: "delete"}, table: getState().popups.table},
-            data: removeItem(subj => subj.name === payload),
+            data: removeItem((subj: ISubject) => subj.name === payload),
             loading: false, loaded: false
           }));
         }
@@ -141,39 +143,39 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
   }
   @Action(Subjects.DeleteError)
-  public deleteError({patchState}: StateContext<SubjectsStateModel>, {payload}: (string | Error)): void {
+  public deleteError({patchState}: StateContext<SubjectsStateModel>, {payload}: any): void {
 
     patchState({error: payload, loading: false, loaded: false});
 
   }
 
   @Action(Subjects.ChangeCurrentPage)
-  public changeCurrent({setState}: StateContext<SubjectsStateModel>, {payload}: number): void {
+  public changeCurrent({setState}: StateContext<SubjectsStateModel>, {payload}: any): SubjectsStateModel {
 
     return setState(state => ({...state, currentPage: payload}));
 
   }
   @Action(Subjects.ChangePagination)
-  public changePagination({setState}: StateContext<SubjectsStateModel>, {payload}: number): void {
+  public changePagination({setState}: StateContext<SubjectsStateModel>, {payload}: any): SubjectsStateModel {
 
       return setState(state => ({...state, paginationConstant: payload}));
 
   }
 
   @Action(Subjects.AddDate)
-  public addNewDate({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public addNewDate({dispatch}: StateContext<SubjectsStateModel>, {payload}: any): Observable<void> {
 
     return dispatch(new Subjects.Update(payload));
 
   }
   @Action(Subjects.ChangeTeacher)
-  public changeTeacher({dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public changeTeacher({dispatch}: StateContext<SubjectsStateModel>, {payload}: any): Observable<void> {
 
     return dispatch(new Subjects.Update(payload));
 
   }
   @Action(Subjects.DeleteDate)
-  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject}: ISubject): void {
+  public deleteDate({dispatch}: StateContext<SubjectsStateModel>, {subject}: any): void {
 
     const [marks, sub] = subject;
     dispatch(new Subjects.Update(sub));
@@ -182,7 +184,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
   }
   @Action(Subjects.Patch)
-  public patchSubject({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public patchSubject({setState, getState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): Observable<Observable<void> | ISubject> {
 
     setState({
       ...getState(),
@@ -190,8 +192,8 @@ export class NgxsSubjectsState implements NgxsOnChanges{
       loaded: false,
     });
 
-    const patchTapCb: Function = patchedSubject => setState(
-      patch(
+    const patchTapCb: (patchedSubject: ISubject) => void = (patchedSubject: ISubject): SubjectsStateModel => setState(
+      <SubjectsStateModel | StateOperator<SubjectsStateModel>>patch(
         {
           loading: false, loaded: true,
         }
@@ -206,16 +208,16 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
   }
   @Action(Subjects.PatchError)
-  public patchSubjectError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+  public patchSubjectError({patchState}: StateContext<StudentsStateModel>, {payload}: any): void {
 
     patchState({error: payload, loading: false, loaded: false});
 
   }
 
   @Action(Subjects.SetSortedColumn)
-  public setSortedColumn({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: number): void {
+  public setSortedColumn({getState, setState, dispatch}: StateContext<SubjectsStateModel>, {payload}: any): void {
 
-    const state: SubjectTableState = getState();
+    const state: SubjectsStateModel = getState();
 
     if (state.sortedColumn === null) {
 
@@ -233,7 +235,7 @@ export class NgxsSubjectsState implements NgxsOnChanges{
 
 
   @Action(Subjects.Update)
-  public keepSubjectUpdated({setState}: StateContext<SubjectsStateModel>, {payload}: ISubject): void {
+  public keepSubjectUpdated({setState}: StateContext<SubjectsStateModel>, {payload}: any): void {
 
     this.subjectsService.updateSubjectState(payload);
 
@@ -264,14 +266,14 @@ export class NgxsSubjectsState implements NgxsOnChanges{
   }
 
   @Action(Subjects.PopUpCancelList)
-  public cancelListPopUp({setState, getState}: StateContext<SubjectsStateModel>): void {
+  public cancelListPopUp({setState, getState}: StateContext<SubjectsStateModel>): SubjectsStateModel {
 
     return setState(state => ({...state, popups: {list: null, table: getState().popups.table}}));
 
   }
 
   @Action(Subjects.PopUpCancelTable)
-  public cancelTablePopUp({setState, getState}: StateContext<SubjectsStateModel>): void {
+  public cancelTablePopUp({setState, getState}: StateContext<SubjectsStateModel>): SubjectsStateModel {
     return setState(state => ({...state, popups: {list: getState().popups.list, table: null}}));
 
   }

@@ -67,31 +67,29 @@ export class D3Service {
   }
 
   public getAverageMarksObject = (
-    marks: {[key]: Mark[]},
+    marks: {[prop: string]: Mark[]},
     subjectId: string,
-    students: {[key]: IStudent}
-  ): {[key]: number} => {
+    students: {[prop: string]: IStudent}
+  ): { [prop: string]: number | number[]; } => {
 
-    const marksArray: {[string]: number[]} = (new StatisticMapper()).getAverageMarksObject(marks, subjectId, students);
+    const marksArray: {[prop: string]: number[]|number} = (new StatisticMapper()).getAverageMarksObject(marks, subjectId, students);
 
-    Object.keys(marksArray).forEach(key => {
-      marksArray[key] = Math.ceil(StatisticResearcher.getAverageInArray(marksArray[key]));
+    Object.keys(marksArray).forEach((key: string) => {
+      marksArray[key] = <number|number[]>Math.ceil(<number>+StatisticResearcher.getAverageInArray(<number[]>marksArray[key]));
     });
-
-
     return marksArray;
-  }
+  };
 
-  public getDataForBarFromEntries = (entries: [string, string][]) => {
-    return entries
-      .reduce((acc: {name: string, value: string}, current: [string, string]) => {
+  public getDataForBarFromEntries = (entries: [string, any][]): { name: string; value: any; }[] => {
+    return entries.reduce((acc: {name: string, value: string}[], current: [string, any]) => {
         acc = [...acc, {name: current[0], value: current[1]}];
         return acc;
       }, []);
   };
 
   public getPerformanceObject = (marks: {name: string, value: string}[]) => {
-    return marks.reduce((acc, current) => {
+    return marks.reduce(
+      (acc: { underperforming: number; passed: number; decent: number; excellent: number; }, current: {name: string, value: number}) => {
       if (current.value <= Performance.underperforming) {
         acc[PerformanceKey.underperforming]++;
       } else if (current.value <= Performance.passed) {
@@ -113,8 +111,8 @@ export class D3Service {
   public getEntries = (obj: {}) => [Object.entries(obj)];
 
   public getPerformanceData = (marks: {name: string, value: string}[], studentsLength: number) => {
-    const performance: Performance = this.getPerformanceObject(marks);
-    const parsed: {[string]: number}[] = this.getDataForBarFromEntries(Object.entries(performance));
+    const performance: { underperforming: number; passed: number; decent: number; excellent: number; } = this.getPerformanceObject(marks);
+    const parsed: {name: string, value: number}[] = <{name: string, value: number}[]>this.getDataForBarFromEntries(<[string, number][]>Object.entries(performance));
     parsed.unshift({name: PerformanceKey.unattested, value: studentsLength - (
       performance[PerformanceKey.underperforming] +
       performance[PerformanceKey.passed] +
@@ -125,8 +123,8 @@ export class D3Service {
   };
 
   public getDatesObject = (
-    students: {[key]: IStudent},
-    marks: {[key]: Mark[]},
+    students: {[prop: string]: IStudent},
+    marks: {[prop: string]: Mark[]},
     selected: number[],
     subjId: string
   ) => {
@@ -134,8 +132,8 @@ export class D3Service {
       const student: IStudent = students[studentId];
       const key: string = (new StatisticMapper()).fromStudentToName(student);
       const studentsMarks: Mark[] = marks[subjId].filter(m => m.student === student.id);
-      const datesMap: {[string]: number[]} = studentsMarks.reduce((acc, mk) => {
-        const dateForView: string = mk.time;
+      const datesMap: {[prop: string]: number[]} = studentsMarks.reduce((acc, mk) => {
+        const dateForView: number = mk.time;
         if (selected.includes(mk.time)) {
           if (acc[dateForView] === undefined) {
             acc[dateForView] = [mk.value];
@@ -146,7 +144,7 @@ export class D3Service {
         return acc;
       }, {});
 
-      const keys: number[] = Object.keys(datesMap).sort((a, b) => a - b);
+      const keys: string[] = Object.keys(datesMap).sort((a, b) => +a - +b);
 
       const series: {name: string, series: {name: string, value: number}[]}[] = keys.reduce((acc, dateKey) => {
         acc = [...acc, {name: (new Date(+dateKey)).toDateString(), value: datesMap[dateKey]}]
@@ -155,19 +153,19 @@ export class D3Service {
       acc = [...acc, {name: key, series}];
       return acc;
     }, []);
-  }
+  };
 
-  public applyTendencies = (datesObject: {[key]: string}[]) => {
-    const data: {[key]: string}[] = [...datesObject];
-    const uniqueDates: [] = data.reduce((acc, curr) => {
+  public applyTendencies = (datesObject: {[prop: string]: string}[]) => {
+    const data: {[prop: string]: string|[]}[] = <{[prop: string]: string|[]}[]>[...datesObject];
+    const uniqueDates: any = data.reduce((acc, curr: {series: []}) => {
       curr.series.map(({name}) => {
         acc[name] = [];
       });
       return acc;
     }, {});
     Object.keys(uniqueDates).map(key => {
-      data.map(({series}) => {
-        series.map(({name, value}) => {
+      data.map(({series}: {series: []}) => {
+        series.map(({name, value}: {name: string, value: any}) => {
           if (key === name) {
             uniqueDates[key] = [...uniqueDates[key], ...value];
           }
@@ -205,7 +203,7 @@ export class D3Service {
   public generateMarksInScale = (
     scale: [number, number],
     step: string,
-    marks: {[key]: Mark},
+    marks: {[prop: string]: Mark},
     subject: [ISubject, boolean, boolean][]
   ) => {
     return scale.reduce((acc, date, index, scale) => {

@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
-import {ITableConfig, tableRow} from "../../common/models/ITableConfig";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
+import {ITableConfig, row, TableRow} from "../../common/models/ITableConfig";
 import {SortByPipe} from "../../common/pipes/sort-by.pipe";
-import {init} from "protractor/built/launcher";
 
 @Component({
   selector: "app-one-header-table",
@@ -13,12 +12,12 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
   @Input() public config: ITableConfig;
   @Input() public paginationConstant: number;
   @Input() public currentPagination: number;
-  @Output() public emitMap: EventEmitter = new EventEmitter();
-  @Output() public emitPagination: EventEmitter = new EventEmitter();
-  public tableRowLength: number
+  @Output() public emitMap: EventEmitter<any> = new EventEmitter();
+  @Output() public emitPagination: EventEmitter<any> = new EventEmitter();
+  public tableRowLength: number;
   public dataForBody: string[][];
   public currentlySorted: {col: (null|number), times: (null|number)} = {col: null, times: null};
-  public init: Map = new Map();
+  public init: Map<string, any> = new Map();
   constructor(
     private sortPipe: SortByPipe
   ) {
@@ -31,8 +30,8 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
       this.config.body, this.paginationConstant, this.currentPagination
     );
   }
-  public cutBodyDataForPagination(body: tableRow[], constant: number, current: number): string[][] {
-    return body.slice(
+  public cutBodyDataForPagination(body: row[], constant: number, current: number): string[][] {
+    return <string[][]>body.slice(
       ((current - 1) * constant), current * constant
     );
   }
@@ -44,7 +43,7 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
       this.config.body, this.paginationConstant, this.currentPagination
     );
   }
-  public executeSorting($event: Event): void {
+  public executeSorting($event: number): void {
     const initializeSort: Function = (col, times) => {
       this.currentlySorted.col = col;
       this.currentlySorted.times = times;
@@ -63,10 +62,10 @@ export class OneHeaderTableComponent implements OnInit, OnChanges {
       this.currentlySorted.times++;
       if (this.currentlySorted.times === 2) {
         initializeSort(null, null);
-        const reInitialized: [] = new Array(this.config.body.length).fill([]);
+        const reInitialized: any[] = <Array<any>>(new Array(this.config.body.length).fill([]));
         this.config.body
           .map((row, index, arr) => {
-            const filtered: string[] = row.filter(v => typeof v === "string");
+            const filtered: string[] = <string[]>row.filter(v => typeof v === "string");
             const key: number = this.init.get(JSON.stringify(filtered));
             reInitialized[key] = arr[index];
           });

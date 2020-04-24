@@ -11,7 +11,7 @@ export class TableRowComponent implements OnInit {
   @Input() public row: string[];
   @Input() public displayDelete: boolean;
   @Input() public rowLength: number;
-  @Output() public emitSorting: EventEmitter = new EventEmitter();
+  @Output() public emitSorting: EventEmitter<number> = new EventEmitter();
   public sortedCell: number;
   public isLowOrHigh: boolean = true;
   constructor() { }

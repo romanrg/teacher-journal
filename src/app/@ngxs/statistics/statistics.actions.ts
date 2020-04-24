@@ -20,7 +20,9 @@ export namespace Statistics {
   }
   export class SetDates {
     public static readonly type = "[Statistics (App)] Set Dates";
-    constructor(public payload: {subjects: ISubject[], marks: Mark[]}) {}
+    constructor(
+        public payload: {subjects: [ISubject, boolean, boolean][], marks: {[prop: string]: Mark[]}}
+    ) {}
   }
   export class CheckOne {
     public static readonly type = "[Statistics] Check One";

@@ -3,8 +3,9 @@ export interface ISubject {
   teacher: string;
   address?: string;
   description?: string;
-  id?: string | number;
+  id?: string;
   uniqueDates?: number[];
+  _id?: string;
 }
 
 export class SubjectModel implements ISubject {

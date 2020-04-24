@@ -8,14 +8,14 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 export class TableHeadComponent implements OnInit {
 
   @Input() public headers: string[];
-  @Output() public emitSortingEvent: EventEmitter = new EventEmitter();
+  @Output() public emitSortingEvent: EventEmitter<number> = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  public emitUp($event: Event): void {
+  public emitUp($event: number): void {
     this.emitSortingEvent.emit($event);
   }
 }

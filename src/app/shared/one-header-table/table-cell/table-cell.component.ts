@@ -12,7 +12,7 @@ export class TableCellComponent implements OnInit {
   @Input() public cell: string;
   @Input() public cellType: string;
   @Input() public isSorted: boolean;
-  @Output() public sortEmitter: EventEmitter = new EventEmitter();
+  @Output() public sortEmitter: EventEmitter<number> = new EventEmitter();
   public thType: "th" = TableCell.th;
   public tdType: "td" = TableCell.td;
   public sortCount: number = 0;
@@ -39,10 +39,10 @@ export class TableCellComponent implements OnInit {
     }
   }
 
-  public sortColumn($event: EventTarget): void {
+  public sortColumn($event: Event): void {
     const sortingCheck: boolean = !(
-      $event.target.textContent.includes("Select date") ||
-      $event.target.textContent.includes("Выберите дату")
+      (<HTMLElement>$event.target).textContent.includes("Select date") ||
+      (<HTMLElement>$event.target).textContent.includes("Выберите дату")
     );
     if (sortingCheck) {
       this.sortEmitter.emit();
@@ -60,7 +60,7 @@ export class TableCellComponent implements OnInit {
     return !(this.sortCount & 1);
   }
 
-  public dateTransformer(cell: String): number {
+  public dateTransformer(cell: any): number|string {
     if (typeof cell === "number") {
       return this.datePipe.transform(cell, "yyyy-MM-dd");
     } else {

@@ -38,7 +38,7 @@ export namespace Subjects {
   }
   export class DeleteDate {
     public static readonly type = "[Subject Table] Delete Date";
-    constructor(public subject: ISubject, public marks: Mark[]) {}
+    constructor(public payload: [string[], ISubject]) {}
   }
   export class ChangeTeacher {
     public static readonly type = "[Subject Table] Change Teacher";

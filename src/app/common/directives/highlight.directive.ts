@@ -25,9 +25,9 @@ export class HighlightDirective {
   @HostListener("mouseenter") public onMouseEnter(): void {
     const children: HTMLElement[] = this.node.getChildsArray();
     const averageValue: string = children[2]?.textContent;
-    if (averageValue !== "" && averageValue < 5) {
+    if (averageValue !== "" && +averageValue < 5) {
       this.highlight("blue");
-    } else if (averageValue !== "" && averageValue >= 5) {
+    } else if (averageValue !== "" && +averageValue >= 5) {
       this.highlight("green");
     }
 

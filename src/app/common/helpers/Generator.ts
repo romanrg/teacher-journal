@@ -5,10 +5,11 @@ import {DatePipe} from "@angular/common";
 import {TranslateService} from "@ngx-translate/core";
 import {_allPass, _chain, _compose, _if, NodeCrawler} from "./lib";
 export class Generator {
+  public renderer: Renderer2;
   public btnText: string;
   constructor(
-    private render: Renderer2,
-    private translate: TranslateService
+    public render: Renderer2,
+    public translate: TranslateService
   ) {
     this.render = render;
     this.translate = translate;
@@ -44,7 +45,7 @@ export class Generator {
     this.render.removeChild(parent, child);
   }
 
-  public listenEvent(element: any, eventName: string, cb: (event: any) => boolean | void): void {
+  public listenEvent(element: any, eventName: string, cb: (event: any) => boolean | void): () => void {
     return this.render.listen(element, eventName, cb);
   }
 
@@ -64,32 +65,33 @@ export class Generator {
 
 }
 export class DatePicker extends Generator {
-  public selector: {};
+  public selector: {add: string, remove: string};
   public btnText: string;
+  public ONE_DAY_CONSTANT: number = 1000 * 24 * 60 * 60;
+  public emptyAttrubutes: {type: string, name: string} = {
+    type: FormControlType.date,
+    name: FormControlType.date
+  };
+
   constructor(
-    private renderer: Renderer2,
-    private translate: TranslateService
+    renderer: Renderer2,
+    translate: TranslateService
   ) {
-    super(renderer);
-    this.ONE_DAY_CONSTANT = 1000 * 24 * 60 * 60;
+    super(renderer, translate);
     this.translate.stream("FORMS").subscribe(data => {
       this.selector = {add: data.DATE_GENERATOR.SELECTOR_ADD, remove: data.DATE_GENERATOR.SELECTOR_DELETE};
     });
     this.translate?.stream("BUTTON_TYPE").subscribe(data => {
       this.btnText = data.SUBMIT;
     });
-    this.emptyAttrubutes = {
-      type: FormControlType.date,
-      name: FormControlType.date
-    };
-    this.attributes = (min: number, initialValue: string) => ({
-      type: FormControlType.date,
-      value: initialValue,
-      name: FormControlType.date,
-      pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}",
-      min
-    });
   }
+  public attributes: Function = (min: number, initialValue: string) => ({
+    type: FormControlType.date,
+    value: initialValue,
+    name: FormControlType.date,
+    pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+    min
+  })
 
   public shouldAddDateInput(target: EventTarget, headers: string[]): boolean {
     const crawler: NodeCrawler = new NodeCrawler(target);
@@ -113,7 +115,7 @@ export class DatePicker extends Generator {
     uniqueDates: ISubject["uniqueDates"],
     pipe: DatePipe,
     onsubmitAction: Function
-  ): number[] {
+  ): void {
       const [container, initialValue, dateInput, minDate] = _chain(
         () => element.parentNode,
         () => element.textContent,
@@ -146,8 +148,17 @@ export class DatePicker extends Generator {
 }
 export class NumberPicker extends Generator {
   public btnText: string;
-  public numberAttributes: any;
-  constructor(private renderer: Renderer2, min: number, max: number, translate: TranslateService) {
+  public min: number;
+  public max: number;
+  public validation: string;
+  public numberAttributes: {type: string, min: number, max: number, pattern: string, name: string} = {
+    type: FormControlType.number,
+    min: this.min,
+    max: this.max,
+    pattern: this.validation,
+    name: FormControlType.number
+  };
+  constructor(renderer: Renderer2, min: number, max: number, translate: TranslateService) {
     super(renderer, translate);
     this.min = min;
     this.max = max;
@@ -155,13 +166,6 @@ export class NumberPicker extends Generator {
     this.translate?.stream("BUTTON_TYPE").subscribe(data => {
       this.btnText = data.SUBMIT;
     });
-    this.numberAttributes = {
-      type: FormControlType.number,
-      min: this.min,
-      max: this.max,
-      pattern: this.validation,
-      name: FormControlType.number
-    };
   }
 
   public generateNumberPicker = (element: any, onsubmitAction: Function): void  => {
