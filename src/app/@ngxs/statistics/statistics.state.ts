@@ -63,19 +63,19 @@ export class NgxsStatisticsState {
     dispatch(new Statistics.SetDates({subjects: getState().subjects, marks: getState().marks}));
   }
   @Action(Statistics.SetStudents)
-  public setStudents({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
+  public setStudents({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     setState(patch({students: mapper.studentsFromState(payload)}));
   }
   @Action(Statistics.SetDates)
-  public setDates({getState, setState, dispatch}: StateContext<StatisticsStateModel>, {payload}: any): void {
+  public setDates({setState}: StateContext<StatisticsStateModel>, {payload}: any): void {
     const mapper: StatisticMapper = new StatisticMapper();
     const {subjects, marks} = payload;
     setState(patch({dates: mapper.datesFromState(subjects, marks)}));
   }
 
   @Action(Statistics.ChangeSelector)
-  public changeSelector({getState, setState, dispatch}: StateContext<StateModel>, {payload}: any): void {
+  public changeSelector({setState}: StateContext<StateModel>, {payload}: any): void {
     setState(patch({selectorType: selectorType[payload]}));
   }
 
