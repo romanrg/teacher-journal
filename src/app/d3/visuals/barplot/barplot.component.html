@@ -38,22 +38,24 @@
       [yScaleMax]="10"
       [showGridLines]="false"
     ></ngx-charts-heat-map>
-    <ngx-charts-line-chart
-      [view]="view"
-      [showGridLines]="false"
-      [scheme]="colorSchemeDates"
-      [results]="byDates"
-      [gradient]="false"
-      [xAxis]="showXAxis"
-      [yAxis]="true"
-      [showXAxisLabel]="false"
-      [showYAxisLabel]="true"
-      [xAxisLabel]="xAxisLabelByDates"
-      [legend]="true"
-      [yScaleMin]="0"
-      [yScaleMax]="10"
-      [activeEntries]="[byDates[byDates.length - 1]]"
-    ></ngx-charts-line-chart>
+    <ng-container *ngIf="byDates[0].series.length >= 2">
+      <ngx-charts-line-chart
+        [view]="view"
+        [showGridLines]="false"
+        [scheme]="colorSchemeDates"
+        [results]="byDates"
+        [gradient]="false"
+        [xAxis]="showXAxis"
+        [yAxis]="true"
+        [showXAxisLabel]="false"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="xAxisLabelByDates"
+        [legend]="true"
+        [yScaleMin]="0"
+        [yScaleMax]="10"
+        [activeEntries]="[byDates[byDates.length - 1]]"
+      ></ngx-charts-line-chart>
+    </ng-container>
   </div>
 
   <div class="wrapper">

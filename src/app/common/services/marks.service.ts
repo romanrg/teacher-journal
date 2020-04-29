@@ -7,7 +7,6 @@ import {API, MARKS_ROUTE} from "../constants/API";
   providedIn: "root"
 })
 
-
 export class MarksServiceService {
   private URL: string = `${API}${MARKS_ROUTE}`;
   private filteredProperties: [string, string] = ["id", "value"];

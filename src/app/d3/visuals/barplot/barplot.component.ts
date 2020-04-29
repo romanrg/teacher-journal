@@ -51,7 +51,10 @@ export class BarplotComponent implements OnInit, OnChanges {
     const datesObject: {name: string, series: any[]}[] = this.barPlotService.getDatesObject(
       students, marks, selected, subjId
     );
-    this.heatMap = [...datesObject].sort((a: {name: string, series: any[]}, b: {name: string, series: any[]}) => b.series.length - a.series.length);
+    this.heatMap = [...datesObject].sort((
+      a: {name: string, series: any[]},
+      b: {name: string, series: any[]}
+      ) => b.series.length - a.series.length);
     this.byDates = this.barPlotService.applyTendencies(datesObject);
 
   };

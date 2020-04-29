@@ -55,7 +55,6 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   public confirm: boolean = false;
   public popUp: {};
   public pops: [AdItem];
-  // public canGo: boolean = false;
 
   // renderer related
   public generator: Generator;
@@ -289,13 +288,15 @@ export class SubjectsTableComponent implements OnInit, OnDestroy, ComponentCanDe
   }
   public canDeactivate = (): boolean | Observable<boolean> => {
 
-    this.pops = this.adService.getConfirmationPop();
-
+    // this.pops = this.adService.getConfirmationPop();
+  /*
     if (this.confirm) {
       return confirm("Sure?")
     } else {
       return false;
     }
+    */
+  return confirm("Sure?")
   };
 
   public confirmPopUp($event: Event): void {

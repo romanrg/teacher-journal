@@ -3,26 +3,16 @@ import {SuccessUpComponent} from "../../shared/success-up/success-up.component";
 import {ErrorUpComponent} from "../../shared/error-up/error-up.component";
 import {ConfirmationPopUpComponent} from "../../shared/confirmation-pop-up/confirmation-pop-up.component";
 
-
 export class AdItem {
   constructor(public component: Type<any>, public data: any) {}
 }
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AdService {
 
-  public getPopUps(): any {
-    return [
-      new AdItem(SuccessUpComponent, "Wow So Successfull!"),
-      new AdItem(ErrorUpComponent, "Such an error!")
-    ];
-  }
-
   public getSuccessPop(popObject: {}): [AdItem] {
-    console.log(popObject);
     return [
       new AdItem(SuccessUpComponent, popObject)
     ];
@@ -31,7 +21,7 @@ export class AdService {
   public getConfirmationPop(confirmation?: string): [AdItem] {
     return [
       new AdItem(ConfirmationPopUpComponent, confirmation)
-    ]
+    ];
   }
 
   public getErrorPop(errorMessage: string): [AdItem] {
