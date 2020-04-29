@@ -77,7 +77,7 @@ describe("MarksServiceService", () => {
       expect(result instanceof Observable).toBe(true);
     });
 
-    it("returned Observable should consist of array", (done: DoneFn) => {
+    it("returned Observable should be array", (done: DoneFn) => {
       result.subscribe(marks => {
         expect(Array.isArray(marks)).toBe(true);
         done();
@@ -162,6 +162,7 @@ describe("MarksServiceService", () => {
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
+
   it("_key should return function", () => {
     expect(typeof service._key === "function").toBe(true);
   });
