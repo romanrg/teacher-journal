@@ -15,9 +15,7 @@ export class MarksServiceService {
   constructor(private http: HttpClient) {
     this._key = this.getKey(this.filteredProperties);
   }
-  public submitMark = (mark: Mark[]): Observable<Mark[]> => {
-    return <Observable<Mark[]>>this.http.post(this.URL, mark);
-  };
+  public submitMark = (mark: Mark[]): Observable<Mark[]> => <Observable<Mark[]>>this.http.post(this.URL, mark);
 
   public getMarks = (): Observable<Mark[]> => <Observable<Mark[]>>this.http.get(this.URL);
 

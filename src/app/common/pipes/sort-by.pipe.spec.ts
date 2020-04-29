@@ -1,6 +1,5 @@
 import {SortByPipe, sortedArray, SortingCb, splicedArray} from "./sort-by.pipe";
 import {row} from "../models/ITableConfig";
-
 describe("SortByPipe", () => {
 
   let pipe: SortByPipe;

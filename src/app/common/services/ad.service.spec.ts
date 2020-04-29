@@ -37,8 +37,6 @@ describe("AdService", () => {
       .toBe(true);
   });
 
-
-
   it("should be created", () => {
     expect(true).toBeTruthy();
   });
