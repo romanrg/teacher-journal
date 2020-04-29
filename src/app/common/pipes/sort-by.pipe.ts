@@ -1,15 +1,14 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import {row} from "../models/ITableConfig";
 
-type sortingRow = row;
-type unsortedArray = sortingRow[];
-type sortedArray = sortingRow[];
-type comparativeIndex = number;
-type auxMap = {row: number[]|string[], position: number};
-type splicedArray =  {valued: (number|string)[], empty: undefined[]};
-class SortingCb {
+export type sortingRow = row;
+export type unsortedArray = sortingRow[];
+export type sortedArray = sortingRow[];
+export type comparativeIndex = number;
+export type auxMap = {row: number[]|string[], position: number};
+export type splicedArray =  {valued: (number|string)[], empty: any[]};
+export class SortingCb {
   public static number = (index: comparativeIndex) => (a: auxMap, b: auxMap) => <number>b.row[index] - <number>a.row[index];
-
 
   public static string = (index: comparativeIndex) => (a: {row: string[]}, b: {row: string[]}) => a.row[index].localeCompare(b.row[index]);
 }
