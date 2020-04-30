@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
-import {RowCreator} from "../../../common/helpers/RowCreator";
 import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {combineLatest, Observable} from "rxjs";
@@ -14,7 +13,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {map, pluck} from "rxjs/internal/operators";
 import {__filter, _chain, _compose, _curry, _partial, NodeCrawler, _allPass} from "../../../common/helpers/lib";
 import {Equalities} from "../../../common/models/filters";
-import {AdService} from "../../../common/services/ad.service";
+import {AdItem, AdService} from "../../../common/services/ad.service";
 
 @Component({
   selector: "app-students-table",
@@ -25,17 +24,17 @@ import {AdService} from "../../../common/services/ad.service";
 export class StudentsTableComponent implements OnInit, OnDestroy {
 
   private manager: SubscriptionManager = new SubscriptionManager();
-  public pops: [];
-  public popUpComponent: [];
+  public pops: [AdItem];
+  public popUpComponent: { type: string; value: string; action: string; };
   public tableConfig: ITableConfig;
   public page: number;
   public itemsPerPage: number;
   public searchPlaceholder: string;
-  public delStudent: IStudent;
+  public delStudent: Event;
   public tableBody: TableBody = new TableBody(TableRow);
-  public readonly confirmation: string;
-  public readonly successfullMessage: string;
-  public readonly errorMessage: string;
+  public confirmation: {START: string, END: string};
+  public successfullMessage: string;
+  public errorMessage: string;
   public readonly tableBodyRowConfig: string[] = ["id", "name", "surname", "address", "description"];
   @Select(NgxsStudentsState.Students) public studentsState$: Observable<StudentsStateModel>;
   constructor(
@@ -56,7 +55,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     }
   );
 
-  public dispatchSearch = ($event: Event): void => this.store.dispatch(new Students.Search($event));
+  public dispatchSearch = ($event: string): Observable<any> => this.store.dispatch(new Students.Search($event));
 
   public createBody = (
     students: IStudent[],
@@ -81,7 +80,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
 
   public deleteStudent($event: Event): void {
 
-    let student: string;
+    let student: IStudent;
 
     const crawler: NodeCrawler = new NodeCrawler($event.target);
 
@@ -112,8 +111,8 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
 
   }
   public dispatchPaginationState = (
-    $event: Event
-  ): void => $event.paginationConstant ?
+    $event: {paginationConstant: number, currentPage: number}
+  ): Observable<any> => $event.paginationConstant ?
     this.store.dispatch(new Students.ChangePagination($event.paginationConstant)) :
     this.store.dispatch(new Students.ChangeCurrentPage($event.currentPage));
 
@@ -158,7 +157,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public ngOnDestroy = (): void => this.manager.removeAllSubscription();
 
 
-  public confirmPopUp($event: Event): boolean {
+  public confirmPopUp($event: Event): void {
     if ($event) {
 
       this.deleteStudent(this.delStudent);
@@ -182,9 +181,7 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     );
 
     if (_isDeleteButton()) {
-      this.pops = this.adService.getSuccessPop(
-        `${this.confirmation.START} ${this.confirmation.END}`
-      );
+      this.pops = this.adService.getConfirmationPop();
       this.delStudent = $event;
     }
 
@@ -194,10 +191,13 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
       this.store.dispatch(new Students.PopUpCancel())
   };
 
-  public sendComponent(popUpComponent: []): any {
+  public sendComponent(popUpComponent: { type: string; value: string; action: string; }): any {
     setTimeout(() => {
       this.closePopUp()
-    }, 5000);
-    return this.adService.getSuccessPop(popUpComponent.value);
+    }, 2000);
+    if (popUpComponent.type === "success") {
+      return this.adService.getSuccessPop(popUpComponent);
+    }
+
   }
 }

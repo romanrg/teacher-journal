@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from "@angular/core";
-import {IFormConfig} from "../../common/models/IFormConfig";
+import {FormControlType, IFormConfig} from "../../common/models/IFormConfig";
 import {Validators} from "@angular/forms";
 
 @Component({
@@ -24,6 +24,7 @@ export class DateEditorComponent implements OnInit {
           type: FormControlType.date,
           validators: [Validators.required],
           errorMessages: ["This field is required"],
+          description: null
         }],
       }
     };

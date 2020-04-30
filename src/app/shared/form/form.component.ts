@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {IFormConfig, IFormControlConfig} from "../../common/models/IFormConfig";
-import {AbstractControl, FormControl, FormGroup} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, ValidationErrors} from "@angular/forms";
 
 @Component({
   selector: "app-form",
@@ -21,7 +21,7 @@ export class FormComponent implements OnInit {
     );
   };
 
-  private createFormControlFromConfig(config: IFormControlConfig[]): FormControl {
+  private createFormControlFromConfig(config: IFormControlConfig[]): { [key: string]: AbstractControl; } {
     let result: any = {};
     config.forEach(control => {
       if (!result[control.name]) {
@@ -35,7 +35,7 @@ export class FormComponent implements OnInit {
     return this.form.get(name);
   }
 
-  public isShowErrorMessage(control: AbstractControl): boolean {
+  public isShowErrorMessage(control: AbstractControl): ValidationErrors {
     return (
       !control.valid &&
       control.touched &&

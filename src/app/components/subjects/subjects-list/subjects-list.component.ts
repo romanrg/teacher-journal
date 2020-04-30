@@ -6,8 +6,7 @@ import * as Ngxs from "@ngxs/store";
 import {Select} from "@ngxs/store";
 import {NgxsSubjectsState, SubjectsStateModel} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
-import {AdService} from "../../../common/services/ad.service";
-import {Students} from "../../../@ngxs/students/students.actions";
+import {AdItem, AdService} from "../../../common/services/ad.service";
 
 
 @Component({
@@ -15,23 +14,28 @@ import {Students} from "../../../@ngxs/students/students.actions";
   templateUrl: "./subjects-list.component.html",
   styleUrls: ["./subjects-list.component.sass"]
 })
-export class SubjectsListComponent implements OnInit, OnDestroy {
+export class SubjectsListComponent implements OnInit {
   @Select(NgxsSubjectsState.Subjects) public subjects$: Observable<SubjectsStateModel>;
-  public popUp: null|string = null;
-  public isLoad$: Observable<boolean> = store
+  public deletingSubject: string;
+  public popUp: {};
+  public pops: [AdItem];
+  public isLoad$: Observable<boolean> = this.store
     .select(state => Object.keys(state)
       .map(key => state[key].loading)
       .some(load => load)
     );
-  public pops: [];
   constructor(
     private store: Ngxs.Store,
     private adService: AdService
     ) {
   }
-  public deleteSubject($event: Event): void {
-    const subjName: string = $event.target.parentNode.getAttribute("subject");
-    this.store.dispatch(new Subjects.Delete(subjName));
+  public deleteSubject(subjectName: string): void {
+    this.store.dispatch(new Subjects.Delete(subjectName));
+  }
+  public showConfirmation($event: Event): void {
+    const subjName: string = <string>((<HTMLElement>(<HTMLElement>$event.target).parentNode).getAttribute("subject"));
+    this.pops = this.adService.getConfirmationPop();
+    this.deletingSubject = subjName;
   }
   public ngOnInit(): void {
     this.subjects$.subscribe(state => {
@@ -39,14 +43,30 @@ export class SubjectsListComponent implements OnInit, OnDestroy {
     })
   }
 
+  public confirmPopUp($event: Event): void {
+    console.log($event);
+    if ($event) {
+
+      this.deleteSubject(this.deletingSubject);
+      this.pops = null;
+
+    } else {
+
+      this.pops = null;
+
+    }
+
+    this.deletingSubject = null;
+  }
+
   public closePopUp(): void {
     this.store.dispatch(new Subjects.PopUpCancelList());
   };
-  public sendComponent(popUpComponent: []): any {
+  public sendComponent(popUpComponent: {}): any {
     setTimeout(() => {
       this.closePopUp()
-    }, 5000);
-    return this.adService.getSuccessPop(popUpComponent.value);
+    }, 2000);
+    return this.adService.getSuccessPop(popUpComponent);
   }
 
 }

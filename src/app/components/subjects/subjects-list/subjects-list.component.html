@@ -1,6 +1,10 @@
 <ng-container *ngIf="popUp">
   <app-pop-up-action [data]="sendComponent(popUp)" (close)="closePopUp()"></app-pop-up-action>
 </ng-container>
+
+<ng-container *ngIf="pops">
+  <app-pop-up (confirmationResult)="confirmPopUp($event)" [items]="pops"></app-pop-up>
+</ng-container>
 <ng-container>
     <nav class="subjects__nav">
       <ng-container *ngIf="(subjects$ | async).data.length; else empty">
@@ -10,7 +14,7 @@
 
           >
             <app-button
-              (click)="deleteSubject($event)"
+              (click)="showConfirmation($event)"
               class="subjects__btn subjects__btn--delete"
               textContent="{{'X'}}"
               [screenReader]="'COMPONENTS.SUBJECTS.LIST.DELETE_BTN' | translate:{subject: subject.name}"
@@ -39,8 +43,6 @@
         class="subjects__btn"
         screenReader="{{'COMPONENTS.SUBJECTS.LIST.LINK_NEW_SUBJECT_FORM' | translate}}"
         textContent="+"
-        [action]="addNewSubject"
-        (emitter)="addNewSubject()"
       >
 
       </app-button>

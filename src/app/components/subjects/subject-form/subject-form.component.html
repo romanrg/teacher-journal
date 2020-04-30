@@ -1,3 +1,6 @@
+<ng-container *ngIf="pops">
+  <app-pop-up (confirmationResult)="confirmPopUp($event)" [items]="pops"></app-pop-up>
+</ng-container>
 <ng-container *ngIf="formConfig">
   <app-form
     [config]="formConfig"

@@ -1,1 +1,0 @@
-export * from "./marks.actions";export * from "./marks.effects";export * from "./marks.state";export * from "./marks.reducer";

@@ -1,6 +1,7 @@
 import {
-  Component, ComponentFactoryResolver, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges,
-  ViewChild
+  Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output,
+  SimpleChanges,
+  ViewChild, ViewContainerRef
 } from "@angular/core";
 import {AdDirective} from "../../common/directives/ad-directive.directive";
 
@@ -11,11 +12,11 @@ import {AdDirective} from "../../common/directives/ad-directive.directive";
 })
 export class PopUpActionComponent implements OnInit, OnDestroy, OnChanges {
 
-  @Input() public data: [];
+  @Input() public data: [{data: any, component: any}];
   public display: string = "none";
   @Output() public close: EventEmitter<boolean> = new EventEmitter();
   @ViewChild(AdDirective, {static: true}) public adHost: AdDirective;
-  public componentRef: ComponentRef;
+  public componentRef: ComponentRef<any>;
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -33,8 +34,8 @@ export class PopUpActionComponent implements OnInit, OnDestroy, OnChanges {
   public ngOnDestroy(): void {
   }
 
-  public render(data: []): void {
-    const factory: ComponentFactory =
+  public render(data: [{data: any, component: any}]): void {
+    const factory: ComponentFactory<any> =
       this.componentFactoryResolver.resolveComponentFactory(
         data[0].component
       );
@@ -44,7 +45,7 @@ export class PopUpActionComponent implements OnInit, OnDestroy, OnChanges {
 
     this.componentRef = viewContainerRef.createComponent(factory);
 
-    (<Component>this.componentRef.instance).data = data[0].data;
+    this.componentRef.instance.data = data[0].data;
   }
 
   public closeUp = (): void => this.close.emit(true);

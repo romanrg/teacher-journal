@@ -12,7 +12,7 @@ import {IStudent} from "../../common/models/IStudent";
 export class SearchBarComponent implements OnInit {
   @Input() public barValue: string;
   public searchBar: FormGroup;
-  @Output public searchRes: EventEmitter<IStudent[]> = new EventEmitter();
+  @Output() public searchRes: EventEmitter<IStudent[]> = new EventEmitter();
 
   constructor(
     private studentsService: StudentsServiceService

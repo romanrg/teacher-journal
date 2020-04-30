@@ -4,6 +4,7 @@ import {IStudent} from "../../../common/models/IStudent";
 import {D3Service} from "../../d3.service";
 import {_compose, _if} from "../../../common/helpers/lib";
 import {Mark} from "../../../common/models/IMark";
+import {NgxChartsModule} from "@swimlane/ngx-charts";
 
 @Component({
   selector: "app-barplot",
@@ -12,7 +13,7 @@ import {Mark} from "../../../common/models/IMark";
 })
 export class BarplotComponent implements OnInit, OnChanges {
 
-  @Input("data") public data: [];
+  @Input("data") public data: [any, any, any, any, any];
   @Input("index") public index: number;
   public colorSchemeDates: {domain: string[]} = {domain: []};
   public colorSchemePerformance: {domain: string[]} = {domain: []};
@@ -24,9 +25,9 @@ export class BarplotComponent implements OnInit, OnChanges {
   public gradient: boolean = false;
   public showLegend: boolean = false;
   public showXAxisLabel: boolean = true;
-  public xAxisLabel: boolean = "Marks";
+  public xAxisLabel: string = "Marks";
   public showYAxisLabel: boolean = true;
-  public yAxisLabel: boolean = "Students";
+  public yAxisLabel: string = "Students";
 
   public byDates: any[] = [];
   public heatMap: any[] = [];
@@ -41,25 +42,28 @@ export class BarplotComponent implements OnInit, OnChanges {
 
   public createByDates = (
     subject: [ISubject],
-    marks: {[string]: Mark[]},
-    dates: {[string]: [number, boolean, boolean]},
-    students: {[string]: IStudent},
+    marks: {[prop: string]: Mark[]},
+    dates: {[prop: string]: [number, boolean, boolean]},
+    students: {[prop: string]: IStudent},
     selected: number[]
     ): void => {
     const subjId: string = subject[0].id;
-    const datesObject: {[string]: number}[] = this.barPlotService.getDatesObject(
+    const datesObject: {name: string, series: any[]}[] = this.barPlotService.getDatesObject(
       students, marks, selected, subjId
     );
-    this.heatMap = [...datesObject].sort((a, b) => b.series.length - a.series.length);
+    this.heatMap = [...datesObject].sort((
+      a: {name: string, series: any[]},
+      b: {name: string, series: any[]}
+      ) => b.series.length - a.series.length);
     this.byDates = this.barPlotService.applyTendencies(datesObject);
 
   };
 
   public createAverageBars = (
     subject: [ISubject],
-    marks: {[string]: Mark[]},
-    dates: {[string]: [number, boolean, boolean]},
-    students: {[string]: IStudent}
+    marks: {[prop: string]: Mark[]},
+    dates: {[prop: string]: [number, boolean, boolean]},
+    students: {[prop: string]: IStudent}
     ): void => {
 
     this.marks = _compose(
@@ -89,13 +93,13 @@ export class BarplotComponent implements OnInit, OnChanges {
 
   public ngOnInit (): void {
     const [subject, marks, dates, students, selected] = this.data;
-    this.createAverageBars(subject, marks, dates, students, selected);
+    this.createAverageBars(subject, marks, dates, students);
     this.createByDates(subject, marks, dates, students, selected);
   }
 
   public ngOnChanges (changes: SimpleChanges): void {
     const [subject, marks, dates, students, selected] = changes.data.currentValue;
-    this.createAverageBars(subject, marks, dates, students, selected);
+    this.createAverageBars(subject, marks, dates, students);
     this.createByDates(subject, marks, dates, students, selected);
 
   }

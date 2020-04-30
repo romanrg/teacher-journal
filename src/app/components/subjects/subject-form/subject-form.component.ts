@@ -11,20 +11,24 @@ import * as Ngxs from "@ngxs/store";
 import { SubjectsStateModel} from "../../../@ngxs/subjects/subjects.state";
 import {Subjects} from "../../../@ngxs/subjects/subjects.actions";
 import {TranslateService} from "@ngx-translate/core";
+import {AdService} from "../../../common/services/ad.service";
 
 @Component({
   selector: "app-subject-form",
   templateUrl: "./subject-form.component.html",
   styleUrls: ["./subject-form.component.sass"]
 })
-export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
+export class SubjectFormComponent implements OnInit/*, ComponentCanDeactivate*/{
   public formConfig: IFormConfig;
   public isSaved: boolean = false;
-  public readonly confirm: string;
+  public confirm: string;
+  public pops: [];
+  public translations: {[prop: string]: {[prop: string]: any}};
   constructor(
     private router: Router,
-    private store: Ngxs.Store<SubjectsStateModel>,
+    private store: Ngxs.Store,
     private translate: TranslateService,
+    private adService: AdService
   ) {
     this.translate.stream("CONFIRMATION_MESSAGE").subscribe(translation => this.confirm = translation)
   }
@@ -34,7 +38,21 @@ export class SubjectFormComponent implements OnInit, ComponentCanDeactivate{
     this.store.dispatch(new Subjects.Create($event));
     this.router.navigate(["/subjects"]);
   }
-  public canDeactivate = (): boolean | Observable<boolean> => this.isSaved ?  true : confirm(this.confirm);
+
+  public confirmPopUp($event: Event): void {
+    if ($event) {
+      this.pops = null;
+      this.isSaved = true;
+      this.router.navigate(["/subjects"]);
+    } else {
+      this.pops = null;
+    }
+  }
+  /*
+  public canDeactivate = (): boolean | Observable<boolean> => {
+    return this.isSaved ?  true : (this.pops = this.adService.getConfirmationPop(this.confirm));
+  };
+  */
   public ngOnInit(): void {
     this.translate.stream("FORMS").subscribe(data => {
       this.translations = data;

@@ -1,3 +1,5 @@
+import {Mark} from "../../common/models/IMark";
+
 export namespace Marks {
   export class Get {
     public static readonly type = "[Marks (App)] Fetch"
@@ -24,7 +26,7 @@ export namespace Marks {
   }
   export class PatchError {
     public static readonly type = "[Marks State] Patch Error";
-    constructor( public payload: string|Error)
+    constructor( public payload: string|Error) {}
   }
   export class Delete {
     public static readonly type = "[Marks State] Delete";

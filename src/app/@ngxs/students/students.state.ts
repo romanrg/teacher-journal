@@ -18,7 +18,7 @@ export class StudentsStateModel {
   public currentPage: number;
   public error: (string| Error)|null;
   public popUpMessage: string|null;
-  public popUpComponent: [];
+  public popUpComponent: { type: string; value: string; action: string; };
 }
 
 @State<StudentsStateModel>({
@@ -51,7 +51,7 @@ export class NgxsStudentsState {
     return state;
   }
   @Action(Students.Get)
-  public getStudents({getState, setState, dispatch}: StateContext<StudentsStateModel>): Observable<IStudent[]> {
+  public getStudents({getState, setState, dispatch}: StateContext<StudentsStateModel>): Observable<Observable<void> | IStudent[]> {
     setState({
       ...getState(),
       loading: true,
@@ -68,12 +68,12 @@ export class NgxsStudentsState {
     );
   }
   @Action(Students.GetError)
-  public studentsGetError({patchState}: StateContext<StudentsStateModel>, {payload}: (string|Error)): void {
+  public studentsGetError({patchState}: StateContext<StudentsStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Create)
-  public createStudent({getState, setState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: IStudent): Observable<IStudent> {
+  public createStudent({getState, setState, patchState, dispatch}: StateContext<StudentsStateModel>, {payload}: any): Observable<Observable<void> | IStudent> {
     setState({
       ...getState(),
       loading: true,
@@ -85,7 +85,7 @@ export class NgxsStudentsState {
         apiResponse.id = apiResponse._id;
         patchState({
           data: [...state.data].concat(apiResponse),
-          popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} added`},
+          popUpComponent: {type: "success", value: `${payload.name} ${payload.surname}`, action: "add"},
           loading: false,
           loaded: true
         });
@@ -95,12 +95,12 @@ export class NgxsStudentsState {
     );
   }
   @Action(Students.CreatetError)
-  public createStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+  public createStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Delete)
-  public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): object {
+  public deleteStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: any): object {
     setState({
       ...getState(),
       loading: true,
@@ -111,7 +111,7 @@ export class NgxsStudentsState {
           setState({
             ...getState(),
             data: getState().data.filter(student => student.id !== payload.id),
-            popUpComponent: {type: "success", value: `${payload.name} ${payload.surname} deleted`},
+            popUpComponent: {type: "success", value: `${payload.name} ${payload.surname}`, action: "delete"},
             loading: false,
             loaded: true
           });
@@ -122,12 +122,12 @@ export class NgxsStudentsState {
     );
   }
   @Action(Students.DeleteError)
-  public deleteError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+  public deleteError({patchState}: StateContext<StudentsStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
 
   @Action(Students.Search)
-  public searchStudent({getState, setState, dispatch}: StateContext<StudentsStateModel>, {payload}: string): Observable<IStudent[]> {
+  public searchStudent({getState, setState}: StateContext<StudentsStateModel>, {payload}: any): void {
     const filterFn = (student: IStudent) =>
       student.name.toLowerCase().includes(payload.toLowerCase()) ||
       student.surname.toLowerCase().includes(payload.toLowerCase()) ||
@@ -143,16 +143,16 @@ export class NgxsStudentsState {
   }
 
   @Action(Students.SearchError)
-  public searchStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: (string | Error)): void {
+  public searchStudentError({patchState}: StateContext<StudentsStateModel>, {payload}: any): void {
     patchState({error: payload});
   }
 
   @Action(Students.ChangeCurrentPage)
-  public changeCurrent({setState}: StateContext<StudentsStateModel>, {payload}: number): void {
+  public changeCurrent({setState}: StateContext<StudentsStateModel>, {payload}: any): void {
     setState(state => ({...state, currentPage: payload}));
   }
   @Action(Students.ChangePagination)
-  public changePagination({setState}: StateContext<StudentsStateModel>, {payload}: number): void {
+  public changePagination({setState}: StateContext<StudentsStateModel>, {payload}: any): void {
     setState(state => ({...state, paginationConstant: payload}));
   }
 

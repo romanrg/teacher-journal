@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input} from "@angular/core";
 
 @Component({
   template: `
@@ -8,7 +8,7 @@ import {Component, Input, OnInit} from "@angular/core";
     </div>
   `
 })
-export class ErrorUpComponent implements OnInit {
+export class ErrorUpComponent {
 
   @Input() public data: any;
 

@@ -1,19 +1,21 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import {row} from "../models/ITableConfig";
+
+export type sortingRow = row;
+export type unsortedArray = sortingRow[];
+export type sortedArray = sortingRow[];
+export type comparativeIndex = number;
+export type auxMap = {row: number[]|string[], position: number};
+export type splicedArray =  {valued: (number|string)[], empty: any[]};
+export class SortingCb {
+  public static number = (index: comparativeIndex) => (a: auxMap, b: auxMap) => <number>b.row[index] - <number>a.row[index];
+
+  public static string = (index: comparativeIndex) => (a: {row: string[]}, b: {row: string[]}) => a.row[index].localeCompare(b.row[index]);
+}
+
 @Pipe({
   name: "sortBy"
 })
-type sortingRow = row;
-type unsortedArray = sortingRow[];
-type sortedArray = sortingRow[];
-type comparativeIndex = number;
-enum splicedArray {valued, empty}
-enum auxMap {row, position}
-enum sortingCb {
-  number = (index: comparativeIndex): Function => (a: auxMap, b: auxMap) => b.row[index] - a.row[index],
-  string = (index: comparativeIndex): Function => (a: auxMap, b: auxMap) => a.row[index].localeCompare(b.row[index])
-}
-
 export class SortByPipe implements PipeTransform {
 
   public spliceValuedAndEmpty = (
@@ -31,21 +33,21 @@ export class SortByPipe implements PipeTransform {
   );
 
   public getAuxMapFromSortedArray: Function = (
-    arr: valuedArray
-  ): auxMap[] => arr.map((row: sortingRow, position: number) => ({position, row}));
+    arr: []
+  ): { position: number; row: row; }[] => arr.map((row: sortingRow, position: number) => ({position, row}));
 
   public isAnyStringValuesForComparision: Function = (
-    arr: splicedArray.valued, index: comparativeIndex
+    arr: splicedArray["valued"], index: comparativeIndex
   ): boolean => arr.map(row => row[index]).some(value => typeof value === "string");
 
   public getSortedArrayFromAuxMap: Function = (
     mapped: auxMap[],
-    arr: splicedArray.valued
-  ): splicedArray.valued => mapped.map(row => arr[row.position]);
+    arr: splicedArray["valued"]
+  ): splicedArray["valued"] => mapped.map(row => arr[row.position]);
 
   public concatenateEmptyWithSorted: Function = (
-    empty: splicedArray.empty
-  ): Function => (sorted: splicedArray.valued): sortedArray => sorted.concat(empty);
+    empty: splicedArray["empty"]
+  ): Function => (sorted: splicedArray["valued"]): sortedArray => <sortedArray><unknown>sorted.concat(empty);
 
   public transform(value: unsortedArray, index: comparativeIndex, isNotReversed: boolean): sortedArray {
 
@@ -56,8 +58,8 @@ export class SortByPipe implements PipeTransform {
       const concatenateEmptyWith: Function = this.concatenateEmptyWithSorted(splicedForSorting.empty);
 
       const mapped: auxMap[] = this.isAnyStringValuesForComparision(splicedForSorting.valued, index) ?
-         this.getAuxMapFromSortedArray(splicedForSorting.valued).sort(sortingCb.string(index)) :
-         this.getAuxMapFromSortedArray(splicedForSorting.valued).sort(sortingCb.number(index));
+         this.getAuxMapFromSortedArray(splicedForSorting.valued).sort(SortingCb.string(index)) :
+         this.getAuxMapFromSortedArray(splicedForSorting.valued).sort(SortingCb.number(index));
 
       if (isNotReversed) {
 

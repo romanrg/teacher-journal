@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="wrapper">
-    <h3 class="title-barplot">Average:</h3>
+    <h3 class="title-barplot">{{'COMPONENTS.STATISTICS.SUBJECTS.AVERAGE'|translate}}:</h3>
     <ngx-charts-bar-horizontal
       [view]="view"
       [scheme]="colorSchemeDates"
@@ -20,7 +20,7 @@
 
 
   <div class="wrapper">
-    <h3 class="title-barplot">Students performance over time:</h3>
+    <h3 class="title-barplot">{{'COMPONENTS.STATISTICS.SUBJECTS.PERFORMANCE'|translate}}:</h3>
     <ngx-charts-heat-map
       [groupPadding]="10"
       [barPadding]="0"
@@ -38,26 +38,28 @@
       [yScaleMax]="10"
       [showGridLines]="false"
     ></ngx-charts-heat-map>
-    <ngx-charts-line-chart
-      [view]="view"
-      [showGridLines]="false"
-      [scheme]="colorSchemeDates"
-      [results]="byDates"
-      [gradient]="false"
-      [xAxis]="showXAxis"
-      [yAxis]="true"
-      [showXAxisLabel]="false"
-      [showYAxisLabel]="true"
-      [xAxisLabel]="xAxisLabelByDates"
-      [legend]="true"
-      [yScaleMin]="0"
-      [yScaleMax]="10"
-      [activeEntries]="[byDates[byDates.length - 1]]"
-    ></ngx-charts-line-chart>
+    <ng-container *ngIf="byDates[0].series.length >= 2">
+      <ngx-charts-line-chart
+        [view]="view"
+        [showGridLines]="false"
+        [scheme]="colorSchemeDates"
+        [results]="byDates"
+        [gradient]="false"
+        [xAxis]="showXAxis"
+        [yAxis]="true"
+        [showXAxisLabel]="false"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="xAxisLabelByDates"
+        [legend]="true"
+        [yScaleMin]="0"
+        [yScaleMax]="10"
+        [activeEntries]="[byDates[byDates.length - 1]]"
+      ></ngx-charts-line-chart>
+    </ng-container>
   </div>
 
   <div class="wrapper">
-    <h3 class="title-barplot">Overall performance:</h3>
+    <h3 class="title-barplot">{{ 'COMPONENTS.STATISTICS.SUBJECTS.CLASS_PERFORMANCE' | translate}}:</h3>
     <ngx-charts-bar-vertical
       [view]="view"
       [scheme]="colorSchemeDates"

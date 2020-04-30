@@ -1,16 +1,14 @@
-import {State, Action, StateContext, Selector} from "@ngxs/store";
-import {GetStudents, DeleteStudent, Students} from "./students.actions";
+import {State, Action, StateContext, Selector, StateOperator} from "@ngxs/store";
 import {Injectable} from "@angular/core";
 import {MarksServiceService} from "../../common/services/marks.service";
 import {Marks} from "./marks.actions";
 import {catchError, retry, tap} from "rxjs/internal/operators";
-import {forkJoin, of} from "rxjs";
-import {append, patch, removeItem, updateItem} from "@ngxs/store/operators";
+import {Observable, of} from "rxjs";
+import {append, patch, removeItem} from "@ngxs/store/operators";
 import {Mark} from "../../common/models/IMark";
-import {_allPass, _allTrue, _compose, copyByJSON} from "../../common/helpers/lib";
+import {copyByJSON} from "../../common/helpers/lib";
 import {Equalities} from "../../common/models/filters";
 import {Statistics} from "../statistics/statistics.actions";
-import {IStudent} from "../../common/models/IStudent";
 
 export class MarksStateModel {
   public data: Mark[];
@@ -32,7 +30,7 @@ export class MarksStateModel {
   providedIn: "root"
 })
 export class NgxsMarksState {
-  public equalMark: Equalities.Marks = Equalities.Marks;
+  public equalMark: Function = Equalities.Marks;
   constructor(
     private marksService: MarksServiceService
   ) {}
@@ -43,7 +41,7 @@ export class NgxsMarksState {
   }
 
   @Action(Marks.Get)
-  public getMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
+  public getMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): Observable<Observable<void> | Mark[]> {
     setState({
       ...getState(),
       loading: true,
@@ -52,7 +50,7 @@ export class NgxsMarksState {
     return this.marksService.getMarks().pipe(
       tap(apiResponse => {
         apiResponse.forEach(mark => mark.id = mark._id);
-        const marks: IStudent[] = [...apiResponse.flat(1)].filter(({subject}) => subject !== null);
+        const marks: Mark[] = [...(<Array<Mark>>apiResponse).flat(1)].filter(({subject}) => subject !== null);
         dispatch(new Statistics.SetMarks(marks));
         return setState({...getState(), data: marks, loading: false, loaded: true});
       }),
@@ -61,11 +59,11 @@ export class NgxsMarksState {
     );
   }
   @Action(Marks.GetError)
-  public getMarksError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+  public getMarksError({patchState}: StateContext<MarksStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Create)
-  public createMark({setState, dispatch, getState}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public createMark({setState, dispatch, getState}: StateContext<MarksStateModel>, {payload}: any): MarksStateModel {
     dispatch(new Marks.AddToTheHashTable(payload));
     return setState(patch({
       data: append([payload]),
@@ -73,7 +71,7 @@ export class NgxsMarksState {
 
   }
   @Action(Marks.Delete)
-  public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public deleteMark({setState, dispatch}: StateContext<MarksStateModel>, {payload}: any): void {
 
     setState(patch({
         data: removeItem(mark => mark.id === payload.id)
@@ -83,50 +81,50 @@ export class NgxsMarksState {
 
   }
   @Action(Marks.Patch)
-  public patchMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public patchMark({setState, getState, dispatch}: StateContext<MarksStateModel>, {payload}: any): void {
     const newData: Mark[] = copyByJSON(getState().data);
     const index: number = newData.findIndex(this.equalMark(payload));
     newData[index].value = payload.value;
     setState({
+        ...getState(),
       data: newData
     });
     dispatch(new Marks.ReplaceInTheHashTable(newData[index]));
   }
 
   @Action(Marks.PatchError)
-  public patchMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+  public patchMarkError({patchState}: StateContext<MarksStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
   @Action(Marks.Change)
-  public changeMark({dispatch}: StateContext<MarksStateModel>, {payload}: Mark): void {
+  public changeMark({dispatch}: StateContext<MarksStateModel>, {payload}: any): Observable<void> {
     return dispatch(new Marks.Patch(payload));
   }
   @Action(Marks.DeleteError)
-  public deleteMarkError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+  public deleteMarkError({patchState}: StateContext<MarksStateModel>, {payload}: any): void {
     patchState({error: payload, loading: false, loaded: false});
   }
   @Action (Marks.AddToTheHashTable)
-  public addToTheHash(ctx, {payload}: Mark): void {
+  public addToTheHash(ctx, {payload}: any): void {
     return this.marksService.addHash(payload);
   }
   @Action (Marks.RemoveFromTheHashTable)
-  public removeFromHash(ctx, {payload}: Mark): void {
+  public removeFromHash(ctx, {payload}: any): void {
     this.marksService.removeHash(payload);
   }
 
   @Action(Marks.ReplaceInTheHashTable)
-  public replaceInTheHash(ctx, {payload}: Mark): void {
+  public replaceInTheHash(ctx, {payload}: any): void {
     this.marksService.replaceHash(payload);
   }
 
   @Action(Marks.Submit)
-  public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): void {
-    setState(patch({
+  public submitMarks({getState, setState, dispatch}: StateContext<MarksStateModel>): Observable<void | Mark[]> {
+    setState(<MarksStateModel | StateOperator<MarksStateModel>>patch({
       loading: true,
       loaded: false
     }));
-    console.log("Memory now:", Object.values(this.marksService.getMemory()));
-    return this.marksService.submitMark(Object.values(this.marksService.getMemory())).pipe(
+    return this.marksService.submitMark(<Mark[]>Object.values(this.marksService.getMemory())).pipe(
       tap(this.marksService.clearMemory),
       tap((apiResponse: Mark[]) => {
         apiResponse.map(mark => mark.id = mark._id);
@@ -134,7 +132,7 @@ export class NgxsMarksState {
           ...apiResponse.filter(mark => mark.subject !== null),
           ...getState().data.filter(mark => mark.id)
         ];
-        return setState(patch({
+        return setState(<MarksStateModel | StateOperator<MarksStateModel>>patch({
           loading: false,
           loaded: true,
           data: newData,
@@ -146,7 +144,7 @@ export class NgxsMarksState {
   }
 
   @Action(Marks.SubmitError)
-  public submitMarksError({patchState}: StateContext<MarksStateModel>, {payload}: (string | Error)): void {
+  public submitMarksError({patchState}: StateContext<MarksStateModel>, {payload}: any): MarksStateModel {
     return patchState({
       error: payload
     });

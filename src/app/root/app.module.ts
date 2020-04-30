@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import {NgModule} from "@angular/core";
+import {NgModule, NO_ERRORS_SCHEMA} from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import {StudentsComponent} from "../components/students/students.component";
@@ -34,8 +34,6 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
 import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
-import {RootStoreModule} from "../@ngrx/core-store.module";
-import {EffectsModule} from "@ngrx/effects";
 import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
 import {LoadingComponent} from "../shared/loading/loading.component";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
@@ -49,7 +47,6 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {DropdownComponent} from "../shared/dropdown/dropdown.component";
 import {NgxsStatisticsState} from "../@ngxs/statistics/statistics.state";
 import {BarplotComponent} from "../d3/visuals/barplot/barplot.component";
-import {BarComponent} from "../d3/visuals/bar/bar.component";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BarplotDateRangeComponent} from "../d3/visuals/barplot-date-range/barplot-date-range.component";
@@ -58,6 +55,7 @@ import {AdDirective} from "../common/directives/ad-directive.directive";
 import {SuccessUpComponent} from "../shared/success-up/success-up.component";
 import {ErrorUpComponent} from "../shared/error-up/error-up.component";
 import {PopUpActionComponent} from "../shared/pop-up-action/pop-up-action.component";
+import {ConfirmationPopUpComponent} from "../shared/confirmation-pop-up/confirmation-pop-up.component";
 
 export function createTranslateLoader(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -98,7 +96,7 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     BarplotDateRangeComponent,
     PopUpComponent,
     AdDirective,
-    PopUpActionComponent
+    PopUpActionComponent,
   ],
   imports: [
     BrowserModule,
@@ -106,8 +104,6 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    RootStoreModule,
-    EffectsModule.forRoot([]),
     TranslateModule.forRoot(),
     NgxsModule.forRoot(
       [NgxsStudentsState, NgxsSubjectsState, NgxsMarksState, NgxsStatisticsState],
@@ -132,7 +128,8 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
     DatePipe,
     modifyHeadersProvider
   ],
-  entryComponents: [SuccessUpComponent, ErrorUpComponent],
-  bootstrap: [AppComponent]
+  entryComponents: [SuccessUpComponent, ErrorUpComponent, ConfirmationPopUpComponent],
+  bootstrap: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule { }
