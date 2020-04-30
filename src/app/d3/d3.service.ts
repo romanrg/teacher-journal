@@ -210,7 +210,7 @@ export class D3Service {
 
       let filterFn: Function = (from, to?) => ([subjectId, mrks]) => {
         if (to) {
-          return [subjectId, mrks.filter(mark => mark.time >= from && mark.time <= to)];
+          return [subjectId, mrks.filter(mark => mark.time >= from && mark.time < to)];
         } else {
           return [subjectId, mrks.filter(mark => mark.time === date)];
         }

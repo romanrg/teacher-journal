@@ -128,7 +128,7 @@
           ></app-barplot-date-range>
           <ul class="statistics__visuals-list"  *ngIf="!(range[0] && range[1])">
             <li *ngFor="let barplot of getSelected(subjects); let i = index" class="statistics__barplot-container">
-              <h3>{{barplot[0].name}}</h3>
+              <h3 class="statistic__title">{{barplot[0].name}}</h3>
               <app-barplot
                 class="statistic__barplot"
                 [data]="[barplot, marks, dates, students, selected]"

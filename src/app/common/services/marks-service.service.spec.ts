@@ -12,7 +12,6 @@ describe("MarksServiceService", () => {
   let mockMark2: Mark = new Mark("studentId2", "subjectId2", 102, 1010102);
   const mocked: Mark[] = [mockMark, mockMark1, mockMark2];
 
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],

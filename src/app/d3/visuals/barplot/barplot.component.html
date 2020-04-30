@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="wrapper">
-    <h3 class="title-barplot">Average:</h3>
+    <h3 class="title-barplot">{{'COMPONENTS.STATISTICS.SUBJECTS.AVERAGE'|translate}}:</h3>
     <ngx-charts-bar-horizontal
       [view]="view"
       [scheme]="colorSchemeDates"
@@ -20,7 +20,7 @@
 
 
   <div class="wrapper">
-    <h3 class="title-barplot">Students performance over time:</h3>
+    <h3 class="title-barplot">{{'COMPONENTS.STATISTICS.SUBJECTS.PERFORMANCE'|translate}}:</h3>
     <ngx-charts-heat-map
       [groupPadding]="10"
       [barPadding]="0"
@@ -59,7 +59,7 @@
   </div>
 
   <div class="wrapper">
-    <h3 class="title-barplot">Overall performance:</h3>
+    <h3 class="title-barplot">{{ 'COMPONENTS.STATISTICS.SUBJECTS.CLASS_PERFORMANCE' | translate}}:</h3>
     <ngx-charts-bar-vertical
       [view]="view"
       [scheme]="colorSchemeDates"

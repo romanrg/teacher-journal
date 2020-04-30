@@ -92,7 +92,12 @@
       "COLLAPSE_ALL": "Collapse All",
       "FROM": "From",
       "TO": "To",
-      "SELECTION": ["date", "week", "month"]
+      "SELECTION": ["date", "week", "month"],
+      "SUBJECTS": {
+        "AVERAGE": "Average",
+        "PERFORMANCE": "Students performance over time",
+        "CLASS_PERFORMANCE": "Overall performance"
+      }
     }
   },
   "CONFIRMATION_MESSAGE": "Do you want to leave this page without saving changes?",

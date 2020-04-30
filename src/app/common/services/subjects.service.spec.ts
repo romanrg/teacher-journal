@@ -5,7 +5,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ISubject, SubjectModel} from "../models/ISubject";
 
-fdescribe("SubjectsService", () => {
+describe("SubjectsService", () => {
 
   let service: SubjectsService;
 

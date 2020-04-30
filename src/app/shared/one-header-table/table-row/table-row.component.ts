@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 
 @Component({
-  selector: 'app-table-row',
-  templateUrl: './table-row.component.html',
-  styleUrls: ['./table-row.component.sass']
+  selector: "app-table-row",
+  templateUrl: "./table-row.component.html",
+  styleUrls: ["./table-row.component.sass"]
 })
-export class TableRowComponent implements OnInit {
+export class TableRowComponent {
 
   @Input() public cellType: string;
   @Input() public row: string[];
@@ -15,10 +15,6 @@ export class TableRowComponent implements OnInit {
   public sortedCell: number;
   public isLowOrHigh: boolean = true;
   constructor() { }
-
-  ngOnInit(): void {
-  }
-
   public emitTopLevel(index: number): void {
     this.emitSorting.emit(index);
     if (index === this.sortedCell) {
