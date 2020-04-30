@@ -51,14 +51,14 @@ export class Generator {
 
   public generateForm(): any {
     const form: any = this.generateElement("form");
-    this.renderer.addClass(form, "generated-form");
+    this.render.addClass(form, "generated-form");
     return form;
   }
 
   public generateSubmitBtn(): any {
     const submitBtn: any = this.generateElement("button");
     this.generateAttributes(submitBtn, {type: "submit"});
-    this.appendChild(submitBtn, this.renderer.createText(this.btnText));
+    this.appendChild(submitBtn, this.render.createText(this.btnText));
     this.renderer.addClass(submitBtn, "generated-submit");
     return submitBtn;
   }

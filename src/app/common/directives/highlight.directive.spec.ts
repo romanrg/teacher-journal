@@ -1,12 +1,12 @@
 import { HighlightDirective } from "./highlight.directive";
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
+import {ComponentFixture, TestBed} from "@angular/core/testing";
 import {TableRowComponent} from "../../shared/one-header-table/table-row/table-row.component";
-import {DebugElement, NO_ERRORS_SCHEMA} from "@angular/core";
+import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {TableCellComponent} from "../../shared/one-header-table/table-cell/table-cell.component";
 import {DatePipe, DecimalPipe} from "@angular/common";
 import {By} from "@angular/platform-browser";
 
-fdescribe("HighlightDirective", () => {
+describe("HighlightDirective", () => {
 
   let component: TableRowComponent;
   let fixture: ComponentFixture<TableRowComponent>;
