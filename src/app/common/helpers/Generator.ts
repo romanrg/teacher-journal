@@ -59,7 +59,7 @@ export class Generator {
     const submitBtn: any = this.generateElement("button");
     this.generateAttributes(submitBtn, {type: "submit"});
     this.appendChild(submitBtn, this.render.createText(this.btnText));
-    this.renderer.addClass(submitBtn, "generated-submit");
+    this.render.addClass(submitBtn, "generated-submit");
     return submitBtn;
   }
 
@@ -139,8 +139,8 @@ export class DatePicker extends Generator {
         this.appendChild.bind(this, form, dateInput),
         this.appendChild.bind(this, form, submitBtn),
       );
-      this.renderer.addClass(dateInput, "date-input")
-      this.renderer.listen(form, "submit", (e) => {
+      this.render.addClass(dateInput, "date-input")
+      this.render.listen(form, "submit", (e) => {
         e.preventDefault();
         onsubmitAction(e.target[FormControlType.date].value, e.target);
       });
@@ -185,8 +185,8 @@ export class NumberPicker extends Generator {
       this.appendChild.bind(this, form, numberInput),
       this.appendChild.bind(this, form, submitBtn)
     );
-    this.renderer.addClass(numberInput, "number-input"),
-    this.renderer.listen(form, "submit", (e) => {
+    this.render.addClass(numberInput, "number-input"),
+    this.render.listen(form, "submit", (e) => {
       e.preventDefault();
       onsubmitAction(e.target[FormControlType.number].value,  [container, form]);
     });
