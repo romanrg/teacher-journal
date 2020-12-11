@@ -1,5 +1,4 @@
-import {Action, ActionReducer, createReducer, on, props} from "@ngrx/store";
-
+import {Action, ActionReducer, createReducer, on} from "@ngrx/store";
 import { StudentsState, initialStudentsState} from "./students.state";
 import * as StudentsActions from "./students.actions";
 import {IStudent, StudentModel} from "../../common/models/IStudent";
@@ -7,14 +6,12 @@ import {IStudent, StudentModel} from "../../common/models/IStudent";
 const reducer: ActionReducer = createReducer(
   initialStudentsState,
   on(StudentsActions.getStudents, state => {
-    console.log("GET_STUDENTS action being handled");
     return {
       ...state,
       loading: true
     };
   }),
   on(StudentsActions.getStudentsSuccess, (state, { students }) => {
-    console.log("GET_STUDENTS_SUCCESS action being handled");
     const data: IStudent[] = [...students];
     return {
       ...state,
@@ -23,8 +20,7 @@ const reducer: ActionReducer = createReducer(
       loaded: true
     };
   }),
-  on(StudentsActions.getStudentsError, (state, { error }) => {
-    console.log("GET_STUDENTS_ERROR action being handled");
+  on(StudentsActions.getStudentsError, (state, {error}) => {
     return {
       ...state,
       loading: false,
@@ -32,53 +28,44 @@ const reducer: ActionReducer = createReducer(
       error
     };
   }),
-  on(StudentsActions.getStudent, state => {
-    console.log("GET_STUDENT action being handled");
-    return {...state};
-  }),
   on(StudentsActions.createStudent, (state, {student}) => {
-    console.log("CREATE_STUDENT action being handled", student);
     return {...state, loading: true};
   }),
-  on(StudentsActions.createStudentSuccess, (state, student) => {
-    console.log("CREATE_STUDENT_SUCCESS action being handled", student);
+  on(StudentsActions.createStudentSuccess, (state, {student}) => {
+    const newState: StudentsState = {...state};
+    newState.data = [...state.data];
+    newState.data.push(student);
     return {
-      ...state,
+      ...newState,
       loading: false,
       loaded: true,
     };
   }),
-  on(StudentsActions.createStudentError, (state, error) => {
-    console.log("CREATE_STUDENT action being handled");
-    const newStudent: StudentModel = new StudentModel(
-      `f${(~~(Math.random()*1e8)).toString(16)}`,
-      student.name,
-      student.surname,
-      student.address,
-      student.description
-    );
-    const newState: StudentsState = {
-      data: [...state.data]
+  on(StudentsActions.createStudentError, (state, {error}) => {
+    return {
+      ...state,
+      error
     };
-    newState.data.push(newStudent);
-    return {...newState};
   }),
   on(StudentsActions.deleteStudent, (state, { id } ) => {
-    console.log("DELETE_STUDENT action being handled");
     return {...state, loading: true};
   }),
   on(StudentsActions.deleteStudentSuccess, (state, {id} ) => {
-    console.log("DELETE_STUDENT_SUCCESS action being handled");
-    let newState = {
+    let newState: StudentsState = {
       data: [...state.data].filter(student => student.id !== id),
+      searchedStudents: null,
       loading: false,
       loaded: true,
+      paginationConstant: state.paginationConstant,
+      currentPage: state.currentPage,
+      searchBar: state.searchBar
     };
-    console.log(state, newState);
+    if (state.searchedStudents !== null) {
+      newState.searchedStudents = [...state.searchedStudents].filter(student => student.id !== id);
+    }
     return {...newState};
   }),
   on(StudentsActions.deleteStudentError, (state, {error} ) => {
-    console.log("DELETE_STUDENT_ERROR action being handled");
     return {
       ...state,
       loading: false,
@@ -86,6 +73,42 @@ const reducer: ActionReducer = createReducer(
       error
     };
   }),
+  on(StudentsActions.searchStudentsBar, ((state, {searchString}) => {
+    return {
+      ...state,
+      searchBar: searchString
+    };
+  })),
+  on(StudentsActions.searchStudentsBarSuccess, ((state, {students}) => {
+    return {
+      ...state,
+      searchedStudents: students
+    };
+  })),
+  on(StudentsActions.searchStudentsBarError, (state, {error}) => {
+    return {
+      ...state,
+      error
+    };
+  }),
+  on(StudentsActions.changePaginationConstant, (state, {paginationConstant}) => {
+    return {
+      ...state,
+      paginationConstant,
+      currentPage: 1
+    };
+  }),
+  on(StudentsActions.changeCurrentPage, (state, {currentPage}) => {
+    return {
+      ...state,
+      currentPage
+    };
+  }),
+  on(StudentsActions.changeLanguage, (state, {language}) => {
+    return {
+      ...state
+    };
+  })
 );
 export function studentsReducer(state: StudentsState | undefined, action: Action): any {
   return reducer(state, action);

@@ -8,12 +8,23 @@
   box-shadow:  15px 15px 29px #272727, -15px -15px 29px #353535
   overflow: hidden
   transition: all 0.3s
-  &:hover .search-bar__input,
-  &:hover .search-bar__button
+  &:hover .search-bar__label
     border-bottom: 0.05rem solid $active-color
 .search-bar__label
   flex-grow: 1
   display: flex
+  border-bottom: 0.05rem solid transparent
+  &::after
+    content: ""
+    height: 1.5rem
+    width: 1.5rem
+    mask: url("src/assets/icon-search.svg")
+    mask-size: 100%
+    mask-repeat: no-repeat
+    background: $active-color
+    position: relative
+    left: calc(0% - 2rem)
+    top: calc(50% - 0.75rem)
 .search-bar__input
   flex-grow: 1
   padding: 2rem
@@ -22,20 +33,9 @@
   border: 0
   color: $color
   outline: none
-  border-bottom: 0.05rem solid transparent
   transition: all 0.3s
-  &:focus
-    border-bottom: 0.05rem solid $active-color
-.search-bar__button
-  background: transparent
-  border: none
-  color: $active-color
-  font: inherit
-  padding-right: 2rem
-  outline: none
-  border-bottom: 0.05rem solid transparent
-  cursor: pointer
-  transition: all 0.3s
-  &:focus
-    border-bottom: 0.05rem solid $active-color
+  &::-webkit-search-cancel-button
+    display: none
+
+
 

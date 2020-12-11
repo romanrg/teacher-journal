@@ -2,9 +2,15 @@
 .table-cell
   display: flex
   flex-grow: 1
-  padding: 1rem
   align-items: center
   justify-content: center
+  word-wrap: break-word
+  overflow: hidden
+  height: 5rem
+  background: $bg-color
+  box-sizing: border-box
+  width: 10rem
+  padding-left: 1rem
 .table-cell__th
   display: flex
   justify-content: center
@@ -12,6 +18,8 @@
   text-transform: uppercase
   border-bottom: 0.01rem solid transparent
   transition: all 0.3s
+  user-select: none
+  box-sizing: border-box
   &:hover
     border-bottom: 0.01rem solid $color
     cursor: pointer
@@ -27,3 +35,8 @@
   &--bottom
     padding-right: 1rem
     transform: rotate(180deg)
+.table-cell__btn--delete
+  color: $error
+  font: inherit
+
+

@@ -4,16 +4,11 @@ export class Mark {
     public subject: (string|number),
     public value: (number),
     public time: number,
-    public id: (string|number),
+    public id?: (string|number),
   ) {
     this.student = student;
     this.time = time;
     this.value = value;
     this.subject = subject;
-  }
-
-  public static getAverageMark: Function = (arr: []): number => {
-    const filtered: number[] = arr.filter(mark => mark);
-    return (filtered.reduce((cur, acc) => +cur + +acc, 0) / filtered.length);
   }
 }

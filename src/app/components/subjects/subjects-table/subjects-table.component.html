@@ -1,21 +1,26 @@
-<ng-container *ngIf="subjectTableConfig">
-  <ng-container *ngIf="subjectTableConfig.body.length; else empty">
-<div class="container" >
-  <app-one-header-table
-    [config]="subjectTableConfig"
-    (click)="generateInput($event.target)"
-    (contextmenu)="deleteDate($event)"
-  ></app-one-header-table>
-  <app-button
-    class="subject-table__btn"
-    [textContent]="'+'"
-    [screenReader]="'Add new date'"
-    (click)="addNewColumn()"
-  ></app-button>
-  <app-form [config]="newTeacherConfig" (onSubmit)="changeTeacher($event)"></app-form>
-</div>
+<ng-template #table>
+    <div class="container">
+      <app-one-header-table
+        [config]="subjectTableConfig"
+        (emitMap)="this.renderMap = $event"
+        (click)="handleClickEvents($event.target)"
+        [paginationConstant]="itemsPerPage"
+        [currentPagination]="page"
+        (emitPagination)="dispatchPaginationState($event)"
+      ></app-one-header-table>
+      <app-button
+        class="subject-table__btn"
+        [textContent]="'+'"
+        [screenReader]="'Add new date'"
+        (click)="subjectTableConfig.headers.push('Select date')"
+      ></app-button>
+    </div>
+    <app-form [config]="teacherConfig.config" (onSubmit)="changeTeacher($event)"></app-form>
+</ng-template>
+<ng-container *ngIf="isAnyErrorsOccur((componentState$ | async)); else table">
+  <ng-container *ngFor="let error of getAllStateErrors((componentState$ | async))">
+    <app-error-message-display
+      [error]="error"
+    ></app-error-message-display>
   </ng-container>
-  <ng-template #empty>
-    <app-empty-data></app-empty-data>
-  </ng-template>
 </ng-container>

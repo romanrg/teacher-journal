@@ -21,10 +21,16 @@
       ></app-button>
       <app-button class="table-foot__btn table-foot__btn--controller" screenReader="Move to the last page" textContent=">>" (click)="isLastOrFirst(true)"></app-button>
     </td>
+    <td class="table-foot__cell table-foot__cell--meta">
+      <span class="table-foot__descriptor">
+        {{generateMetaCell()}}
+      </span>
+    </td>
     <td class="table-foot__cell table-foot__cell--selector">
       <span class="table-foot__descriptor">Items per page:</span>
       <select class="table-foot__select" (change)="changePaginationConstant.emit(+$event.srcElement.value)">
         <option
+          [selected]="option === paginationConstant"
           class="table-foot__option"
           *ngFor="let option of paginationConstantList"
           [value]="option"

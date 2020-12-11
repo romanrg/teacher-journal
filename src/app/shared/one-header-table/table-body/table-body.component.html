@@ -1,7 +1,8 @@
-<tbody>
+<tbody class="table-body">
   <app-table-row
-    *ngFor="let row of bodyData; let i = index" class="table-body"
-
+    appHighlight
+    *ngFor="let row of bodyData; let i = index"
+    [displayDelete]="displayDelete"
     [attr.rowIndex]="generateRowIndex(i)"
     [cellType]="'td'"
     [row]="row"

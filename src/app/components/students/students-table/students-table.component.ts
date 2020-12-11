@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {StudentsServiceService} from "../../../common/services/students-service.service";
-import {ITableConfig} from "../../../common/models/ITableConfig";
+import {ITableConfig, TableBody, TableRow} from "../../../common/models/ITableConfig";
 import {RowCreator} from "../../../common/helpers/RowCreator";
-import {IStudent, StudentModel} from "../../../common/models/IStudent";
+import {IStudent} from "../../../common/models/IStudent";
 import {SubscriptionManager} from "../../../common/helpers/SubscriptionManager";
 import {STUDENTS_HEADERS} from "../../../common/constants/STUDENTS_HEADERS";
 import {select, Store} from "@ngrx/store";
@@ -21,9 +20,15 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
   public tableConfig: ITableConfig;
   public tableHeaders: ReadonlyArray<string> = STUDENTS_HEADERS;
   public studentsState$: Observable<StudentsState>;
+  public page: number;
+  public itemsPerPage: number;
+  public searchPlaceholder: string;
+  public tableBody: TableBody;
   constructor(
     private store: Store<AppState>,
-  ) {}
+  ) {
+    this.tableBody = new TableBody(TableRow);
+  }
   public createStudentsTableConfig(students: IStudent[]): ITableConfig {
     const headers: ReadonlyArray<string> = this.tableHeaders;
     const caption: string = "Students list:";
@@ -32,38 +37,48 @@ export class StudentsTableComponent implements OnInit, OnDestroy {
     };
   }
   public renderSearch($event: Event): void {
-    const headers: string[] = this.tableHeaders;
-    this.tableConfig.body = this.createBody(<IStudent[]>$event, headers);
+    this.store.dispatch(StudentsActions.searchStudentsBar({searchString: $event}));
   }
-  public createBody(students: IStudent[], config: ReadonlyArray<string>): string[][] {
-    const newBody: string[][] = [];
-    <IStudent[]>students.forEach((student, index) => {
-      const creator: RowCreator = new RowCreator();
-      const row: string[] = creator.generateRowFromObject(
-        student,
-        config
-      );
-      row[0] = index + 1;
-      newBody.push(row);
-    });
-    return newBody;
+  public createBody(students: IStudent[], config: ReadonlyArray<string>): Array<(string|number|undefined)[]> {
+    this.tableBody.clear();
+    this.tableBody.generateBodyFromDataAndConfig(config, students);
+    this.tableBody.changeAllValuesAtIndexWithArrayValues(0, this.tableBody.generateIdArray(students.length));
+    return this.tableBody.body;
   }
   public deleteStudent($event: Event): void {
-    const name: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[1].textContent;
-    const surname: string = [...$event.target.parentNode.parentNode.childNodes].filter(node => node.classList)[2].textContent;
-    let student: string;
-    this.studentsState$.subscribe(students => {
-      student = students.data.filter(stud => stud.name === name && stud.surname === surname)[0];
-    }).unsubscribe();
+    if ($event.target.parentNode.getAttribute("data")) {
+      const rowData: string[] = $event.target.parentNode.getAttribute("data").split(",");
+      let student: string;
+      this.studentsState$.subscribe(students => {
+        student = students.data.filter(stud => stud.name === rowData[1] && stud.surname === rowData[2])[0];
+      }).unsubscribe();
+      confirm(`Do you want to delete ${rowData[1]} ${rowData[2]}?`);
+      this.store.dispatch(StudentsActions.deleteStudent(student));
+    }
 
-    this.store.dispatch(StudentsActions.deleteStudent(student));
+  }
+  public dispatchPaginationState($event: Event): void {
+    if ($event.paginationConstant) {
+      this.store.dispatch(StudentsActions.changePaginationConstant($event));
+    } else {
+      this.store.dispatch(StudentsActions.changeCurrentPage($event));
+    }
+
   }
   public ngOnInit(): void {
     this.studentsState$ = this.store.pipe(select("students"));
-    this.store.dispatch(StudentsActions.getStudents());
     this.manager.addSubscription(
       this.studentsState$.subscribe(students => {
-        this.tableConfig = this.createStudentsTableConfig(students.data);
+        this.page = students.currentPage;
+        this.itemsPerPage = students.paginationConstant;
+        if (students.searchBar) {
+          this.searchPlaceholder = students.searchBar;
+        }
+        if (students.searchedStudents) {
+          this.tableConfig = this.createStudentsTableConfig(students.searchedStudents);
+        } else {
+          this.tableConfig = this.createStudentsTableConfig(students.data);
+        }
       })
     );
   }

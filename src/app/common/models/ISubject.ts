@@ -1,12 +1,18 @@
-import {ITeacher} from "./ITeacher";
-
 export interface ISubject {
   name: string;
   teacher: ITeacher | string;
-  cabinet?: number;
-  description?: string;
   address?: string;
-  _id: string | number;
-  marks?: (string|number)[];
+  description?: string;
+  id: string | number;
   uniqueDates?: number[];
+}
+
+export class SubjectModel extends ISubject {
+  constructor(
+    public name: string = "",
+    public teacher: ITeacher | string = "",
+    public address: string = "",
+    public description: string = "",
+    public uniqueDates: number[] = [],
+  ) {}
 }

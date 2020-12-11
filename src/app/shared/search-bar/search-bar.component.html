@@ -1,14 +1,13 @@
 <form class="search-bar__form"
       [formGroup]="searchBar"
-      (keydown)="showSearchResult()"
+      (keyup)="showSearchResult()"
 
 >
   <label class="search-bar__label">
     <input type="search"
            class="search-bar__input"
            formControlName="search"
-           placeholder="What are you looking for?"
+           [placeholder]="'What are you looking for?'"
     >
   </label>
-  <button type="submit" class="search-bar__button">Search</button>
 </form>

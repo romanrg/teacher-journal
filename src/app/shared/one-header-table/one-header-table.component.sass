@@ -4,6 +4,7 @@
   flex-direction: column
   box-sizing: border-box
   color: $color
+  margin: 0 auto
 .table__caption
   display: flex
   text-transform: uppercase
@@ -16,5 +17,22 @@
 .table__body, .table__head, .table__foot
   display: flex
   flex-direction: column
-  padding: 1rem
 
+.scroll
+  overflow-x: scroll
+  &::-webkit-scrollbar
+    background: transparent
+    max-height: 0.5rem
+    max-width: 0.5rem
+  &::-webkit-scrollbar-thumb
+    background-color: $active-color
+    max-width: 0.3rem
+  &::-webkit-scrollbar-corner
+    display: none
+.table__body
+  max-height: 38.5rem
+.table__head
+  position: sticky
+  top: 0
+  z-index: 3
+  background-color: #2e2e2e

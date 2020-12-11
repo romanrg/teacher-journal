@@ -3,6 +3,8 @@ import { NgModule } from "@angular/core";
 import { StudentsStoreModule } from "./students/students-store.module";
 import { environment } from "../../environments/environment";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import {SubjectsStoreModule} from "./subjects/subjects-store.module";
+import {MarksStoreModule} from "./marks/marks-store.module";
 @NgModule({
   imports: [
     StoreModule.forRoot({}, {
@@ -12,6 +14,8 @@ import { StoreDevtoolsModule } from "@ngrx/store-devtools";
       }
     }),
     StudentsStoreModule,
+    SubjectsStoreModule,
+    MarksStoreModule,
     !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
 })

@@ -33,11 +33,13 @@ import {HighlightDirective} from "../common/directives/highlight.directive";
 import {MarksHighlightDirective} from "../common/directives/marks-highlight.directive";
 import {HttpClientModule} from "@angular/common/http";
 import {SearchBarComponent} from "../shared/search-bar/search-bar.component";
-import {modifyHeadersProvider} from "../common/interceptors/modify-headers.interceptor";
+import {modifyHeadersProvider, queueRequestsProvider, requestQueueProvider} from "../common/interceptors/modify-headers.interceptor";
 import {EmptyDataComponent} from "../shared/empty-data/empty-data.component";
 import {RootStoreModule} from "../@ngrx/core-store.module";
 import {EffectsModule} from "@ngrx/effects";
-
+import {ErrorMessageDisplayComponent} from "../shared/error-message-display/error-message-display.component";
+import {LoadingComponent} from "../shared/loading/loading.component";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   declarations: [
@@ -67,7 +69,9 @@ import {EffectsModule} from "@ngrx/effects";
     HighlightDirective,
     MarksHighlightDirective,
     SearchBarComponent,
-    EmptyDataComponent
+    EmptyDataComponent,
+    ErrorMessageDisplayComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,
@@ -76,9 +80,16 @@ import {EffectsModule} from "@ngrx/effects";
     FormsModule,
     HttpClientModule,
     RootStoreModule,
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([]),
+    TranslateModule.forRoot()
   ],
-  providers: [ExitFormGuard, DecimalPipe, SortByPipe, DatePipe, modifyHeadersProvider],
+  providers: [
+    ExitFormGuard,
+    DecimalPipe,
+    SortByPipe,
+    DatePipe,
+    modifyHeadersProvider,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

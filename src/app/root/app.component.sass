@@ -1,5 +1,6 @@
+@import "src/styles/variables.sass"
 .logo__link
-  color: #FFFFFF
+  color: $color
   text-transform: uppercase
   text-decoration: none
   padding: 1rem
@@ -11,7 +12,15 @@
   display: flex
   align-items: center
   justify-content: space-around
-  flex-wrap: wrap
+  flex-wrap: nowrap
 .breadcrumbs
   display: flex
   align-self: center
+.language__select
+  background: transparent
+  color: $color
+  font: inherit
+  border: none
+.language__option
+  background: $bg-color
+  padding: 1rem
